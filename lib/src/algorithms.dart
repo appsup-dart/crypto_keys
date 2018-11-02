@@ -216,7 +216,7 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
     /// ECDSA using P-384 and SHA-384
     "ES384": algorithms.signing.ecdsa.sha384,
 
-    /// ECDSA using P-512 and SHA-512
+    /// ECDSA using P-521 and SHA-512
     "ES512": algorithms.signing.ecdsa.sha512,
 
     /// RSASSA-PSS using SHA-256 and MGF1 with SHA-256
