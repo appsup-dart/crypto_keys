@@ -22,23 +22,26 @@ class _$RsaPublicKeyImpl extends RsaPublicKeyImpl {
   @override
   final BigInt modulus;
 
-  factory _$RsaPublicKeyImpl([void updates(RsaPublicKeyImplBuilder b)]) =>
-      (new RsaPublicKeyImplBuilder()..update(updates)).build();
+  factory _$RsaPublicKeyImpl(
+          [void Function(RsaPublicKeyImplBuilder b) updates]) =>
+      (RsaPublicKeyImplBuilder()..update(updates)).build();
 
   _$RsaPublicKeyImpl._({this.exponent, this.modulus}) : super._() {
-    if (exponent == null)
-      throw new BuiltValueNullFieldError('RsaPublicKeyImpl', 'exponent');
-    if (modulus == null)
-      throw new BuiltValueNullFieldError('RsaPublicKeyImpl', 'modulus');
+    if (exponent == null) {
+      throw BuiltValueNullFieldError('RsaPublicKeyImpl', 'exponent');
+    }
+    if (modulus == null) {
+      throw BuiltValueNullFieldError('RsaPublicKeyImpl', 'modulus');
+    }
   }
 
   @override
-  RsaPublicKeyImpl rebuild(void updates(RsaPublicKeyImplBuilder b)) =>
+  RsaPublicKeyImpl rebuild(void Function(RsaPublicKeyImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
   RsaPublicKeyImplBuilder toBuilder() =>
-      new RsaPublicKeyImplBuilder()..replace(this);
+      RsaPublicKeyImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -90,19 +93,19 @@ class RsaPublicKeyImplBuilder
 
   @override
   void replace(RsaPublicKeyImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$RsaPublicKeyImpl;
   }
 
   @override
-  void update(void updates(RsaPublicKeyImplBuilder b)) {
+  void update(void Function(RsaPublicKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$RsaPublicKeyImpl build() {
     final _$result =
-        _$v ?? new _$RsaPublicKeyImpl._(exponent: exponent, modulus: modulus);
+        _$v ?? _$RsaPublicKeyImpl._(exponent: exponent, modulus: modulus);
     replace(_$result);
     return _$result;
   }
@@ -118,8 +121,9 @@ class _$RsaPrivateKeyImpl extends RsaPrivateKeyImpl {
   @override
   final BigInt modulus;
 
-  factory _$RsaPrivateKeyImpl([void updates(RsaPrivateKeyImplBuilder b)]) =>
-      (new RsaPrivateKeyImplBuilder()..update(updates)).build();
+  factory _$RsaPrivateKeyImpl(
+          [void Function(RsaPrivateKeyImplBuilder b) updates]) =>
+      (RsaPrivateKeyImplBuilder()..update(updates)).build();
 
   _$RsaPrivateKeyImpl._(
       {this.privateExponent,
@@ -127,26 +131,28 @@ class _$RsaPrivateKeyImpl extends RsaPrivateKeyImpl {
       this.secondPrimeFactor,
       this.modulus})
       : super._() {
-    if (privateExponent == null)
-      throw new BuiltValueNullFieldError(
-          'RsaPrivateKeyImpl', 'privateExponent');
-    if (firstPrimeFactor == null)
-      throw new BuiltValueNullFieldError(
-          'RsaPrivateKeyImpl', 'firstPrimeFactor');
-    if (secondPrimeFactor == null)
-      throw new BuiltValueNullFieldError(
-          'RsaPrivateKeyImpl', 'secondPrimeFactor');
-    if (modulus == null)
-      throw new BuiltValueNullFieldError('RsaPrivateKeyImpl', 'modulus');
+    if (privateExponent == null) {
+      throw BuiltValueNullFieldError('RsaPrivateKeyImpl', 'privateExponent');
+    }
+    if (firstPrimeFactor == null) {
+      throw BuiltValueNullFieldError('RsaPrivateKeyImpl', 'firstPrimeFactor');
+    }
+    if (secondPrimeFactor == null) {
+      throw BuiltValueNullFieldError('RsaPrivateKeyImpl', 'secondPrimeFactor');
+    }
+    if (modulus == null) {
+      throw BuiltValueNullFieldError('RsaPrivateKeyImpl', 'modulus');
+    }
   }
 
   @override
-  RsaPrivateKeyImpl rebuild(void updates(RsaPrivateKeyImplBuilder b)) =>
+  RsaPrivateKeyImpl rebuild(
+          void Function(RsaPrivateKeyImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
   RsaPrivateKeyImplBuilder toBuilder() =>
-      new RsaPrivateKeyImplBuilder()..replace(this);
+      RsaPrivateKeyImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -223,19 +229,19 @@ class RsaPrivateKeyImplBuilder
 
   @override
   void replace(RsaPrivateKeyImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$RsaPrivateKeyImpl;
   }
 
   @override
-  void update(void updates(RsaPrivateKeyImplBuilder b)) {
+  void update(void Function(RsaPrivateKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$RsaPrivateKeyImpl build() {
     final _$result = _$v ??
-        new _$RsaPrivateKeyImpl._(
+        _$RsaPrivateKeyImpl._(
             privateExponent: privateExponent,
             firstPrimeFactor: firstPrimeFactor,
             secondPrimeFactor: secondPrimeFactor,
@@ -253,26 +259,29 @@ class _$EcPublicKeyImpl extends EcPublicKeyImpl {
   @override
   final Identifier curve;
 
-  factory _$EcPublicKeyImpl([void updates(EcPublicKeyImplBuilder b)]) =>
-      (new EcPublicKeyImplBuilder()..update(updates)).build();
+  factory _$EcPublicKeyImpl(
+          [void Function(EcPublicKeyImplBuilder b) updates]) =>
+      (EcPublicKeyImplBuilder()..update(updates)).build();
 
   _$EcPublicKeyImpl._({this.xCoordinate, this.yCoordinate, this.curve})
       : super._() {
-    if (xCoordinate == null)
-      throw new BuiltValueNullFieldError('EcPublicKeyImpl', 'xCoordinate');
-    if (yCoordinate == null)
-      throw new BuiltValueNullFieldError('EcPublicKeyImpl', 'yCoordinate');
-    if (curve == null)
-      throw new BuiltValueNullFieldError('EcPublicKeyImpl', 'curve');
+    if (xCoordinate == null) {
+      throw BuiltValueNullFieldError('EcPublicKeyImpl', 'xCoordinate');
+    }
+    if (yCoordinate == null) {
+      throw BuiltValueNullFieldError('EcPublicKeyImpl', 'yCoordinate');
+    }
+    if (curve == null) {
+      throw BuiltValueNullFieldError('EcPublicKeyImpl', 'curve');
+    }
   }
 
   @override
-  EcPublicKeyImpl rebuild(void updates(EcPublicKeyImplBuilder b)) =>
+  EcPublicKeyImpl rebuild(void Function(EcPublicKeyImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  EcPublicKeyImplBuilder toBuilder() =>
-      new EcPublicKeyImplBuilder()..replace(this);
+  EcPublicKeyImplBuilder toBuilder() => EcPublicKeyImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -335,19 +344,19 @@ class EcPublicKeyImplBuilder
 
   @override
   void replace(EcPublicKeyImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$EcPublicKeyImpl;
   }
 
   @override
-  void update(void updates(EcPublicKeyImplBuilder b)) {
+  void update(void Function(EcPublicKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$EcPublicKeyImpl build() {
     final _$result = _$v ??
-        new _$EcPublicKeyImpl._(
+        _$EcPublicKeyImpl._(
             xCoordinate: xCoordinate, yCoordinate: yCoordinate, curve: curve);
     replace(_$result);
     return _$result;
@@ -360,23 +369,26 @@ class _$EcPrivateKeyImpl extends EcPrivateKeyImpl {
   @override
   final Identifier curve;
 
-  factory _$EcPrivateKeyImpl([void updates(EcPrivateKeyImplBuilder b)]) =>
-      (new EcPrivateKeyImplBuilder()..update(updates)).build();
+  factory _$EcPrivateKeyImpl(
+          [void Function(EcPrivateKeyImplBuilder b) updates]) =>
+      (EcPrivateKeyImplBuilder()..update(updates)).build();
 
   _$EcPrivateKeyImpl._({this.eccPrivateKey, this.curve}) : super._() {
-    if (eccPrivateKey == null)
-      throw new BuiltValueNullFieldError('EcPrivateKeyImpl', 'eccPrivateKey');
-    if (curve == null)
-      throw new BuiltValueNullFieldError('EcPrivateKeyImpl', 'curve');
+    if (eccPrivateKey == null) {
+      throw BuiltValueNullFieldError('EcPrivateKeyImpl', 'eccPrivateKey');
+    }
+    if (curve == null) {
+      throw BuiltValueNullFieldError('EcPrivateKeyImpl', 'curve');
+    }
   }
 
   @override
-  EcPrivateKeyImpl rebuild(void updates(EcPrivateKeyImplBuilder b)) =>
+  EcPrivateKeyImpl rebuild(void Function(EcPrivateKeyImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
   EcPrivateKeyImplBuilder toBuilder() =>
-      new EcPrivateKeyImplBuilder()..replace(this);
+      EcPrivateKeyImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -429,19 +441,19 @@ class EcPrivateKeyImplBuilder
 
   @override
   void replace(EcPrivateKeyImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$EcPrivateKeyImpl;
   }
 
   @override
-  void update(void updates(EcPrivateKeyImplBuilder b)) {
+  void update(void Function(EcPrivateKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$EcPrivateKeyImpl build() {
-    final _$result = _$v ??
-        new _$EcPrivateKeyImpl._(eccPrivateKey: eccPrivateKey, curve: curve);
+    final _$result =
+        _$v ?? _$EcPrivateKeyImpl._(eccPrivateKey: eccPrivateKey, curve: curve);
     replace(_$result);
     return _$result;
   }
@@ -451,21 +463,23 @@ class _$SymmetricKeyImpl extends SymmetricKeyImpl {
   @override
   final Uint8List keyValue;
 
-  factory _$SymmetricKeyImpl([void updates(SymmetricKeyImplBuilder b)]) =>
-      (new SymmetricKeyImplBuilder()..update(updates)).build();
+  factory _$SymmetricKeyImpl(
+          [void Function(SymmetricKeyImplBuilder b) updates]) =>
+      (SymmetricKeyImplBuilder()..update(updates)).build();
 
   _$SymmetricKeyImpl._({this.keyValue}) : super._() {
-    if (keyValue == null)
-      throw new BuiltValueNullFieldError('SymmetricKeyImpl', 'keyValue');
+    if (keyValue == null) {
+      throw BuiltValueNullFieldError('SymmetricKeyImpl', 'keyValue');
+    }
   }
 
   @override
-  SymmetricKeyImpl rebuild(void updates(SymmetricKeyImplBuilder b)) =>
+  SymmetricKeyImpl rebuild(void Function(SymmetricKeyImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
   SymmetricKeyImplBuilder toBuilder() =>
-      new SymmetricKeyImplBuilder()..replace(this);
+      SymmetricKeyImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -509,18 +523,18 @@ class SymmetricKeyImplBuilder
 
   @override
   void replace(SymmetricKeyImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$SymmetricKeyImpl;
   }
 
   @override
-  void update(void updates(SymmetricKeyImplBuilder b)) {
+  void update(void Function(SymmetricKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$SymmetricKeyImpl build() {
-    final _$result = _$v ?? new _$SymmetricKeyImpl._(keyValue: keyValue);
+    final _$result = _$v ?? _$SymmetricKeyImpl._(keyValue: keyValue);
     replace(_$result);
     return _$result;
   }
@@ -531,23 +545,24 @@ class _$SignatureImpl extends SignatureImpl {
   final BuiltList<int> built_data;
   Uint8List __data;
 
-  factory _$SignatureImpl([void updates(SignatureImplBuilder b)]) =>
-      (new SignatureImplBuilder()..update(updates)).build();
+  factory _$SignatureImpl([void Function(SignatureImplBuilder b) updates]) =>
+      (SignatureImplBuilder()..update(updates)).build();
 
   _$SignatureImpl._({this.built_data}) : super._() {
-    if (built_data == null)
-      throw new BuiltValueNullFieldError('SignatureImpl', 'built_data');
+    if (built_data == null) {
+      throw BuiltValueNullFieldError('SignatureImpl', 'built_data');
+    }
   }
 
   @override
   Uint8List get data => __data ??= super.data;
 
   @override
-  SignatureImpl rebuild(void updates(SignatureImplBuilder b)) =>
+  SignatureImpl rebuild(void Function(SignatureImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  SignatureImplBuilder toBuilder() => new SignatureImplBuilder()..replace(this);
+  SignatureImplBuilder toBuilder() => SignatureImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -575,8 +590,7 @@ class SignatureImplBuilder
 
   ListBuilder<int> _built_data;
 
-  ListBuilder<int> get built_data =>
-      _$this._built_data ??= new ListBuilder<int>();
+  ListBuilder<int> get built_data => _$this._built_data ??= ListBuilder<int>();
 
   set built_data(ListBuilder<int> built_data) =>
       _$this._built_data = built_data;
@@ -593,12 +607,12 @@ class SignatureImplBuilder
 
   @override
   void replace(SignatureImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$SignatureImpl;
   }
 
   @override
-  void update(void updates(SignatureImplBuilder b)) {
+  void update(void Function(SignatureImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -606,14 +620,14 @@ class SignatureImplBuilder
   _$SignatureImpl build() {
     _$SignatureImpl _$result;
     try {
-      _$result = _$v ?? new _$SignatureImpl._(built_data: built_data.build());
+      _$result = _$v ?? _$SignatureImpl._(built_data: built_data.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'built_data';
         built_data.build();
       } catch (e) {
-        throw new BuiltValueNestedFieldError(
+        throw BuiltValueNestedFieldError(
             'SignatureImpl', _$failedField, e.toString());
       }
       rethrow;
@@ -638,8 +652,8 @@ class _$EncryptionResultImpl extends EncryptionResultImpl {
   Uint8List __additionalAuthenticatedData;
 
   factory _$EncryptionResultImpl(
-          [void updates(EncryptionResultImplBuilder b)]) =>
-      (new EncryptionResultImplBuilder()..update(updates)).build();
+          [void Function(EncryptionResultImplBuilder b) updates]) =>
+      (EncryptionResultImplBuilder()..update(updates)).build();
 
   _$EncryptionResultImpl._(
       {this.built_data,
@@ -647,8 +661,9 @@ class _$EncryptionResultImpl extends EncryptionResultImpl {
       this.built_authenticationTag,
       this.built_additionalAuthenticatedData})
       : super._() {
-    if (built_data == null)
-      throw new BuiltValueNullFieldError('EncryptionResultImpl', 'built_data');
+    if (built_data == null) {
+      throw BuiltValueNullFieldError('EncryptionResultImpl', 'built_data');
+    }
   }
 
   @override
@@ -667,12 +682,13 @@ class _$EncryptionResultImpl extends EncryptionResultImpl {
       __additionalAuthenticatedData ??= super.additionalAuthenticatedData;
 
   @override
-  EncryptionResultImpl rebuild(void updates(EncryptionResultImplBuilder b)) =>
+  EncryptionResultImpl rebuild(
+          void Function(EncryptionResultImplBuilder b) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
   EncryptionResultImplBuilder toBuilder() =>
-      new EncryptionResultImplBuilder()..replace(this);
+      EncryptionResultImplBuilder()..replace(this);
 
   @override
   bool operator ==(dynamic other) {
@@ -713,8 +729,7 @@ class EncryptionResultImplBuilder
 
   ListBuilder<int> _built_data;
 
-  ListBuilder<int> get built_data =>
-      _$this._built_data ??= new ListBuilder<int>();
+  ListBuilder<int> get built_data => _$this._built_data ??= ListBuilder<int>();
 
   set built_data(ListBuilder<int> built_data) =>
       _$this._built_data = built_data;
@@ -722,7 +737,7 @@ class EncryptionResultImplBuilder
   ListBuilder<int> _built_initializationVector;
 
   ListBuilder<int> get built_initializationVector =>
-      _$this._built_initializationVector ??= new ListBuilder<int>();
+      _$this._built_initializationVector ??= ListBuilder<int>();
 
   set built_initializationVector(ListBuilder<int> built_initializationVector) =>
       _$this._built_initializationVector = built_initializationVector;
@@ -730,7 +745,7 @@ class EncryptionResultImplBuilder
   ListBuilder<int> _built_authenticationTag;
 
   ListBuilder<int> get built_authenticationTag =>
-      _$this._built_authenticationTag ??= new ListBuilder<int>();
+      _$this._built_authenticationTag ??= ListBuilder<int>();
 
   set built_authenticationTag(ListBuilder<int> built_authenticationTag) =>
       _$this._built_authenticationTag = built_authenticationTag;
@@ -738,7 +753,7 @@ class EncryptionResultImplBuilder
   ListBuilder<int> _built_additionalAuthenticatedData;
 
   ListBuilder<int> get built_additionalAuthenticatedData =>
-      _$this._built_additionalAuthenticatedData ??= new ListBuilder<int>();
+      _$this._built_additionalAuthenticatedData ??= ListBuilder<int>();
 
   set built_additionalAuthenticatedData(
           ListBuilder<int> built_additionalAuthenticatedData) =>
@@ -761,12 +776,12 @@ class EncryptionResultImplBuilder
 
   @override
   void replace(EncryptionResultImpl other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) throw ArgumentError.notNull('other');
     _$v = other as _$EncryptionResultImpl;
   }
 
   @override
-  void update(void updates(EncryptionResultImplBuilder b)) {
+  void update(void Function(EncryptionResultImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -775,7 +790,7 @@ class EncryptionResultImplBuilder
     _$EncryptionResultImpl _$result;
     try {
       _$result = _$v ??
-          new _$EncryptionResultImpl._(
+          _$EncryptionResultImpl._(
               built_data: built_data.build(),
               built_initializationVector: _built_initializationVector?.build(),
               built_authenticationTag: _built_authenticationTag?.build(),
@@ -793,7 +808,7 @@ class EncryptionResultImplBuilder
         _$failedField = 'built_additionalAuthenticatedData';
         _built_additionalAuthenticatedData?.build();
       } catch (e) {
-        throw new BuiltValueNestedFieldError(
+        throw BuiltValueNestedFieldError(
             'EncryptionResultImpl', _$failedField, e.toString());
       }
       rethrow;

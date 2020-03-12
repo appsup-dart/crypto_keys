@@ -3,13 +3,14 @@ import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
-_testSigning(KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
+void _testSigning(
+    KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
     [Uint8List signature, bool isRandom]) {
   var signer = keyPair.createSigner(algorithm);
   var verifier = keyPair.createVerifier(algorithm);
 
   if (signature != null) {
-    expect(verifier.verify(data, new Signature(signature)), isTrue);
+    expect(verifier.verify(data, Signature(signature)), isTrue);
 
     if (!isRandom) {
       expect(signer.sign(data).data, signature);
@@ -18,11 +19,12 @@ _testSigning(KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
 
   var s = signer.sign(data);
   expect(verifier.verify(data, s), isTrue);
-  s = new Signature(s.data..[0] += 1);
+  s = Signature(s.data..[0] += 1);
   expect(verifier.verify(data, s), isFalse);
 }
 
-_testEncryption(KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
+void _testEncryption(
+    KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
     [EncryptionResult encryptedData, bool isRandom]) {
   var encrypter = keyPair.publicKey.createEncrypter(algorithm);
   var decrypter = keyPair.privateKey.createEncrypter(algorithm);
@@ -54,18 +56,18 @@ _testEncryption(KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
       data);
 }
 
-main() {
+void main() {
   group('Signing', () {
     group('Signing with symmetric keys', () {
       var jwk = {
-        "kty": "oct",
-        "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75"
-            "aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
+        'kty': 'oct',
+        'k': 'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75'
+            'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow'
       };
 
       var keyPair = keyPairFromJwk(jwk);
 
-      var data = new Uint8List.fromList([
+      var data = Uint8List.fromList([
         101,
         121,
         74,
@@ -204,7 +206,7 @@ main() {
       ]);
 
       test('Example Signing Using HMAC SHA-256', () {
-        var signature = new Uint8List.fromList([
+        var signature = Uint8List.fromList([
           116,
           24,
           223,
@@ -252,40 +254,40 @@ main() {
 
     group('Signing with RSA keys', () {
       var jwk = {
-        "kty": "RSA",
-        "n": "ofgWCuLjybRlzo0tZWJjNiuSfb4p4fAkd_wWJcyQoTbji9k0l8W26mPddx"
-            "HmfHQp-Vaw-4qPCJrcS2mJPMEzP1Pt0Bm4d4QlL-yRT-SFd2lZS-pCgNMs"
-            "D1W_YpRPEwOWvG6b32690r2jZ47soMZo9wGzjb_7OMg0LOL-bSf63kpaSH"
-            "SXndS5z5rexMdbBYUsLA9e-KXBdQOS-UTo7WTBEMa2R2CapHg665xsmtdV"
-            "MTBQY4uDZlxvb3qCo5ZwKh9kG4LT6_I5IhlJH7aGhyxXFvUK-DWNmoudF8"
-            "NAco9_h9iaGNj8q2ethFkMLs91kzk2PAcDTW9gb54h4FRWyuXpoQ",
-        "e": "AQAB",
-        "d": "Eq5xpGnNCivDflJsRQBXHx1hdR1k6Ulwe2JZD50LpXyWPEAeP88vLNO97I"
-            "jlA7_GQ5sLKMgvfTeXZx9SE-7YwVol2NXOoAJe46sui395IW_GO-pWJ1O0"
-            "BkTGoVEn2bKVRUCgu-GjBVaYLU6f3l9kJfFNS3E0QbVdxzubSu3Mkqzjkn"
-            "439X0M_V51gfpRLI9JYanrC4D4qAdGcopV_0ZHHzQlBjudU2QvXt4ehNYT"
-            "CBr6XCLQUShb1juUO1ZdiYoFaFQT5Tw8bGUl_x_jTj3ccPDVZFD9pIuhLh"
-            "BOneufuBiB4cS98l2SR_RQyGWSeWjnczT0QU91p1DhOVRuOopznQ",
-        "p": "4BzEEOtIpmVdVEZNCqS7baC4crd0pqnRH_5IB3jw3bcxGn6QLvnEtfdUdi"
-            "YrqBdss1l58BQ3KhooKeQTa9AB0Hw_Py5PJdTJNPY8cQn7ouZ2KKDcmnPG"
-            "BY5t7yLc1QlQ5xHdwW1VhvKn-nXqhJTBgIPgtldC-KDV5z-y2XDwGUc",
-        "q": "uQPEfgmVtjL0Uyyx88GZFF1fOunH3-7cepKmtH4pxhtCoHqpWmT8YAmZxa"
-            "ewHgHAjLYsp1ZSe7zFYHj7C6ul7TjeLQeZD_YwD66t62wDmpe_HlB-TnBA"
-            "-njbglfIsRLtXlnDzQkv5dTltRJ11BKBBypeeF6689rjcJIDEz9RWdc",
-        "dp": "BwKfV3Akq5_MFZDFZCnW-wzl-CCo83WoZvnLQwCTeDv8uzluRSnm71I3Q"
-            "CLdhrqE2e9YkxvuxdBfpT_PI7Yz-FOKnu1R6HsJeDCjn12Sk3vmAktV2zb"
-            "34MCdy7cpdTh_YVr7tss2u6vneTwrA86rZtu5Mbr1C1XsmvkxHQAdYo0",
-        "dq": "h_96-mK1R_7glhsum81dZxjTnYynPbZpHziZjeeHcXYsXaaMwkOlODsWa"
-            "7I9xXDoRwbKgB719rrmI2oKr6N3Do9U0ajaHF-NKJnwgjMd2w9cjz3_-ky"
-            "NlxAr2v4IKhGNpmM5iIgOS1VZnOZ68m6_pbLBSp3nssTdlqvd0tIiTHU",
-        "qi": "IYd7DHOhrWvxkwPQsRM2tOgrjbcrfvtQJipd-DlcxyVuuM9sQLdgjVk2o"
-            "y26F0EmpScGLq2MowX7fhd_QJQ3ydy5cY7YIBi87w93IKLEdfnbJtoOPLU"
-            "W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U"
+        'kty': 'RSA',
+        'n': 'ofgWCuLjybRlzo0tZWJjNiuSfb4p4fAkd_wWJcyQoTbji9k0l8W26mPddx'
+            'HmfHQp-Vaw-4qPCJrcS2mJPMEzP1Pt0Bm4d4QlL-yRT-SFd2lZS-pCgNMs'
+            'D1W_YpRPEwOWvG6b32690r2jZ47soMZo9wGzjb_7OMg0LOL-bSf63kpaSH'
+            'SXndS5z5rexMdbBYUsLA9e-KXBdQOS-UTo7WTBEMa2R2CapHg665xsmtdV'
+            'MTBQY4uDZlxvb3qCo5ZwKh9kG4LT6_I5IhlJH7aGhyxXFvUK-DWNmoudF8'
+            'NAco9_h9iaGNj8q2ethFkMLs91kzk2PAcDTW9gb54h4FRWyuXpoQ',
+        'e': 'AQAB',
+        'd': 'Eq5xpGnNCivDflJsRQBXHx1hdR1k6Ulwe2JZD50LpXyWPEAeP88vLNO97I'
+            'jlA7_GQ5sLKMgvfTeXZx9SE-7YwVol2NXOoAJe46sui395IW_GO-pWJ1O0'
+            'BkTGoVEn2bKVRUCgu-GjBVaYLU6f3l9kJfFNS3E0QbVdxzubSu3Mkqzjkn'
+            '439X0M_V51gfpRLI9JYanrC4D4qAdGcopV_0ZHHzQlBjudU2QvXt4ehNYT'
+            'CBr6XCLQUShb1juUO1ZdiYoFaFQT5Tw8bGUl_x_jTj3ccPDVZFD9pIuhLh'
+            'BOneufuBiB4cS98l2SR_RQyGWSeWjnczT0QU91p1DhOVRuOopznQ',
+        'p': '4BzEEOtIpmVdVEZNCqS7baC4crd0pqnRH_5IB3jw3bcxGn6QLvnEtfdUdi'
+            'YrqBdss1l58BQ3KhooKeQTa9AB0Hw_Py5PJdTJNPY8cQn7ouZ2KKDcmnPG'
+            'BY5t7yLc1QlQ5xHdwW1VhvKn-nXqhJTBgIPgtldC-KDV5z-y2XDwGUc',
+        'q': 'uQPEfgmVtjL0Uyyx88GZFF1fOunH3-7cepKmtH4pxhtCoHqpWmT8YAmZxa'
+            'ewHgHAjLYsp1ZSe7zFYHj7C6ul7TjeLQeZD_YwD66t62wDmpe_HlB-TnBA'
+            '-njbglfIsRLtXlnDzQkv5dTltRJ11BKBBypeeF6689rjcJIDEz9RWdc',
+        'dp': 'BwKfV3Akq5_MFZDFZCnW-wzl-CCo83WoZvnLQwCTeDv8uzluRSnm71I3Q'
+            'CLdhrqE2e9YkxvuxdBfpT_PI7Yz-FOKnu1R6HsJeDCjn12Sk3vmAktV2zb'
+            '34MCdy7cpdTh_YVr7tss2u6vneTwrA86rZtu5Mbr1C1XsmvkxHQAdYo0',
+        'dq': 'h_96-mK1R_7glhsum81dZxjTnYynPbZpHziZjeeHcXYsXaaMwkOlODsWa'
+            '7I9xXDoRwbKgB719rrmI2oKr6N3Do9U0ajaHF-NKJnwgjMd2w9cjz3_-ky'
+            'NlxAr2v4IKhGNpmM5iIgOS1VZnOZ68m6_pbLBSp3nssTdlqvd0tIiTHU',
+        'qi': 'IYd7DHOhrWvxkwPQsRM2tOgrjbcrfvtQJipd-DlcxyVuuM9sQLdgjVk2o'
+            'y26F0EmpScGLq2MowX7fhd_QJQ3ydy5cY7YIBi87w93IKLEdfnbJtoOPLU'
+            'W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U'
       };
 
       var keyPair = keyPairFromJwk(jwk);
 
-      var data = new Uint8List.fromList([
+      var data = Uint8List.fromList([
         101,
         121,
         74,
@@ -404,7 +406,7 @@ main() {
       ]);
 
       test('Example Signing Using RSASSA-PKCS1-v1_5 SHA-256', () {
-        var signature = new Uint8List.fromList([
+        var signature = Uint8List.fromList([
           112,
           46,
           33,
@@ -677,16 +679,16 @@ main() {
     group('Signing with EC keys', () {
       test('Example Signing Using ECDSA P-256 SHA-256', () {
         var jwk = {
-          "kty": "EC",
-          "crv": "P-256",
-          "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
-          "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
-          "d": "jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI"
+          'kty': 'EC',
+          'crv': 'P-256',
+          'x': 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU',
+          'y': 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
+          'd': 'jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI'
         };
 
         var keyPair = keyPairFromJwk(jwk);
 
-        var data = new Uint8List.fromList([
+        var data = Uint8List.fromList([
           101,
           121,
           74,
@@ -804,7 +806,7 @@ main() {
           81
         ]);
 
-        var signature = new Uint8List.fromList([
+        var signature = Uint8List.fromList([
           14,
           209,
           33,
@@ -876,19 +878,19 @@ main() {
 
       test('Example Signing Using ECDSA P-521 SHA-512', () {
         var jwk = {
-          "kty": "EC",
-          "crv": "P-521",
-          "x": "AekpBQ8ST8a8VcfVOTNl353vSrDCLLJXmPk06wTjxrrjcBpXp5EOnYG_"
-              "NjFZ6OvLFV1jSfS9tsz4qUxcWceqwQGk",
-          "y": "ADSmRA43Z1DSNx_RvcLI87cdL07l6jQyyBXMoxVg_l2Th-x3S1WDhjDl"
-              "y79ajL4Kkd0AZMaZmh9ubmf63e3kyMj2",
-          "d": "AY5pb7A0UFiB3RELSD64fTLOSV_jazdF7fLYyuTw8lOfRhWg6Y6rUrPA"
-              "xerEzgdRhajnu0ferB0d53vM9mE15j2C"
+          'kty': 'EC',
+          'crv': 'P-521',
+          'x': 'AekpBQ8ST8a8VcfVOTNl353vSrDCLLJXmPk06wTjxrrjcBpXp5EOnYG_'
+              'NjFZ6OvLFV1jSfS9tsz4qUxcWceqwQGk',
+          'y': 'ADSmRA43Z1DSNx_RvcLI87cdL07l6jQyyBXMoxVg_l2Th-x3S1WDhjDl'
+              'y79ajL4Kkd0AZMaZmh9ubmf63e3kyMj2',
+          'd': 'AY5pb7A0UFiB3RELSD64fTLOSV_jazdF7fLYyuTw8lOfRhWg6Y6rUrPA'
+              'xerEzgdRhajnu0ferB0d53vM9mE15j2C'
         };
 
         var keyPair = keyPairFromJwk(jwk);
 
-        var data = new Uint8List.fromList([
+        var data = Uint8List.fromList([
           101,
           121,
           74,
@@ -921,7 +923,7 @@ main() {
           90,
           65
         ]);
-        var signature = new Uint8List.fromList([
+        var signature = Uint8List.fromList([
           1,
           220,
           12,
@@ -1063,7 +1065,7 @@ main() {
 
   group('Encryption', () {
     group('Content Encryption with symmetric keys', () {
-      var data = new Uint8List.fromList([
+      var data = Uint8List.fromList([
         76,
         105,
         118,
@@ -1089,8 +1091,8 @@ main() {
       ]);
 
       test('Example encryption using AES_128_CBC', () {
-        var keyPair = new KeyPair.symmetric(new SymmetricKey(
-            keyValue: new Uint8List.fromList([
+        var keyPair = KeyPair.symmetric(SymmetricKey(
+            keyValue: Uint8List.fromList([
           107,
           124,
           212,
@@ -1108,8 +1110,8 @@ main() {
           44,
           207
         ])));
-        var encryptedData = new EncryptionResult(
-            new Uint8List.fromList([
+        var encryptedData = EncryptionResult(
+            Uint8List.fromList([
               40,
               57,
               83,
@@ -1143,7 +1145,7 @@ main() {
               56,
               102
             ]),
-            initializationVector: new Uint8List.fromList([
+            initializationVector: Uint8List.fromList([
               3,
               22,
               60,
@@ -1167,17 +1169,17 @@ main() {
       });
 
       test('Example encryption using AES_192_CBC', () {
-        var keyPair = new KeyPair.generateSymmetric(192);
+        var keyPair = KeyPair.generateSymmetric(192);
         _testEncryption(keyPair, algorithms.encryption.aes.cbc, data);
       });
       test('Example encryption using AES_256_CBC', () {
-        var keyPair = new KeyPair.generateSymmetric(256);
+        var keyPair = KeyPair.generateSymmetric(256);
         _testEncryption(keyPair, algorithms.encryption.aes.cbc, data);
       });
 
       test('Example encryption using AES_128_CBC_HMAC_SHA_256', () {
-        var keyPair = new KeyPair.symmetric(new SymmetricKey(
-            keyValue: new Uint8List.fromList([
+        var keyPair = KeyPair.symmetric(SymmetricKey(
+            keyValue: Uint8List.fromList([
           4,
           211,
           31,
@@ -1211,8 +1213,8 @@ main() {
           44,
           207
         ])));
-        var encryptedData = new EncryptionResult(
-            new Uint8List.fromList([
+        var encryptedData = EncryptionResult(
+            Uint8List.fromList([
               40,
               57,
               83,
@@ -1246,7 +1248,7 @@ main() {
               56,
               102
             ]),
-            initializationVector: new Uint8List.fromList([
+            initializationVector: Uint8List.fromList([
               3,
               22,
               60,
@@ -1264,7 +1266,7 @@ main() {
               104,
               101
             ]),
-            additionalAuthenticatedData: new Uint8List.fromList([
+            additionalAuthenticatedData: Uint8List.fromList([
               101,
               121,
               74,
@@ -1317,7 +1319,7 @@ main() {
               110,
               48
             ]),
-            authenticationTag: new Uint8List.fromList([
+            authenticationTag: Uint8List.fromList([
               83,
               73,
               191,
@@ -1340,28 +1342,28 @@ main() {
             data, encryptedData, false);
       });
       test('Example encryption using AES_192_CBC_HMAC_SHA_384', () {
-        var keyPair = new KeyPair.generateSymmetric(384);
+        var keyPair = KeyPair.generateSymmetric(384);
         _testEncryption(
             keyPair, algorithms.encryption.aes.cbcWithHmac.sha384, data);
       });
       test('Example encryption using AES_256_CBC_HMAC_SHA_512', () {
-        var keyPair = new KeyPair.generateSymmetric(512);
+        var keyPair = KeyPair.generateSymmetric(512);
         _testEncryption(
             keyPair, algorithms.encryption.aes.cbcWithHmac.sha512, data);
       });
 
       test('Example encryption using AES_128_GCM', () {
-        var keyPair = new KeyPair.generateSymmetric(128);
+        var keyPair = KeyPair.generateSymmetric(128);
         _testEncryption(keyPair, algorithms.encryption.aes.gcm, data);
       });
       test('Example encryption using AES_192_GCM', () {
-        var keyPair = new KeyPair.generateSymmetric(192);
+        var keyPair = KeyPair.generateSymmetric(192);
         _testEncryption(keyPair, algorithms.encryption.aes.gcm, data);
       });
       test(
         'Example encryption using AES_256_GCM',
         () {
-          var data = new Uint8List.fromList([
+          var data = Uint8List.fromList([
             84,
             104,
             101,
@@ -1426,8 +1428,8 @@ main() {
             110,
             46
           ]);
-          var keyPair = new KeyPair.symmetric(new SymmetricKey(
-              keyValue: new Uint8List.fromList([
+          var keyPair = KeyPair.symmetric(SymmetricKey(
+              keyValue: Uint8List.fromList([
             177,
             161,
             244,
@@ -1462,8 +1464,8 @@ main() {
             252
           ])));
 
-          var encryptedData = new EncryptionResult(
-              new Uint8List.fromList([
+          var encryptedData = EncryptionResult(
+              Uint8List.fromList([
                 229,
                 236,
                 166,
@@ -1528,7 +1530,7 @@ main() {
                 63,
                 192
               ]),
-              additionalAuthenticatedData: new Uint8List.fromList([
+              additionalAuthenticatedData: Uint8List.fromList([
                 101,
                 121,
                 74,
@@ -1576,9 +1578,9 @@ main() {
                 102,
                 81
               ]),
-              initializationVector: new Uint8List.fromList(
+              initializationVector: Uint8List.fromList(
                   [227, 197, 117, 252, 2, 219, 233, 68, 180, 225, 77, 219]),
-              authenticationTag: new Uint8List.fromList([
+              authenticationTag: Uint8List.fromList([
                 92,
                 80,
                 104,
@@ -1599,14 +1601,14 @@ main() {
 
           _testEncryption(keyPair, algorithms.encryption.aes.gcm, data,
               encryptedData, false);
-        }, /* skip: "GCM mode not implemented"*/
+        }, /* skip: 'GCM mode not implemented'*/
       );
     });
 
     group(
       'Key Encryption with symmetric keys',
       () {
-        var data = new Uint8List.fromList([
+        var data = Uint8List.fromList([
           4,
           211,
           31,
@@ -1643,9 +1645,9 @@ main() {
 
         test('Example encryption using AES Key Wrap 128', () {
           var keyPair =
-              keyPairFromJwk({"kty": "oct", "k": "GawgguFyGrWKav7AX4VKUg"});
+              keyPairFromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
 
-          var encryptedData = new EncryptionResult(new Uint8List.fromList([
+          var encryptedData = EncryptionResult(Uint8List.fromList([
             232,
             160,
             123,
@@ -1692,52 +1694,52 @@ main() {
               encryptedData, false);
         });
         test('Example encryption using AES Key Wrap 192', () {
-          var keyPair = new KeyPair.generateSymmetric(192);
+          var keyPair = KeyPair.generateSymmetric(192);
           _testEncryption(keyPair, algorithms.encryption.aes.keyWrap, data);
         });
         test('Example encryption using AES Key Wrap 256', () {
-          var keyPair = new KeyPair.generateSymmetric(256);
+          var keyPair = KeyPair.generateSymmetric(256);
           _testEncryption(keyPair, algorithms.encryption.aes.keyWrap, data);
         });
-      }, /*skip: "AES key wrap not implemented"*/
+      }, /*skip: 'AES key wrap not implemented'*/
     );
 
     group('Encryption with RSA keys', () {
       test('Example encryption using RSAES-PKCS1-v1_5', () {
         var jwk = {
-          "kty": "RSA",
-          "n": "sXchDaQebHnPiGvyDOAT4saGEUetSyo9MKLOoWFsueri23bOdgWp4Dy1Wl"
-              "UzewbgBHod5pcM9H95GQRV3JDXboIRROSBigeC5yjU1hGzHHyXss8UDpre"
-              "cbAYxknTcQkhslANGRUZmdTOQ5qTRsLAt6BTYuyvVRdhS8exSZEy_c4gs_"
-              "7svlJJQ4H9_NxsiIoLwAEk7-Q3UXERGYw_75IDrGA84-lA_-Ct4eTlXHBI"
-              "Y2EaV7t7LjJaynVJCpkv4LKjTTAumiGUIuQhrNhZLuF_RJLqHpM2kgWFLU"
-              "7-VTdL1VbC2tejvcI2BlMkEpk1BzBZI0KQB0GaDWFLN-aEAw3vRw",
-          "e": "AQAB",
-          "d": "VFCWOqXr8nvZNyaaJLXdnNPXZKRaWCjkU5Q2egQQpTBMwhprMzWzpR8Sxq"
-              "1OPThh_J6MUD8Z35wky9b8eEO0pwNS8xlh1lOFRRBoNqDIKVOku0aZb-ry"
-              "nq8cxjDTLZQ6Fz7jSjR1Klop-YKaUHc9GsEofQqYruPhzSA-QgajZGPbE_"
-              "0ZaVDJHfyd7UUBUKunFMScbflYAAOYJqVIVwaYR5zWEEceUjNnTNo_CVSj"
-              "-VvXLO5VZfCUAVLgW4dpf1SrtZjSt34YLsRarSb127reG_DUwg9Ch-Kyvj"
-              "T1SkHgUWRVGcyly7uvVGRSDwsXypdrNinPA4jlhoNdizK2zF2CWQ",
-          "p": "9gY2w6I6S6L0juEKsbeDAwpd9WMfgqFoeA9vEyEUuk4kLwBKcoe1x4HG68"
-              "ik918hdDSE9vDQSccA3xXHOAFOPJ8R9EeIAbTi1VwBYnbTp87X-xcPWlEP"
-              "krdoUKW60tgs1aNd_Nnc9LEVVPMS390zbFxt8TN_biaBgelNgbC95sM",
-          "q": "uKlCKvKv_ZJMVcdIs5vVSU_6cPtYI1ljWytExV_skstvRSNi9r66jdd9-y"
-              "BhVfuG4shsp2j7rGnIio901RBeHo6TPKWVVykPu1iYhQXw1jIABfw-MVsN"
-              "-3bQ76WLdt2SDxsHs7q7zPyUyHXmps7ycZ5c72wGkUwNOjYelmkiNS0",
-          "dp": "w0kZbV63cVRvVX6yk3C8cMxo2qCM4Y8nsq1lmMSYhG4EcL6FWbX5h9yuv"
-              "ngs4iLEFk6eALoUS4vIWEwcL4txw9LsWH_zKI-hwoReoP77cOdSL4AVcra"
-              "Hawlkpyd2TWjE5evgbhWtOxnZee3cXJBkAi64Ik6jZxbvk-RR3pEhnCs",
-          "dq": "o_8V14SezckO6CNLKs_btPdFiO9_kC1DsuUTd2LAfIIVeMZ7jn1Gus_Ff"
-              "7B7IVx3p5KuBGOVF8L-qifLb6nQnLysgHDh132NDioZkhH7mI7hPG-PYE_"
-              "odApKdnqECHWw0J-F0JWnUd6D2B_1TvF9mXA2Qx-iGYn8OVV1Bsmp6qU",
-          "qi": "eNho5yRBEBxhGBtQRww9QirZsB66TrfFReG_CcteI1aCneT0ELGhYlRlC"
-              "tUkTRclIfuEPmNsNDPbLoLqqCVznFbvdB7x-Tl-m0l_eFTj2KiqwGqE9PZ"
-              "B9nNTwMVvH3VRRSLWACvPnSiwP8N5Usy-WRXS-V7TbpxIhvepTfE0NNo"
+          'kty': 'RSA',
+          'n': 'sXchDaQebHnPiGvyDOAT4saGEUetSyo9MKLOoWFsueri23bOdgWp4Dy1Wl'
+              'UzewbgBHod5pcM9H95GQRV3JDXboIRROSBigeC5yjU1hGzHHyXss8UDpre'
+              'cbAYxknTcQkhslANGRUZmdTOQ5qTRsLAt6BTYuyvVRdhS8exSZEy_c4gs_'
+              '7svlJJQ4H9_NxsiIoLwAEk7-Q3UXERGYw_75IDrGA84-lA_-Ct4eTlXHBI'
+              'Y2EaV7t7LjJaynVJCpkv4LKjTTAumiGUIuQhrNhZLuF_RJLqHpM2kgWFLU'
+              '7-VTdL1VbC2tejvcI2BlMkEpk1BzBZI0KQB0GaDWFLN-aEAw3vRw',
+          'e': 'AQAB',
+          'd': 'VFCWOqXr8nvZNyaaJLXdnNPXZKRaWCjkU5Q2egQQpTBMwhprMzWzpR8Sxq'
+              '1OPThh_J6MUD8Z35wky9b8eEO0pwNS8xlh1lOFRRBoNqDIKVOku0aZb-ry'
+              'nq8cxjDTLZQ6Fz7jSjR1Klop-YKaUHc9GsEofQqYruPhzSA-QgajZGPbE_'
+              '0ZaVDJHfyd7UUBUKunFMScbflYAAOYJqVIVwaYR5zWEEceUjNnTNo_CVSj'
+              '-VvXLO5VZfCUAVLgW4dpf1SrtZjSt34YLsRarSb127reG_DUwg9Ch-Kyvj'
+              'T1SkHgUWRVGcyly7uvVGRSDwsXypdrNinPA4jlhoNdizK2zF2CWQ',
+          'p': '9gY2w6I6S6L0juEKsbeDAwpd9WMfgqFoeA9vEyEUuk4kLwBKcoe1x4HG68'
+              'ik918hdDSE9vDQSccA3xXHOAFOPJ8R9EeIAbTi1VwBYnbTp87X-xcPWlEP'
+              'krdoUKW60tgs1aNd_Nnc9LEVVPMS390zbFxt8TN_biaBgelNgbC95sM',
+          'q': 'uKlCKvKv_ZJMVcdIs5vVSU_6cPtYI1ljWytExV_skstvRSNi9r66jdd9-y'
+              'BhVfuG4shsp2j7rGnIio901RBeHo6TPKWVVykPu1iYhQXw1jIABfw-MVsN'
+              '-3bQ76WLdt2SDxsHs7q7zPyUyHXmps7ycZ5c72wGkUwNOjYelmkiNS0',
+          'dp': 'w0kZbV63cVRvVX6yk3C8cMxo2qCM4Y8nsq1lmMSYhG4EcL6FWbX5h9yuv'
+              'ngs4iLEFk6eALoUS4vIWEwcL4txw9LsWH_zKI-hwoReoP77cOdSL4AVcra'
+              'Hawlkpyd2TWjE5evgbhWtOxnZee3cXJBkAi64Ik6jZxbvk-RR3pEhnCs',
+          'dq': 'o_8V14SezckO6CNLKs_btPdFiO9_kC1DsuUTd2LAfIIVeMZ7jn1Gus_Ff'
+              '7B7IVx3p5KuBGOVF8L-qifLb6nQnLysgHDh132NDioZkhH7mI7hPG-PYE_'
+              'odApKdnqECHWw0J-F0JWnUd6D2B_1TvF9mXA2Qx-iGYn8OVV1Bsmp6qU',
+          'qi': 'eNho5yRBEBxhGBtQRww9QirZsB66TrfFReG_CcteI1aCneT0ELGhYlRlC'
+              'tUkTRclIfuEPmNsNDPbLoLqqCVznFbvdB7x-Tl-m0l_eFTj2KiqwGqE9PZ'
+              'B9nNTwMVvH3VRRSLWACvPnSiwP8N5Usy-WRXS-V7TbpxIhvepTfE0NNo'
         };
         var keyPair = keyPairFromJwk(jwk);
 
-        var data = new Uint8List.fromList([
+        var data = Uint8List.fromList([
           4,
           211,
           31,
@@ -1772,7 +1774,7 @@ main() {
           207
         ]);
 
-        var encryptedData = new EncryptionResult(new Uint8List.fromList([
+        var encryptedData = EncryptionResult(Uint8List.fromList([
           80,
           104,
           72,
@@ -2037,40 +2039,40 @@ main() {
 
       test('Example encryption using RSAES-OAEP', () {
         var jwk = {
-          "kty": "RSA",
-          "n": "oahUIoWw0K0usKNuOR6H4wkf4oBUXHTxRvgb48E-BVvxkeDNjbC4he8rUW"
-              "cJoZmds2h7M70imEVhRU5djINXtqllXI4DFqcI1DgjT9LewND8MW2Krf3S"
-              "psk_ZkoFnilakGygTwpZ3uesH-PFABNIUYpOiN15dsQRkgr0vEhxN92i2a"
-              "sbOenSZeyaxziK72UwxrrKoExv6kc5twXTq4h-QChLOln0_mtUZwfsRaMS"
-              "tPs6mS6XrgxnxbWhojf663tuEQueGC-FCMfra36C9knDFGzKsNa7LZK2dj"
-              "YgyD3JR_MB_4NUJW_TqOQtwHYbxevoJArm-L5StowjzGy-_bq6Gw",
-          "e": "AQAB",
-          "d": "kLdtIj6GbDks_ApCSTYQtelcNttlKiOyPzMrXHeI-yk1F7-kpDxY4-WY5N"
-              "WV5KntaEeXS1j82E375xxhWMHXyvjYecPT9fpwR_M9gV8n9Hrh2anTpTD9"
-              "3Dt62ypW3yDsJzBnTnrYu1iwWRgBKrEYY46qAZIrA2xAwnm2X7uGR1hghk"
-              "qDp0Vqj3kbSCz1XyfCs6_LehBwtxHIyh8Ripy40p24moOAbgxVw3rxT_vl"
-              "t3UVe4WO3JkJOzlpUf-KTVI2Ptgm-dARxTEtE-id-4OJr0h-K-VFs3VSnd"
-              "VTIznSxfyrj8ILL6MG_Uv8YAu7VILSB3lOW085-4qE3DzgrTjgyQ",
-          "p": "1r52Xk46c-LsfB5P442p7atdPUrxQSy4mti_tZI3Mgf2EuFVbUoDBvaRQ-"
-              "SWxkbkmoEzL7JXroSBjSrK3YIQgYdMgyAEPTPjXv_hI2_1eTSPVZfzL0lf"
-              "fNn03IXqWF5MDFuoUYE0hzb2vhrlN_rKrbfDIwUbTrjjgieRbwC6Cl0",
-          "q": "wLb35x7hmQWZsWJmB_vle87ihgZ19S8lBEROLIsZG4ayZVe9Hi9gDVCOBm"
-              "UDdaDYVTSNx_8Fyw1YYa9XGrGnDew00J28cRUoeBB_jKI1oma0Orv1T9aX"
-              "IWxKwd4gvxFImOWr3QRL9KEBRzk2RatUBnmDZJTIAfwTs0g68UZHvtc",
-          "dp": "ZK-YwE7diUh0qR1tR7w8WHtolDx3MZ_OTowiFvgfeQ3SiresXjm9gZ5KL"
-              "hMXvo-uz-KUJWDxS5pFQ_M0evdo1dKiRTjVw_x4NyqyXPM5nULPkcpU827"
-              "rnpZzAJKpdhWAgqrXGKAECQH0Xt4taznjnd_zVpAmZZq60WPMBMfKcuE",
-          "dq": "Dq0gfgJ1DdFGXiLvQEZnuKEN0UUmsJBxkjydc3j4ZYdBiMRAy86x0vHCj"
-              "ywcMlYYg4yoC4YZa9hNVcsjqA3FeiL19rk8g6Qn29Tt0cj8qqyFpz9vNDB"
-              "UfCAiJVeESOjJDZPYHdHY8v1b-o-Z2X5tvLx-TCekf7oxyeKDUqKWjis",
-          "qi": "VIMpMYbPf47dT1w_zDUXfPimsSegnMOA1zTaX7aGk_8urY6R8-ZW1FxU7"
-              "AlWAyLWybqq6t16VFd7hQd0y6flUK4SlOydB61gwanOsXGOAOv82cHq0E3"
-              "eL4HrtZkUuKvnPrMnsUUFlfUdybVzxyjz9JF_XyaY14ardLSjf4L_FNY"
+          'kty': 'RSA',
+          'n': 'oahUIoWw0K0usKNuOR6H4wkf4oBUXHTxRvgb48E-BVvxkeDNjbC4he8rUW'
+              'cJoZmds2h7M70imEVhRU5djINXtqllXI4DFqcI1DgjT9LewND8MW2Krf3S'
+              'psk_ZkoFnilakGygTwpZ3uesH-PFABNIUYpOiN15dsQRkgr0vEhxN92i2a'
+              'sbOenSZeyaxziK72UwxrrKoExv6kc5twXTq4h-QChLOln0_mtUZwfsRaMS'
+              'tPs6mS6XrgxnxbWhojf663tuEQueGC-FCMfra36C9knDFGzKsNa7LZK2dj'
+              'YgyD3JR_MB_4NUJW_TqOQtwHYbxevoJArm-L5StowjzGy-_bq6Gw',
+          'e': 'AQAB',
+          'd': 'kLdtIj6GbDks_ApCSTYQtelcNttlKiOyPzMrXHeI-yk1F7-kpDxY4-WY5N'
+              'WV5KntaEeXS1j82E375xxhWMHXyvjYecPT9fpwR_M9gV8n9Hrh2anTpTD9'
+              '3Dt62ypW3yDsJzBnTnrYu1iwWRgBKrEYY46qAZIrA2xAwnm2X7uGR1hghk'
+              'qDp0Vqj3kbSCz1XyfCs6_LehBwtxHIyh8Ripy40p24moOAbgxVw3rxT_vl'
+              't3UVe4WO3JkJOzlpUf-KTVI2Ptgm-dARxTEtE-id-4OJr0h-K-VFs3VSnd'
+              'VTIznSxfyrj8ILL6MG_Uv8YAu7VILSB3lOW085-4qE3DzgrTjgyQ',
+          'p': '1r52Xk46c-LsfB5P442p7atdPUrxQSy4mti_tZI3Mgf2EuFVbUoDBvaRQ-'
+              'SWxkbkmoEzL7JXroSBjSrK3YIQgYdMgyAEPTPjXv_hI2_1eTSPVZfzL0lf'
+              'fNn03IXqWF5MDFuoUYE0hzb2vhrlN_rKrbfDIwUbTrjjgieRbwC6Cl0',
+          'q': 'wLb35x7hmQWZsWJmB_vle87ihgZ19S8lBEROLIsZG4ayZVe9Hi9gDVCOBm'
+              'UDdaDYVTSNx_8Fyw1YYa9XGrGnDew00J28cRUoeBB_jKI1oma0Orv1T9aX'
+              'IWxKwd4gvxFImOWr3QRL9KEBRzk2RatUBnmDZJTIAfwTs0g68UZHvtc',
+          'dp': 'ZK-YwE7diUh0qR1tR7w8WHtolDx3MZ_OTowiFvgfeQ3SiresXjm9gZ5KL'
+              'hMXvo-uz-KUJWDxS5pFQ_M0evdo1dKiRTjVw_x4NyqyXPM5nULPkcpU827'
+              'rnpZzAJKpdhWAgqrXGKAECQH0Xt4taznjnd_zVpAmZZq60WPMBMfKcuE',
+          'dq': 'Dq0gfgJ1DdFGXiLvQEZnuKEN0UUmsJBxkjydc3j4ZYdBiMRAy86x0vHCj'
+              'ywcMlYYg4yoC4YZa9hNVcsjqA3FeiL19rk8g6Qn29Tt0cj8qqyFpz9vNDB'
+              'UfCAiJVeESOjJDZPYHdHY8v1b-o-Z2X5tvLx-TCekf7oxyeKDUqKWjis',
+          'qi': 'VIMpMYbPf47dT1w_zDUXfPimsSegnMOA1zTaX7aGk_8urY6R8-ZW1FxU7'
+              'AlWAyLWybqq6t16VFd7hQd0y6flUK4SlOydB61gwanOsXGOAOv82cHq0E3'
+              'eL4HrtZkUuKvnPrMnsUUFlfUdybVzxyjz9JF_XyaY14ardLSjf4L_FNY'
         };
 
         var keyPair = keyPairFromJwk(jwk);
 
-        var data = new Uint8List.fromList([
+        var data = Uint8List.fromList([
           177,
           161,
           244,
@@ -2105,7 +2107,7 @@ main() {
           252
         ]);
 
-        var encryptedData = new EncryptionResult(new Uint8List.fromList([
+        var encryptedData = EncryptionResult(Uint8List.fromList([
           56,
           163,
           154,
@@ -2366,56 +2368,56 @@ main() {
 
         _testEncryption(
             keyPair, algorithms.encryption.rsa.oaep, data, encryptedData, true);
-      }, skip: "RSAES-OAEP not implemented");
+      }, skip: 'RSAES-OAEP not implemented');
     });
   });
 }
 
 List<int> base64ToBytes(String encoded) {
-  encoded += new List.filled((4 - encoded.length % 4) % 4, "=").join();
+  encoded += List.filled((4 - encoded.length % 4) % 4, '=').join();
   return base64Url.decode(encoded);
 }
 
 BigInt base64ToInt(String encoded) {
-  final b256 = new BigInt.from(256);
+  final b256 = BigInt.from(256);
   return base64ToBytes(encoded)
-      .fold(BigInt.zero, (a, b) => a * b256 + new BigInt.from(b));
+      .fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
 }
 
 KeyPair keyPairFromJwk(Map<String, dynamic> jwk) {
-  switch (jwk["kty"]) {
-    case "oct":
-      var key = new SymmetricKey(keyValue: base64ToBytes(jwk["k"]));
-      return new KeyPair(publicKey: key, privateKey: key);
-    case "RSA":
-      return new KeyPair(
-          publicKey: new RsaPublicKey(
-            modulus: base64ToInt(jwk["n"]),
-            exponent: base64ToInt(jwk["e"]),
+  switch (jwk['kty']) {
+    case 'oct':
+      var key = SymmetricKey(keyValue: base64ToBytes(jwk['k']));
+      return KeyPair(publicKey: key, privateKey: key);
+    case 'RSA':
+      return KeyPair(
+          publicKey: RsaPublicKey(
+            modulus: base64ToInt(jwk['n']),
+            exponent: base64ToInt(jwk['e']),
           ),
-          privateKey: new RsaPrivateKey(
-            modulus: base64ToInt(jwk["n"]),
-            privateExponent: base64ToInt(jwk["d"]),
-            firstPrimeFactor: base64ToInt(jwk["p"]),
-            secondPrimeFactor: base64ToInt(jwk["q"]),
+          privateKey: RsaPrivateKey(
+            modulus: base64ToInt(jwk['n']),
+            privateExponent: base64ToInt(jwk['d']),
+            firstPrimeFactor: base64ToInt(jwk['p']),
+            secondPrimeFactor: base64ToInt(jwk['q']),
           ));
-    case "EC":
-      return new KeyPair(
-          privateKey: new EcPrivateKey(
-              eccPrivateKey: base64ToInt(jwk["d"]),
-              curve: parseCurve(jwk["crv"])),
-          publicKey: new EcPublicKey(
-              xCoordinate: base64ToInt(jwk["x"]),
-              yCoordinate: base64ToInt(jwk["y"]),
-              curve: parseCurve(jwk["crv"])));
+    case 'EC':
+      return KeyPair(
+          privateKey: EcPrivateKey(
+              eccPrivateKey: base64ToInt(jwk['d']),
+              curve: parseCurve(jwk['crv'])),
+          publicKey: EcPublicKey(
+              xCoordinate: base64ToInt(jwk['x']),
+              yCoordinate: base64ToInt(jwk['y']),
+              curve: parseCurve(jwk['crv'])));
   }
-  throw ArgumentError("Unknown key type ${jwk["kty"]}");
+  throw ArgumentError('Unknown key type ${jwk['kty']}');
 }
 
 Identifier parseCurve(String name) {
   return {
-    "P-256": curves.p256,
-    "P-384": curves.p384,
-    "P-521": curves.p521,
+    'P-256': curves.p256,
+    'P-384': curves.p384,
+    'P-521': curves.p521,
   }[name];
 }

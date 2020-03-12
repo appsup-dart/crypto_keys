@@ -1,12 +1,12 @@
 import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 
-main() {
+void main() {
   // Create a key pair from a JWK representation
-  var keyPair = new KeyPair.fromJwk({
-    "kty": "oct",
-    "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75"
-        "aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
+  var keyPair = KeyPair.fromJwk({
+    'kty': 'oct',
+    'k': 'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75'
+        'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow'
   });
 
   // A key pair has a private and public key, possibly one of them is null, if
@@ -22,7 +22,7 @@ main() {
   var signature = signer.sign("It's me, really me".codeUnits);
 
   print("Signing '$content'");
-  print("Signature: ${signature.data}");
+  print('Signature: ${signature.data}');
 
   // The public key can be used for verifying the signature
   var publicKey = keyPair.publicKey;
@@ -31,9 +31,10 @@ main() {
   var verifier = publicKey.createVerifier(algorithms.signing.hmac.sha256);
 
   var verified =
-      verifier.verify(new Uint8List.fromList(content.codeUnits), signature);
-  if (verified)
-    print("Verification succeeded");
-  else
-    print("Verification failed");
+      verifier.verify(Uint8List.fromList(content.codeUnits), signature);
+  if (verified) {
+    print('Verification succeeded');
+  } else {
+    print('Verification failed');
+  }
 }

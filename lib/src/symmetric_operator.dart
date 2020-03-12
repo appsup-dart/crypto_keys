@@ -10,9 +10,9 @@ class _SymmetricSignerAndVerifier extends Signer<SymmetricKey>
 
   @override
   Signature sign(List<int> data) {
-    data = data is Uint8List ? data : new Uint8List.fromList(data);
-    _algorithm.init(new pc.KeyParameter(key.keyValue));
-    return new Signature(_algorithm.process(data));
+    data = data is Uint8List ? data : Uint8List.fromList(data);
+    _algorithm.init(pc.KeyParameter(key.keyValue));
+    return Signature(_algorithm.process(data));
   }
 
   @override
@@ -28,15 +28,16 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
 
   pc.CipherParameters _getParams(
       Uint8List initializationVector, Uint8List additionalAuthenticatedData) {
-    var keyParam = new pc.KeyParameter(key.keyValue);
+    var keyParam = pc.KeyParameter(key.keyValue);
 
     if (_algorithm is pc.AESKeyWrap) return keyParam;
 
-    var paramsWithIV = new pc.ParametersWithIVAndAad(keyParam,
-        initializationVector, additionalAuthenticatedData ?? new Uint8List(0));
+    var paramsWithIV = pc.ParametersWithIVAndAad(keyParam, initializationVector,
+        additionalAuthenticatedData ?? Uint8List(0));
 
-    if (_algorithm is pc.PaddedBlockCipher)
-      return new pc.PaddedBlockCipherParameters(paramsWithIV, null);
+    if (_algorithm is pc.PaddedBlockCipher) {
+      return pc.PaddedBlockCipherParameters(paramsWithIV, null);
+    }
 
     return paramsWithIV;
   }
@@ -49,7 +50,7 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
             input.initializationVector, input.additionalAuthenticatedData));
     var data = input.data;
     if (input.authenticationTag != null) {
-      data = new Uint8List(data.length + input.authenticationTag.length);
+      data = Uint8List(data.length + input.authenticationTag.length);
       data.setAll(0, input.data);
       data.setAll(input.data.length, input.authenticationTag);
     }
@@ -60,7 +61,7 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
   EncryptionResult encrypt(Uint8List input,
       {Uint8List initializationVector, Uint8List additionalAuthenticatedData}) {
     initializationVector ??=
-        new DefaultSecureRandom().nextBytes(_algorithm.blockSize);
+        DefaultSecureRandom().nextBytes(_algorithm.blockSize);
 
     _algorithm.init(
         true, _getParams(initializationVector, additionalAuthenticatedData));
@@ -69,12 +70,11 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
     if (_algorithm is pc.BlockCipherWithAuthenticationTag) {
       var tagLength =
           (_algorithm as pc.BlockCipherWithAuthenticationTag).tagLength;
-      tag =
-          new Uint8List.view(r.buffer, r.offsetInBytes + r.length - tagLength);
-      r = new Uint8List.view(r.buffer, r.offsetInBytes, r.length - tagLength);
+      tag = Uint8List.view(r.buffer, r.offsetInBytes + r.length - tagLength);
+      r = Uint8List.view(r.buffer, r.offsetInBytes, r.length - tagLength);
     }
 
-    return new EncryptionResult(r,
+    return EncryptionResult(r,
         initializationVector:
             _algorithm is pc.AESKeyWrap ? null : initializationVector,
         additionalAuthenticatedData: additionalAuthenticatedData,

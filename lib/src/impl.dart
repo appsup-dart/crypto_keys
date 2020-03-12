@@ -74,12 +74,12 @@ abstract class SignatureImpl
 
   @override
   @memoized
-  Uint8List get data => new Uint8List.fromList(built_data.asList());
+  Uint8List get data => Uint8List.fromList(built_data.asList());
 
   SignatureImpl._();
 
   factory SignatureImpl(Uint8List data) =>
-      _$SignatureImpl._(built_data: new BuiltList(data));
+      _$SignatureImpl._(built_data: BuiltList(data));
 }
 
 abstract class EncryptionResultImpl
@@ -90,7 +90,7 @@ abstract class EncryptionResultImpl
 
   @override
   @memoized
-  Uint8List get data => new Uint8List.fromList(built_data.asList());
+  Uint8List get data => Uint8List.fromList(built_data.asList());
 
   @nullable
   BuiltList<int> get built_initializationVector;
@@ -99,7 +99,7 @@ abstract class EncryptionResultImpl
   @memoized
   Uint8List get initializationVector => built_initializationVector == null
       ? null
-      : new Uint8List.fromList(built_initializationVector.asList());
+      : Uint8List.fromList(built_initializationVector.asList());
 
   @nullable
   BuiltList<int> get built_authenticationTag;
@@ -108,7 +108,7 @@ abstract class EncryptionResultImpl
   @memoized
   Uint8List get authenticationTag => built_authenticationTag == null
       ? null
-      : new Uint8List.fromList(built_authenticationTag.asList());
+      : Uint8List.fromList(built_authenticationTag.asList());
 
   @nullable
   BuiltList<int> get built_additionalAuthenticatedData;
@@ -118,7 +118,7 @@ abstract class EncryptionResultImpl
   Uint8List get additionalAuthenticatedData =>
       built_additionalAuthenticatedData == null
           ? null
-          : new Uint8List.fromList(built_additionalAuthenticatedData.asList());
+          : Uint8List.fromList(built_additionalAuthenticatedData.asList());
 
   EncryptionResultImpl._();
 
@@ -127,14 +127,13 @@ abstract class EncryptionResultImpl
           Uint8List authenticationTag,
           Uint8List additionalAuthenticatedData}) =>
       _$EncryptionResultImpl._(
-          built_data: new BuiltList(data),
+          built_data: BuiltList(data),
           built_initializationVector: initializationVector == null
               ? null
-              : new BuiltList(initializationVector),
+              : BuiltList(initializationVector),
           built_additionalAuthenticatedData: additionalAuthenticatedData == null
               ? null
-              : new BuiltList(additionalAuthenticatedData),
-          built_authenticationTag: authenticationTag == null
-              ? null
-              : new BuiltList(authenticationTag));
+              : BuiltList(additionalAuthenticatedData),
+          built_authenticationTag:
+              authenticationTag == null ? null : BuiltList(authenticationTag));
 }
