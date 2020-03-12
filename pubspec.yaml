@@ -1,6 +1,6 @@
 name: crypto_keys
 description: A library for doing cryptographic signing/verifying and encrypting/decrypting.
-version: 0.1.0+1
+version: 0.1.0+2
 author: Rik Bellens <rik.bellens@appsup.be>
 homepage: https://github.com/appsup-dart/crypto_keys
 
@@ -10,7 +10,7 @@ environment:
 dependencies:
   pointycastle: ^1.0.0-rc4
   meta: ^1.1.6
-  built_value: ^6.1.5
+  built_value: ">=6.0.0 <8.0.0"
   built_collection: ^4.0.0
 
 dev_dependencies:
