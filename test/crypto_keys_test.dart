@@ -2368,7 +2368,7 @@ void main() {
 
         _testEncryption(
             keyPair, algorithms.encryption.rsa.oaep, data, encryptedData, true);
-      }, skip: 'RSAES-OAEP not implemented');
+      });
     });
   });
 }

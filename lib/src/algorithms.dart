@@ -89,8 +89,7 @@ class _RsaEncAlgorithms extends Identifier {
 
   /// RSAES OAEP using default parameters
   final oaep = AlgorithmIdentifier._('enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding',
-      () => throw UnimplementedError('RSA OAEP mode not implemented'));
-
+      () => pc.OAEPEncoding(pc.RSAEngine()));
   _RsaEncAlgorithms() : super._('enc/RSA');
 }
 
