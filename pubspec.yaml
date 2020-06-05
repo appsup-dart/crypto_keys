@@ -8,7 +8,7 @@ environment:
   sdk: '>=2.0.0 <3.0.0'
 
 dependencies:
-  pointycastle: ^1.0.0-rc4
+  pointycastle: ^1.0.0
   meta: ^1.1.6
   built_value: ">=6.0.0 <8.0.0"
   built_collection: ^4.0.0
