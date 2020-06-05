@@ -386,7 +386,9 @@ class AESKeyWrap implements BlockCipher {
 
         _underlyingCipher.processBlock(a, 0, b, 0);
 
-        b64.setInt64(0, b64.getInt64(0) ^ t);
+        b64.setUint32(0, b64.getUint32(0) ^ (t << 32));
+        b64.setUint32(4, b64.getUint32(4) ^ (t & 0xffffffff));
+
         a.setAll(0, b.take(8));
         r.setAll(i * 8, b.skip(8));
       }
@@ -415,7 +417,8 @@ class AESKeyWrap implements BlockCipher {
       for (var i = n - 1; i >= 0; i--) {
         var t = n * j + i + 1;
 
-        a64.setInt64(0, a64.getInt64(0) ^ t);
+        a64.setInt32(0, a64.getInt32(0) ^ (t << 32));
+        a64.setInt32(4, a64.getInt32(4) ^ (t & 0xffffffff));
         a.setAll(8, r.skip(i * 8).take(8));
 
         _underlyingCipher.processBlock(a, 0, b, 0);
