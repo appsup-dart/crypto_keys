@@ -54,6 +54,52 @@ class KeyPair {
   factory KeyPair.generateSymmetric(int bitLength) =>
       KeyPair.symmetric(SymmetricKey.generate(bitLength));
 
+  factory KeyPair.generateRsa({BigInt exponent, int bitStrength = 2048}) {
+    exponent ??= BigInt.from(65537);
+
+    var generator = pc.RSAKeyGenerator()
+      ..init(pc.ParametersWithRandom(
+          pc.RSAKeyGeneratorParameters(exponent, bitStrength, 5),
+          DefaultSecureRandom()));
+
+    var pair = generator.generateKeyPair();
+
+    return KeyPair(
+        publicKey: RsaPublicKey(
+          exponent: (pair.publicKey as pc.RSAPublicKey).e,
+          modulus: (pair.publicKey as pc.RSAPublicKey).n,
+        ),
+        privateKey: RsaPrivateKey(
+          modulus: (pair.privateKey as pc.RSAPrivateKey).n,
+          privateExponent: (pair.privateKey as pc.RSAPrivateKey).d,
+          firstPrimeFactor: (pair.privateKey as pc.RSAPrivateKey).p,
+          secondPrimeFactor: (pair.privateKey as pc.RSAPrivateKey).q,
+        ));
+  }
+
+  factory KeyPair.generateEc(Identifier curve) {
+    var generator = pc.ECKeyGenerator()
+      ..init(
+        pc.ParametersWithRandom(
+          pc.ECKeyGeneratorParameters(
+            _AsymmetricOperator.createCurveParameters(curve),
+          ),
+          DefaultSecureRandom(),
+        ),
+      );
+
+    var pair = generator.generateKeyPair();
+
+    return KeyPair(
+        publicKey: EcPublicKey(
+            xCoordinate: (pair.publicKey as pc.ECPublicKey).Q.x.toBigInteger(),
+            yCoordinate: (pair.publicKey as pc.ECPublicKey).Q.y.toBigInteger(),
+            curve: curve),
+        privateKey: EcPrivateKey(
+            eccPrivateKey: (pair.privateKey as pc.ECPrivateKey).d,
+            curve: curve));
+  }
+
   /// Create a key pair from a JsonWebKey
   factory KeyPair.fromJwk(Map<String, dynamic> jwk) {
     switch (jwk['kty']) {

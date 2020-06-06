@@ -1,6 +1,7 @@
 ## 0.1.2
 
 - Added RSAES-OAEP-256
+- Generate assymetric key pairs
 
 ## 0.1.1
 

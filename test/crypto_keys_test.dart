@@ -674,6 +674,16 @@ void main() {
       test('Example Signing Using RSASSA-PKCS1-v1_5 SHA-512', () {
         _testSigning(keyPair, algorithms.signing.rsa.sha512, data);
       });
+
+      test('Example Signing Using generated RSA keys', () {
+        var text = 'Can we sign and verify this text';
+        var data = utf8.encode(text);
+
+        var keyPair = KeyPair.generateRsa();
+        var alg = algorithms.signing.rsa.sha384;
+
+        _testSigning(keyPair, alg, data);
+      });
     });
 
     group('Signing with EC keys', () {
@@ -1059,6 +1069,22 @@ void main() {
         ]);
         _testSigning(
             keyPair, algorithms.signing.ecdsa.sha512, data, signature, true);
+      });
+
+      test('Example Signing Using generated EC keys', () {
+        var text = 'Can we sign and verify this text';
+        var data = utf8.encode(text);
+
+        for (var curve in [curves.p256, curves.p384, curves.p521]) {
+          var keyPair = KeyPair.generateEc(curve);
+          var alg = {
+            curves.p256: algorithms.signing.ecdsa.sha256,
+            curves.p384: algorithms.signing.ecdsa.sha384,
+            curves.p521: algorithms.signing.ecdsa.sha512,
+          }[curve];
+
+          _testSigning(keyPair, alg, data);
+        }
       });
     });
   });
