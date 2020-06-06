@@ -65,7 +65,7 @@ void main() {
             'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow'
       };
 
-      var keyPair = keyPairFromJwk(jwk);
+      var keyPair = KeyPair.fromJwk(jwk);
 
       var data = Uint8List.fromList([
         101,
@@ -285,7 +285,7 @@ void main() {
             'W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U'
       };
 
-      var keyPair = keyPairFromJwk(jwk);
+      var keyPair = KeyPair.fromJwk(jwk);
 
       var data = Uint8List.fromList([
         101,
@@ -696,7 +696,7 @@ void main() {
           'd': 'jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI'
         };
 
-        var keyPair = keyPairFromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk);
 
         var data = Uint8List.fromList([
           101,
@@ -898,7 +898,7 @@ void main() {
               'xerEzgdRhajnu0ferB0d53vM9mE15j2C'
         };
 
-        var keyPair = keyPairFromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk);
 
         var data = Uint8List.fromList([
           101,
@@ -1671,7 +1671,7 @@ void main() {
 
         test('Example encryption using AES Key Wrap 128', () {
           var keyPair =
-              keyPairFromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
+              KeyPair.fromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
 
           var encryptedData = EncryptionResult(Uint8List.fromList([
             232,
@@ -1763,7 +1763,7 @@ void main() {
               'tUkTRclIfuEPmNsNDPbLoLqqCVznFbvdB7x-Tl-m0l_eFTj2KiqwGqE9PZ'
               'B9nNTwMVvH3VRRSLWACvPnSiwP8N5Usy-WRXS-V7TbpxIhvepTfE0NNo'
         };
-        var keyPair = keyPairFromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk);
 
         var data = Uint8List.fromList([
           4,
@@ -2096,7 +2096,7 @@ void main() {
               'eL4HrtZkUuKvnPrMnsUUFlfUdybVzxyjz9JF_XyaY14ardLSjf4L_FNY'
         };
 
-        var keyPair = keyPairFromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk);
 
         var data = Uint8List.fromList([
           177,
@@ -2435,7 +2435,7 @@ void main() {
               'mE3nwxg'
         };
 
-        var keyPair = keyPairFromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk);
 
         var encryptedData = EncryptionResult(Uint8List.fromList([
           124,
@@ -2715,42 +2715,4 @@ BigInt base64ToInt(String encoded) {
   final b256 = BigInt.from(256);
   return base64ToBytes(encoded)
       .fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
-}
-
-KeyPair keyPairFromJwk(Map<String, dynamic> jwk) {
-  switch (jwk['kty']) {
-    case 'oct':
-      var key = SymmetricKey(keyValue: base64ToBytes(jwk['k']));
-      return KeyPair(publicKey: key, privateKey: key);
-    case 'RSA':
-      return KeyPair(
-          publicKey: RsaPublicKey(
-            modulus: base64ToInt(jwk['n']),
-            exponent: base64ToInt(jwk['e']),
-          ),
-          privateKey: RsaPrivateKey(
-            modulus: base64ToInt(jwk['n']),
-            privateExponent: base64ToInt(jwk['d']),
-            firstPrimeFactor: base64ToInt(jwk['p']),
-            secondPrimeFactor: base64ToInt(jwk['q']),
-          ));
-    case 'EC':
-      return KeyPair(
-          privateKey: EcPrivateKey(
-              eccPrivateKey: base64ToInt(jwk['d']),
-              curve: parseCurve(jwk['crv'])),
-          publicKey: EcPublicKey(
-              xCoordinate: base64ToInt(jwk['x']),
-              yCoordinate: base64ToInt(jwk['y']),
-              curve: parseCurve(jwk['crv'])));
-  }
-  throw ArgumentError('Unknown key type ${jwk['kty']}');
-}
-
-Identifier parseCurve(String name) {
-  return {
-    'P-256': curves.p256,
-    'P-384': curves.p384,
-    'P-521': curves.p521,
-  }[name];
 }
