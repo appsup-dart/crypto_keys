@@ -1,5 +1,6 @@
 library crypto_keys.algorithms;
 
+import 'package:crypto_keys/src/pointycastle_oaep256.dart';
 import 'package:pointycastle/export.dart' as pc;
 import 'dart:math' show Random;
 import 'pointycastle_ext.dart' as pc;
@@ -90,6 +91,12 @@ class _RsaEncAlgorithms extends Identifier {
   /// RSAES OAEP using default parameters
   final oaep = AlgorithmIdentifier._('enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding',
       () => pc.OAEPEncoding(pc.RSAEngine()));
+
+  /// RSAES OAEP using SHA-256 and MGF1 with SHA-256
+  final oaep256 = AlgorithmIdentifier._(
+      'enc/RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
+      () => OAEP256Encoding(pc.RSAEngine()));
+
   _RsaEncAlgorithms() : super._('enc/RSA');
 }
 
@@ -236,13 +243,17 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
     'RSA-OAEP': algorithms.encryption.rsa.oaep,
 
     /// RSAES OAEP using SHA-256 and MGF1 with SHA-256
-    'RSA-OAEP-256': null, // TODO
+    'RSA-OAEP-256': algorithms.encryption.rsa.oaep256,
+
     /// AES Key Wrap with default initial value using 128-bit key
-    'A128KW': algorithms.encryption.aes.keyWrap, // TODO
+    'A128KW': algorithms.encryption.aes.keyWrap,
+
     /// AES Key Wrap with default initial value using 192-bit key
-    'A192KW': algorithms.encryption.aes.keyWrap, // TODO
+    'A192KW': algorithms.encryption.aes.keyWrap,
+
     /// AES Key Wrap with default initial value using 256-bit key
-    'A256KW': algorithms.encryption.aes.keyWrap, // TODO
+    'A256KW': algorithms.encryption.aes.keyWrap,
+
     /// Direct use of a shared symmetric key as the CEK
     'dir': null,
 
@@ -287,11 +298,13 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
     'A256CBC-HS512': algorithms.encryption.aes.cbcWithHmac.sha512,
 
     /// AES GCM using 128-bit key
-    'A128GCM': algorithms.encryption.aes.gcm, // TODO
+    'A128GCM': algorithms.encryption.aes.gcm,
+
     /// AES GCM using 192-bit key
-    'A192GCM': algorithms.encryption.aes.gcm, // TODO
+    'A192GCM': algorithms.encryption.aes.gcm,
+
     /// AES GCM using 256-bit key
-    'A256GCM': algorithms.encryption.aes.gcm, // TODO
+    'A256GCM': algorithms.encryption.aes.gcm,
   };
 
   static AlgorithmIdentifier getByJwaName(String alg) {
