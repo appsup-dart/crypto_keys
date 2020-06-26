@@ -886,6 +886,14 @@ void main() {
             keyPair, algorithms.signing.ecdsa.sha256, data, signature, true);
       });
 
+      test('Example Signing Using ECDSA P-256K SHA-256', () {
+        var keyPair = KeyPair.generateEc(curves.p256k);
+
+        var data = Uint8List.fromList('hello world'.codeUnits);
+
+        _testSigning(keyPair, algorithms.signing.ecdsa.sha256, data);
+      });
+
       test('Example Signing Using ECDSA P-521 SHA-512', () {
         var jwk = {
           'kty': 'EC',

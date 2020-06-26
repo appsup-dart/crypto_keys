@@ -173,6 +173,9 @@ class _Curves {
 
   /// P-521
   final p521 = const Identifier._('curve/P-521');
+
+  /// P-256K
+  final p256k = const Identifier._('curve/P-256K');
 }
 
 /// An identifier for uniquely identify algorithms and other objects

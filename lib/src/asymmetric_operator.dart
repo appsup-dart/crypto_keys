@@ -6,6 +6,8 @@ abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
     switch (name) {
       case 'P-256':
         return pc.ECCurve_secp256r1();
+      case 'P-256K':
+        return pc.ECCurve_secp256k1();
       case 'P-384':
         return pc.ECCurve_secp384r1();
       case 'P-521':
@@ -73,10 +75,12 @@ class _AsymmetricSigner extends Signer<PrivateKey>
     if (key is EcKey) {
       var sig = _algorithm.generateSignature(data) as pc.ECSignature;
 
-      var length =
-          (int.parse((key as EcKey).curve.name.split('/').last.substring(2)) /
-                  8)
-              .ceil();
+      var length = {
+        curves.p256: 32,
+        curves.p256k: 32,
+        curves.p384: 48,
+        curves.p521: 66
+      }[(key as EcKey).curve];
       var bytes = Uint8List(length * 2);
       bytes.setRange(
           0, length, _bigIntToBytes(sig.r, length).toList().reversed);

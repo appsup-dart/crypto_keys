@@ -168,6 +168,7 @@ BigInt _base64ToInt(String encoded) {
 Identifier _parseCurve(String name) {
   return {
     'P-256': curves.p256,
+    'P-256K': curves.p256k,
     'P-384': curves.p384,
     'P-521': curves.p521,
   }[name];

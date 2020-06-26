@@ -1,3 +1,8 @@
+
+## 0.1.3
+
+- Added support for P-256K curve
+
 ## 0.1.2
 
 - Added RSAES-OAEP-256
