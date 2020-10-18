@@ -1,4 +1,8 @@
 
+## 0.1.4
+
+- Upgraded dependency to Pointy Castle's new 2.0.0 release.
+
 ## 0.1.3
 
 - Added support for P-256K curve

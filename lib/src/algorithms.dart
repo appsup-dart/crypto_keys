@@ -3,7 +3,7 @@ library crypto_keys.algorithms;
 import 'package:crypto_keys/src/pointycastle_oaep256.dart';
 import 'package:pointycastle/export.dart' as pc;
 import 'dart:math' show Random;
-import 'pointycastle_ext.dart' as pc;
+import 'pointycastle_ext.dart' as pce;
 import 'dart:typed_data';
 
 /// Contains the identifiers for supported algorithms
@@ -53,10 +53,10 @@ class AesEncAlgorithms extends Identifier {
 
   /// AES GCM
   final gcm = AlgorithmIdentifier._(
-      'enc/AES/GCM', () => pc.GCMBlockCipher(pc.AESFastEngine()));
+      'enc/AES/GCM', () => pce.GCMBlockCipher(pc.AESFastEngine()));
 
   /// AES Key Wrap with default initial value
-  final keyWrap = AlgorithmIdentifier._('enc/AES/KW', () => pc.AESKeyWrap());
+  final keyWrap = AlgorithmIdentifier._('enc/AES/KW', () => pce.AESKeyWrap());
 
   AesEncAlgorithms() : super._('enc/AES');
 }
@@ -65,19 +65,19 @@ class AesWithHmacEncAlgorithms extends Identifier {
   /// AES_128_CBC_HMAC_SHA_256 authenticated encryption algorithm
   final sha256 = AlgorithmIdentifier._(
       'enc/AES/CBC/PKCS7+HMAC/SHA-256',
-      () => pc.AesCbcAuthenticatedCipherWithHash(
+      () => pce.AesCbcAuthenticatedCipherWithHash(
           algorithms.signing.hmac.sha256.createAlgorithm()));
 
   /// AES_192_CBC_HMAC_SHA_384 authenticated encryption algorithm
   final sha384 = AlgorithmIdentifier._(
       'enc/AES/CBC/PKCS7+HMAC/SHA-384',
-      () => pc.AesCbcAuthenticatedCipherWithHash(
+      () => pce.AesCbcAuthenticatedCipherWithHash(
           algorithms.signing.hmac.sha384.createAlgorithm()));
 
   /// AES_256_CBC_HMAC_SHA_512 authenticated encryption algorithm
   final sha512 = AlgorithmIdentifier._(
       'enc/AES/CBC/PKCS7+HMAC/SHA-512',
-      () => pc.AesCbcAuthenticatedCipherWithHash(
+      () => pce.AesCbcAuthenticatedCipherWithHash(
           algorithms.signing.hmac.sha512.createAlgorithm()));
 
   AesWithHmacEncAlgorithms() : super._('enc/AES/CBC/PKCS7+HMAC');
