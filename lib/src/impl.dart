@@ -1,139 +1,176 @@
 import '../crypto_keys.dart';
-import 'package:built_value/built_value.dart';
-import 'package:built_collection/built_collection.dart';
 
 import 'dart:typed_data';
 import 'algorithms.dart';
+import 'package:collection/collection.dart';
+import 'package:quiver/core.dart';
 
-part 'impl.g.dart';
-
-abstract class RsaPublicKeyImpl extends PublicKey
+class RsaPublicKeyImpl extends PublicKey
     with Key
-    implements
-        RsaPublicKey,
-        RsaKey,
-        Built<RsaPublicKeyImpl, RsaPublicKeyImplBuilder> {
-  RsaPublicKeyImpl._();
+    implements RsaPublicKey, RsaKey {
+  @override
+  final BigInt exponent;
+  @override
+  final BigInt modulus;
 
-  factory RsaPublicKeyImpl({BigInt modulus, BigInt exponent}) =
-      _$RsaPublicKeyImpl._;
+  RsaPublicKeyImpl({this.modulus, this.exponent});
+
+  @override
+  int get hashCode => hash2(exponent, modulus);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RsaPublicKey &&
+          other.exponent == exponent &&
+          other.modulus == modulus);
 }
 
-abstract class RsaPrivateKeyImpl extends PrivateKey
+class RsaPrivateKeyImpl extends PrivateKey
     with Key
-    implements
-        RsaPrivateKey,
-        RsaKey,
-        Built<RsaPrivateKeyImpl, RsaPrivateKeyImplBuilder> {
-  RsaPrivateKeyImpl._();
+    implements RsaPrivateKey, RsaKey {
+  @override
+  final BigInt firstPrimeFactor;
 
-  factory RsaPrivateKeyImpl(
-      {BigInt privateExponent,
-      BigInt firstPrimeFactor,
-      BigInt secondPrimeFactor,
-      BigInt modulus}) = _$RsaPrivateKeyImpl._;
+  @override
+  final BigInt modulus;
+
+  @override
+  final BigInt privateExponent;
+
+  @override
+  final BigInt secondPrimeFactor;
+
+  RsaPrivateKeyImpl(
+      {this.privateExponent,
+      this.firstPrimeFactor,
+      this.secondPrimeFactor,
+      this.modulus});
+
+  @override
+  int get hashCode =>
+      hash4(privateExponent, firstPrimeFactor, secondPrimeFactor, modulus);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RsaPrivateKey &&
+          other.privateExponent == privateExponent &&
+          other.firstPrimeFactor == firstPrimeFactor &&
+          other.secondPrimeFactor == secondPrimeFactor &&
+          other.modulus == modulus);
 }
 
-abstract class EcPublicKeyImpl extends PublicKey
-    with Key
-    implements
-        EcPublicKey,
-        EcKey,
-        Built<EcPublicKeyImpl, EcPublicKeyImplBuilder> {
-  EcPublicKeyImpl._();
+class EcPublicKeyImpl extends PublicKey with Key implements EcPublicKey, EcKey {
+  @override
+  final Identifier curve;
 
-  factory EcPublicKeyImpl(
-      {BigInt xCoordinate,
-      BigInt yCoordinate,
-      Identifier curve}) = _$EcPublicKeyImpl._;
+  @override
+  final BigInt xCoordinate;
+
+  @override
+  final BigInt yCoordinate;
+
+  EcPublicKeyImpl({this.xCoordinate, this.yCoordinate, this.curve});
+
+  @override
+  int get hashCode => hash3(xCoordinate, yCoordinate, curve);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EcPublicKey &&
+          other.xCoordinate == xCoordinate &&
+          other.yCoordinate == yCoordinate &&
+          other.curve == curve);
 }
 
-abstract class EcPrivateKeyImpl extends PrivateKey
+class EcPrivateKeyImpl extends PrivateKey
     with Key
-    implements
-        EcPrivateKey,
-        EcKey,
-        Built<EcPrivateKeyImpl, EcPrivateKeyImplBuilder> {
-  EcPrivateKeyImpl._();
+    implements EcPrivateKey, EcKey {
+  @override
+  final Identifier curve;
 
-  factory EcPrivateKeyImpl({BigInt eccPrivateKey, Identifier curve}) =
-      _$EcPrivateKeyImpl._;
+  @override
+  final BigInt eccPrivateKey;
+
+  EcPrivateKeyImpl({this.eccPrivateKey, this.curve});
+
+  @override
+  int get hashCode => hash2(eccPrivateKey, curve);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EcPrivateKey &&
+          other.eccPrivateKey == eccPrivateKey &&
+          other.curve == curve);
 }
 
-abstract class SymmetricKeyImpl extends Object
+class SymmetricKeyImpl extends Object
     with Key, PublicKey, PrivateKey
-    implements SymmetricKey, Built<SymmetricKeyImpl, SymmetricKeyImplBuilder> {
-  SymmetricKeyImpl._();
+    implements SymmetricKey {
+  @override
+  final Uint8List keyValue;
 
-  factory SymmetricKeyImpl({Uint8List keyValue}) = _$SymmetricKeyImpl._;
+  SymmetricKeyImpl({this.keyValue});
+
+  @override
+  int get hashCode => const ListEquality().hash(keyValue);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SymmetricKey &&
+          const ListEquality().equals(other.keyValue, keyValue));
 }
 
-abstract class SignatureImpl
-    implements Signature, Built<SignatureImpl, SignatureImplBuilder> {
-  BuiltList<int> get built_data;
+class SignatureImpl implements Signature {
+  @override
+  final Uint8List data;
+
+  SignatureImpl(this.data);
 
   @override
-  @memoized
-  Uint8List get data => Uint8List.fromList(built_data.asList());
+  int get hashCode => const ListEquality().hash(data);
 
-  SignatureImpl._();
-
-  factory SignatureImpl(Uint8List data) =>
-      _$SignatureImpl._(built_data: BuiltList(data));
+  @override
+  bool operator ==(other) =>
+      other is Signature && const ListEquality().equals(other.data, data);
 }
 
-abstract class EncryptionResultImpl
-    implements
-        EncryptionResult,
-        Built<EncryptionResultImpl, EncryptionResultImplBuilder> {
-  BuiltList<int> get built_data;
+class EncryptionResultImpl implements EncryptionResult {
+  @override
+  final Uint8List data;
 
   @override
-  @memoized
-  Uint8List get data => Uint8List.fromList(built_data.asList());
-
-  @nullable
-  BuiltList<int> get built_initializationVector;
+  final Uint8List initializationVector;
 
   @override
-  @memoized
-  Uint8List get initializationVector => built_initializationVector == null
-      ? null
-      : Uint8List.fromList(built_initializationVector.asList());
-
-  @nullable
-  BuiltList<int> get built_authenticationTag;
+  final Uint8List authenticationTag;
 
   @override
-  @memoized
-  Uint8List get authenticationTag => built_authenticationTag == null
-      ? null
-      : Uint8List.fromList(built_authenticationTag.asList());
+  final Uint8List additionalAuthenticatedData;
 
-  @nullable
-  BuiltList<int> get built_additionalAuthenticatedData;
+  EncryptionResultImpl(this.data,
+      {this.initializationVector,
+      this.authenticationTag,
+      this.additionalAuthenticatedData});
 
   @override
-  @memoized
-  Uint8List get additionalAuthenticatedData =>
-      built_additionalAuthenticatedData == null
-          ? null
-          : Uint8List.fromList(built_additionalAuthenticatedData.asList());
+  int get hashCode => hash4(
+      const ListEquality().hash(data),
+      const ListEquality().hash(initializationVector),
+      const ListEquality().hash(authenticationTag),
+      const ListEquality().hash(additionalAuthenticatedData));
 
-  EncryptionResultImpl._();
-
-  factory EncryptionResultImpl(Uint8List data,
-          {Uint8List initializationVector,
-          Uint8List authenticationTag,
-          Uint8List additionalAuthenticatedData}) =>
-      _$EncryptionResultImpl._(
-          built_data: BuiltList(data),
-          built_initializationVector: initializationVector == null
-              ? null
-              : BuiltList(initializationVector),
-          built_additionalAuthenticatedData: additionalAuthenticatedData == null
-              ? null
-              : BuiltList(additionalAuthenticatedData),
-          built_authenticationTag:
-              authenticationTag == null ? null : BuiltList(authenticationTag));
+  @override
+  bool operator ==(other) =>
+      other is EncryptionResult &&
+      const ListEquality().equals(other.data, data) &&
+      const ListEquality()
+          .equals(other.initializationVector, initializationVector) &&
+      const ListEquality().equals(other.authenticationTag, authenticationTag) &&
+      const ListEquality().equals(
+          other.additionalAuthenticatedData, additionalAuthenticatedData);
 }
