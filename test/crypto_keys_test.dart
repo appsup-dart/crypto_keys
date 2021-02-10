@@ -24,8 +24,13 @@ void _testSigning(
 }
 
 void _testEncryption(
-    KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
-    [EncryptionResult encryptedData, bool isRandom]) {
+  KeyPair keyPair,
+  AlgorithmIdentifier algorithm,
+  Uint8List data, [
+  EncryptionResult encryptedData,
+  bool isRandom,
+  bool biDirectional = true,
+]) {
   var encrypter = keyPair.publicKey.createEncrypter(algorithm);
   var decrypter = keyPair.privateKey.createEncrypter(algorithm);
 
@@ -48,12 +53,20 @@ void _testEncryption(
           additionalAuthenticatedData:
               encryptedData?.additionalAuthenticatedData)),
       data);
-  expect(
-      encrypter.decrypt(decrypter.encrypt(data,
+
+  if (biDirectional == true) {
+    expect(
+      encrypter.decrypt(
+        decrypter.encrypt(
+          data,
           initializationVector: encryptedData?.initializationVector,
           additionalAuthenticatedData:
-              encryptedData?.additionalAuthenticatedData)),
-      data);
+              encryptedData?.additionalAuthenticatedData,
+        ),
+      ),
+      data,
+    );
+  }
 }
 
 void main() {
@@ -2400,8 +2413,15 @@ void main() {
           206
         ]));
 
+        /// OAEP doesn't support decryption from a PrivateKey in PointyCastle.
         _testEncryption(
-            keyPair, algorithms.encryption.rsa.oaep, data, encryptedData, true);
+          keyPair,
+          algorithms.encryption.rsa.oaep,
+          data,
+          encryptedData,
+          true,
+          false,
+        );
       });
 
       test('Example encryption using RSAES-OAEP-256', () {
