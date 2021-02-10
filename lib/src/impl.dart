@@ -15,7 +15,7 @@ abstract class RsaPublicKeyImpl extends PublicKey
         Built<RsaPublicKeyImpl, RsaPublicKeyImplBuilder> {
   RsaPublicKeyImpl._();
 
-  factory RsaPublicKeyImpl({BigInt modulus, BigInt exponent}) =
+  factory RsaPublicKeyImpl({BigInt? modulus, BigInt? exponent}) =
       _$RsaPublicKeyImpl._;
 }
 
@@ -28,10 +28,10 @@ abstract class RsaPrivateKeyImpl extends PrivateKey
   RsaPrivateKeyImpl._();
 
   factory RsaPrivateKeyImpl(
-      {BigInt privateExponent,
-      BigInt firstPrimeFactor,
-      BigInt secondPrimeFactor,
-      BigInt modulus}) = _$RsaPrivateKeyImpl._;
+      {BigInt? privateExponent,
+      BigInt? firstPrimeFactor,
+      BigInt? secondPrimeFactor,
+      BigInt? modulus}) = _$RsaPrivateKeyImpl._;
 }
 
 abstract class EcPublicKeyImpl extends PublicKey
@@ -43,9 +43,9 @@ abstract class EcPublicKeyImpl extends PublicKey
   EcPublicKeyImpl._();
 
   factory EcPublicKeyImpl(
-      {BigInt xCoordinate,
-      BigInt yCoordinate,
-      Identifier curve}) = _$EcPublicKeyImpl._;
+      {BigInt? xCoordinate,
+      BigInt? yCoordinate,
+      Identifier? curve}) = _$EcPublicKeyImpl._;
 }
 
 abstract class EcPrivateKeyImpl extends PrivateKey
@@ -56,7 +56,7 @@ abstract class EcPrivateKeyImpl extends PrivateKey
         Built<EcPrivateKeyImpl, EcPrivateKeyImplBuilder> {
   EcPrivateKeyImpl._();
 
-  factory EcPrivateKeyImpl({BigInt eccPrivateKey, Identifier curve}) =
+  factory EcPrivateKeyImpl({BigInt? eccPrivateKey, Identifier? curve}) =
       _$EcPrivateKeyImpl._;
 }
 
@@ -65,16 +65,16 @@ abstract class SymmetricKeyImpl extends Object
     implements SymmetricKey, Built<SymmetricKeyImpl, SymmetricKeyImplBuilder> {
   SymmetricKeyImpl._();
 
-  factory SymmetricKeyImpl({Uint8List keyValue}) = _$SymmetricKeyImpl._;
+  factory SymmetricKeyImpl({Uint8List? keyValue}) = _$SymmetricKeyImpl._;
 }
 
 abstract class SignatureImpl
     implements Signature, Built<SignatureImpl, SignatureImplBuilder> {
-  BuiltList<int> get built_data;
+  BuiltList<int>? get built_data;
 
   @override
   @memoized
-  Uint8List get data => Uint8List.fromList(built_data.asList());
+  Uint8List get data => Uint8List.fromList(built_data!.asList());
 
   SignatureImpl._();
 
@@ -86,46 +86,46 @@ abstract class EncryptionResultImpl
     implements
         EncryptionResult,
         Built<EncryptionResultImpl, EncryptionResultImplBuilder> {
-  BuiltList<int> get built_data;
+  BuiltList<int>? get built_data;
 
   @override
   @memoized
-  Uint8List get data => Uint8List.fromList(built_data.asList());
+  Uint8List get data => Uint8List.fromList(built_data!.asList());
 
   @nullable
-  BuiltList<int> get built_initializationVector;
+  BuiltList<int>? get built_initializationVector;
 
   @override
   @memoized
-  Uint8List get initializationVector => built_initializationVector == null
+  Uint8List? get initializationVector => built_initializationVector == null
       ? null
-      : Uint8List.fromList(built_initializationVector.asList());
+      : Uint8List.fromList(built_initializationVector!.asList());
 
   @nullable
-  BuiltList<int> get built_authenticationTag;
+  BuiltList<int>? get built_authenticationTag;
 
   @override
   @memoized
-  Uint8List get authenticationTag => built_authenticationTag == null
+  Uint8List? get authenticationTag => built_authenticationTag == null
       ? null
-      : Uint8List.fromList(built_authenticationTag.asList());
+      : Uint8List.fromList(built_authenticationTag!.asList());
 
   @nullable
-  BuiltList<int> get built_additionalAuthenticatedData;
+  BuiltList<int>? get built_additionalAuthenticatedData;
 
   @override
   @memoized
-  Uint8List get additionalAuthenticatedData =>
+  Uint8List? get additionalAuthenticatedData =>
       built_additionalAuthenticatedData == null
           ? null
-          : Uint8List.fromList(built_additionalAuthenticatedData.asList());
+          : Uint8List.fromList(built_additionalAuthenticatedData!.asList());
 
   EncryptionResultImpl._();
 
   factory EncryptionResultImpl(Uint8List data,
-          {Uint8List initializationVector,
-          Uint8List authenticationTag,
-          Uint8List additionalAuthenticatedData}) =>
+          {Uint8List? initializationVector,
+          Uint8List? authenticationTag,
+          Uint8List? additionalAuthenticatedData}) =>
       _$EncryptionResultImpl._(
           built_data: BuiltList(data),
           built_initializationVector: initializationVector == null
