@@ -1,7 +1,7 @@
 library crypto_keys.algorithms;
 
 import 'package:crypto_keys/src/pointycastle_oaep256.dart';
-import 'package:pointycastle/export.dart' as pc hide GCMBlockCipher;
+import 'package:pointycastle/export.dart' as pc;
 import 'dart:math' show Random;
 import 'pointycastle_ext.dart' as pc;
 import 'dart:typed_data';
@@ -196,7 +196,7 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
 
   AlgorithmIdentifier._(String name, this.factory) : super._(name);
 
-  static final _jwaAlgorithms = <String, AlgorithmIdentifier?>{
+  static final _jwaAlgorithms = <String, AlgorithmIdentifier>{
     // Algorithms for JWS
 
     /// HMAC using SHA-256
@@ -310,7 +310,7 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
     'A256GCM': algorithms.encryption.aes.gcm,
   };
 
-  static AlgorithmIdentifier? getByJwaName(String alg) {
+  static AlgorithmIdentifier getByJwaName(String alg) {
     var i = _jwaAlgorithms[alg];
     if (i == null && alg != 'none') {
       if (_jwaAlgorithms.containsKey(alg)) {

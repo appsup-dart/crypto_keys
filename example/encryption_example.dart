@@ -7,7 +7,7 @@ void main() {
 
   // Use the public key to create an encrypter with the AES/GCM algorithm
   var encrypter =
-      keyPair.publicKey!.createEncrypter(algorithms.encryption.aes.gcm);
+      keyPair.publicKey.createEncrypter(algorithms.encryption.aes.gcm);
 
   // Encrypt the content with an additional authentication data for integrity
   // protection
@@ -22,7 +22,7 @@ void main() {
 
   // Use the private key to create the decrypter
   var decrypter =
-      keyPair.privateKey!.createEncrypter(algorithms.encryption.aes.gcm);
+      keyPair.privateKey.createEncrypter(algorithms.encryption.aes.gcm);
 
   // Decrypt and verify authentication tag
   var decrypted = decrypter.decrypt(v);

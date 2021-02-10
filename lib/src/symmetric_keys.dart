@@ -3,9 +3,9 @@ part of '../crypto_keys.dart';
 /// A symmetric key
 abstract class SymmetricKey extends Key with PublicKey, PrivateKey {
   /// The value of the symmetric (or other single-valued) key
-  Uint8List? get keyValue;
+  Uint8List get keyValue;
 
-  factory SymmetricKey({Uint8List? keyValue}) = SymmetricKeyImpl;
+  factory SymmetricKey({Uint8List keyValue}) = SymmetricKeyImpl;
 
   factory SymmetricKey.generate(int bitLength) {
     if (bitLength % 8 != 0) {

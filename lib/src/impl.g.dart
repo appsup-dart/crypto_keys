@@ -18,12 +18,12 @@ part of 'impl.dart';
 
 class _$RsaPublicKeyImpl extends RsaPublicKeyImpl {
   @override
-  final BigInt? exponent;
+  final BigInt exponent;
   @override
-  final BigInt? modulus;
+  final BigInt modulus;
 
   factory _$RsaPublicKeyImpl(
-          [void Function(RsaPublicKeyImplBuilder b)? updates]) =>
+          [void Function(RsaPublicKeyImplBuilder b) updates]) =>
       (RsaPublicKeyImplBuilder()..update(updates)).build();
 
   _$RsaPublicKeyImpl._({this.exponent, this.modulus}) : super._() {
@@ -66,26 +66,26 @@ class _$RsaPublicKeyImpl extends RsaPublicKeyImpl {
 
 class RsaPublicKeyImplBuilder
     implements Builder<RsaPublicKeyImpl, RsaPublicKeyImplBuilder> {
-  _$RsaPublicKeyImpl? _$v;
+  _$RsaPublicKeyImpl _$v;
 
-  BigInt? _exponent;
+  BigInt _exponent;
 
-  BigInt? get exponent => _$this._exponent;
+  BigInt get exponent => _$this._exponent;
 
-  set exponent(BigInt? exponent) => _$this._exponent = exponent;
+  set exponent(BigInt exponent) => _$this._exponent = exponent;
 
-  BigInt? _modulus;
+  BigInt _modulus;
 
-  BigInt? get modulus => _$this._modulus;
+  BigInt get modulus => _$this._modulus;
 
-  set modulus(BigInt? modulus) => _$this._modulus = modulus;
+  set modulus(BigInt modulus) => _$this._modulus = modulus;
 
   RsaPublicKeyImplBuilder();
 
   RsaPublicKeyImplBuilder get _$this {
     if (_$v != null) {
-      _exponent = _$v!.exponent;
-      _modulus = _$v!.modulus;
+      _exponent = _$v.exponent;
+      _modulus = _$v.modulus;
       _$v = null;
     }
     return this;
@@ -98,7 +98,7 @@ class RsaPublicKeyImplBuilder
   }
 
   @override
-  void update(void Function(RsaPublicKeyImplBuilder b)? updates) {
+  void update(void Function(RsaPublicKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -113,16 +113,16 @@ class RsaPublicKeyImplBuilder
 
 class _$RsaPrivateKeyImpl extends RsaPrivateKeyImpl {
   @override
-  final BigInt? privateExponent;
+  final BigInt privateExponent;
   @override
-  final BigInt? firstPrimeFactor;
+  final BigInt firstPrimeFactor;
   @override
-  final BigInt? secondPrimeFactor;
+  final BigInt secondPrimeFactor;
   @override
-  final BigInt? modulus;
+  final BigInt modulus;
 
   factory _$RsaPrivateKeyImpl(
-          [void Function(RsaPrivateKeyImplBuilder b)? updates]) =>
+          [void Function(RsaPrivateKeyImplBuilder b) updates]) =>
       (RsaPrivateKeyImplBuilder()..update(updates)).build();
 
   _$RsaPrivateKeyImpl._(
@@ -185,43 +185,43 @@ class _$RsaPrivateKeyImpl extends RsaPrivateKeyImpl {
 
 class RsaPrivateKeyImplBuilder
     implements Builder<RsaPrivateKeyImpl, RsaPrivateKeyImplBuilder> {
-  _$RsaPrivateKeyImpl? _$v;
+  _$RsaPrivateKeyImpl _$v;
 
-  BigInt? _privateExponent;
+  BigInt _privateExponent;
 
-  BigInt? get privateExponent => _$this._privateExponent;
+  BigInt get privateExponent => _$this._privateExponent;
 
-  set privateExponent(BigInt? privateExponent) =>
+  set privateExponent(BigInt privateExponent) =>
       _$this._privateExponent = privateExponent;
 
-  BigInt? _firstPrimeFactor;
+  BigInt _firstPrimeFactor;
 
-  BigInt? get firstPrimeFactor => _$this._firstPrimeFactor;
+  BigInt get firstPrimeFactor => _$this._firstPrimeFactor;
 
-  set firstPrimeFactor(BigInt? firstPrimeFactor) =>
+  set firstPrimeFactor(BigInt firstPrimeFactor) =>
       _$this._firstPrimeFactor = firstPrimeFactor;
 
-  BigInt? _secondPrimeFactor;
+  BigInt _secondPrimeFactor;
 
-  BigInt? get secondPrimeFactor => _$this._secondPrimeFactor;
+  BigInt get secondPrimeFactor => _$this._secondPrimeFactor;
 
-  set secondPrimeFactor(BigInt? secondPrimeFactor) =>
+  set secondPrimeFactor(BigInt secondPrimeFactor) =>
       _$this._secondPrimeFactor = secondPrimeFactor;
 
-  BigInt? _modulus;
+  BigInt _modulus;
 
-  BigInt? get modulus => _$this._modulus;
+  BigInt get modulus => _$this._modulus;
 
-  set modulus(BigInt? modulus) => _$this._modulus = modulus;
+  set modulus(BigInt modulus) => _$this._modulus = modulus;
 
   RsaPrivateKeyImplBuilder();
 
   RsaPrivateKeyImplBuilder get _$this {
     if (_$v != null) {
-      _privateExponent = _$v!.privateExponent;
-      _firstPrimeFactor = _$v!.firstPrimeFactor;
-      _secondPrimeFactor = _$v!.secondPrimeFactor;
-      _modulus = _$v!.modulus;
+      _privateExponent = _$v.privateExponent;
+      _firstPrimeFactor = _$v.firstPrimeFactor;
+      _secondPrimeFactor = _$v.secondPrimeFactor;
+      _modulus = _$v.modulus;
       _$v = null;
     }
     return this;
@@ -234,7 +234,7 @@ class RsaPrivateKeyImplBuilder
   }
 
   @override
-  void update(void Function(RsaPrivateKeyImplBuilder b)? updates) {
+  void update(void Function(RsaPrivateKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -253,14 +253,14 @@ class RsaPrivateKeyImplBuilder
 
 class _$EcPublicKeyImpl extends EcPublicKeyImpl {
   @override
-  final BigInt? xCoordinate;
+  final BigInt xCoordinate;
   @override
-  final BigInt? yCoordinate;
+  final BigInt yCoordinate;
   @override
-  final Identifier? curve;
+  final Identifier curve;
 
   factory _$EcPublicKeyImpl(
-          [void Function(EcPublicKeyImplBuilder b)? updates]) =>
+          [void Function(EcPublicKeyImplBuilder b) updates]) =>
       (EcPublicKeyImplBuilder()..update(updates)).build();
 
   _$EcPublicKeyImpl._({this.xCoordinate, this.yCoordinate, this.curve})
@@ -310,33 +310,33 @@ class _$EcPublicKeyImpl extends EcPublicKeyImpl {
 
 class EcPublicKeyImplBuilder
     implements Builder<EcPublicKeyImpl, EcPublicKeyImplBuilder> {
-  _$EcPublicKeyImpl? _$v;
+  _$EcPublicKeyImpl _$v;
 
-  BigInt? _xCoordinate;
+  BigInt _xCoordinate;
 
-  BigInt? get xCoordinate => _$this._xCoordinate;
+  BigInt get xCoordinate => _$this._xCoordinate;
 
-  set xCoordinate(BigInt? xCoordinate) => _$this._xCoordinate = xCoordinate;
+  set xCoordinate(BigInt xCoordinate) => _$this._xCoordinate = xCoordinate;
 
-  BigInt? _yCoordinate;
+  BigInt _yCoordinate;
 
-  BigInt? get yCoordinate => _$this._yCoordinate;
+  BigInt get yCoordinate => _$this._yCoordinate;
 
-  set yCoordinate(BigInt? yCoordinate) => _$this._yCoordinate = yCoordinate;
+  set yCoordinate(BigInt yCoordinate) => _$this._yCoordinate = yCoordinate;
 
-  Identifier? _curve;
+  Identifier _curve;
 
-  Identifier? get curve => _$this._curve;
+  Identifier get curve => _$this._curve;
 
-  set curve(Identifier? curve) => _$this._curve = curve;
+  set curve(Identifier curve) => _$this._curve = curve;
 
   EcPublicKeyImplBuilder();
 
   EcPublicKeyImplBuilder get _$this {
     if (_$v != null) {
-      _xCoordinate = _$v!.xCoordinate;
-      _yCoordinate = _$v!.yCoordinate;
-      _curve = _$v!.curve;
+      _xCoordinate = _$v.xCoordinate;
+      _yCoordinate = _$v.yCoordinate;
+      _curve = _$v.curve;
       _$v = null;
     }
     return this;
@@ -349,7 +349,7 @@ class EcPublicKeyImplBuilder
   }
 
   @override
-  void update(void Function(EcPublicKeyImplBuilder b)? updates) {
+  void update(void Function(EcPublicKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -365,12 +365,12 @@ class EcPublicKeyImplBuilder
 
 class _$EcPrivateKeyImpl extends EcPrivateKeyImpl {
   @override
-  final BigInt? eccPrivateKey;
+  final BigInt eccPrivateKey;
   @override
-  final Identifier? curve;
+  final Identifier curve;
 
   factory _$EcPrivateKeyImpl(
-          [void Function(EcPrivateKeyImplBuilder b)? updates]) =>
+          [void Function(EcPrivateKeyImplBuilder b) updates]) =>
       (EcPrivateKeyImplBuilder()..update(updates)).build();
 
   _$EcPrivateKeyImpl._({this.eccPrivateKey, this.curve}) : super._() {
@@ -413,27 +413,27 @@ class _$EcPrivateKeyImpl extends EcPrivateKeyImpl {
 
 class EcPrivateKeyImplBuilder
     implements Builder<EcPrivateKeyImpl, EcPrivateKeyImplBuilder> {
-  _$EcPrivateKeyImpl? _$v;
+  _$EcPrivateKeyImpl _$v;
 
-  BigInt? _eccPrivateKey;
+  BigInt _eccPrivateKey;
 
-  BigInt? get eccPrivateKey => _$this._eccPrivateKey;
+  BigInt get eccPrivateKey => _$this._eccPrivateKey;
 
-  set eccPrivateKey(BigInt? eccPrivateKey) =>
+  set eccPrivateKey(BigInt eccPrivateKey) =>
       _$this._eccPrivateKey = eccPrivateKey;
 
-  Identifier? _curve;
+  Identifier _curve;
 
-  Identifier? get curve => _$this._curve;
+  Identifier get curve => _$this._curve;
 
-  set curve(Identifier? curve) => _$this._curve = curve;
+  set curve(Identifier curve) => _$this._curve = curve;
 
   EcPrivateKeyImplBuilder();
 
   EcPrivateKeyImplBuilder get _$this {
     if (_$v != null) {
-      _eccPrivateKey = _$v!.eccPrivateKey;
-      _curve = _$v!.curve;
+      _eccPrivateKey = _$v.eccPrivateKey;
+      _curve = _$v.curve;
       _$v = null;
     }
     return this;
@@ -446,7 +446,7 @@ class EcPrivateKeyImplBuilder
   }
 
   @override
-  void update(void Function(EcPrivateKeyImplBuilder b)? updates) {
+  void update(void Function(EcPrivateKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -461,10 +461,10 @@ class EcPrivateKeyImplBuilder
 
 class _$SymmetricKeyImpl extends SymmetricKeyImpl {
   @override
-  final Uint8List? keyValue;
+  final Uint8List keyValue;
 
   factory _$SymmetricKeyImpl(
-          [void Function(SymmetricKeyImplBuilder b)? updates]) =>
+          [void Function(SymmetricKeyImplBuilder b) updates]) =>
       (SymmetricKeyImplBuilder()..update(updates)).build();
 
   _$SymmetricKeyImpl._({this.keyValue}) : super._() {
@@ -503,19 +503,19 @@ class _$SymmetricKeyImpl extends SymmetricKeyImpl {
 
 class SymmetricKeyImplBuilder
     implements Builder<SymmetricKeyImpl, SymmetricKeyImplBuilder> {
-  _$SymmetricKeyImpl? _$v;
+  _$SymmetricKeyImpl _$v;
 
-  Uint8List? _keyValue;
+  Uint8List _keyValue;
 
-  Uint8List? get keyValue => _$this._keyValue;
+  Uint8List get keyValue => _$this._keyValue;
 
-  set keyValue(Uint8List? keyValue) => _$this._keyValue = keyValue;
+  set keyValue(Uint8List keyValue) => _$this._keyValue = keyValue;
 
   SymmetricKeyImplBuilder();
 
   SymmetricKeyImplBuilder get _$this {
     if (_$v != null) {
-      _keyValue = _$v!.keyValue;
+      _keyValue = _$v.keyValue;
       _$v = null;
     }
     return this;
@@ -528,7 +528,7 @@ class SymmetricKeyImplBuilder
   }
 
   @override
-  void update(void Function(SymmetricKeyImplBuilder b)? updates) {
+  void update(void Function(SymmetricKeyImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -542,10 +542,10 @@ class SymmetricKeyImplBuilder
 
 class _$SignatureImpl extends SignatureImpl {
   @override
-  final BuiltList<int>? built_data;
-  Uint8List? __data;
+  final BuiltList<int> built_data;
+  Uint8List __data;
 
-  factory _$SignatureImpl([void Function(SignatureImplBuilder b)? updates]) =>
+  factory _$SignatureImpl([void Function(SignatureImplBuilder b) updates]) =>
       (SignatureImplBuilder()..update(updates)).build();
 
   _$SignatureImpl._({this.built_data}) : super._() {
@@ -586,9 +586,9 @@ class _$SignatureImpl extends SignatureImpl {
 
 class SignatureImplBuilder
     implements Builder<SignatureImpl, SignatureImplBuilder> {
-  _$SignatureImpl? _$v;
+  _$SignatureImpl _$v;
 
-  ListBuilder<int>? _built_data;
+  ListBuilder<int> _built_data;
 
   ListBuilder<int> get built_data => _$this._built_data ??= ListBuilder<int>();
 
@@ -599,7 +599,7 @@ class SignatureImplBuilder
 
   SignatureImplBuilder get _$this {
     if (_$v != null) {
-      _built_data = _$v!.built_data?.toBuilder();
+      _built_data = _$v.built_data?.toBuilder();
       _$v = null;
     }
     return this;
@@ -612,7 +612,7 @@ class SignatureImplBuilder
   }
 
   @override
-  void update(void Function(SignatureImplBuilder b)? updates) {
+  void update(void Function(SignatureImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -622,7 +622,7 @@ class SignatureImplBuilder
     try {
       _$result = _$v ?? _$SignatureImpl._(built_data: built_data.build());
     } catch (_) {
-      late String _$failedField;
+      String _$failedField;
       try {
         _$failedField = 'built_data';
         built_data.build();
@@ -639,20 +639,20 @@ class SignatureImplBuilder
 
 class _$EncryptionResultImpl extends EncryptionResultImpl {
   @override
-  final BuiltList<int>? built_data;
+  final BuiltList<int> built_data;
   @override
-  final BuiltList<int>? built_initializationVector;
+  final BuiltList<int> built_initializationVector;
   @override
-  final BuiltList<int>? built_authenticationTag;
+  final BuiltList<int> built_authenticationTag;
   @override
-  final BuiltList<int>? built_additionalAuthenticatedData;
-  Uint8List? __data;
-  Uint8List? __initializationVector;
-  Uint8List? __authenticationTag;
-  Uint8List? __additionalAuthenticatedData;
+  final BuiltList<int> built_additionalAuthenticatedData;
+  Uint8List __data;
+  Uint8List __initializationVector;
+  Uint8List __authenticationTag;
+  Uint8List __additionalAuthenticatedData;
 
   factory _$EncryptionResultImpl(
-          [void Function(EncryptionResultImplBuilder b)? updates]) =>
+          [void Function(EncryptionResultImplBuilder b) updates]) =>
       (EncryptionResultImplBuilder()..update(updates)).build();
 
   _$EncryptionResultImpl._(
@@ -670,15 +670,15 @@ class _$EncryptionResultImpl extends EncryptionResultImpl {
   Uint8List get data => __data ??= super.data;
 
   @override
-  Uint8List? get initializationVector =>
+  Uint8List get initializationVector =>
       __initializationVector ??= super.initializationVector;
 
   @override
-  Uint8List? get authenticationTag =>
+  Uint8List get authenticationTag =>
       __authenticationTag ??= super.authenticationTag;
 
   @override
-  Uint8List? get additionalAuthenticatedData =>
+  Uint8List get additionalAuthenticatedData =>
       __additionalAuthenticatedData ??= super.additionalAuthenticatedData;
 
   @override
@@ -725,16 +725,16 @@ class _$EncryptionResultImpl extends EncryptionResultImpl {
 
 class EncryptionResultImplBuilder
     implements Builder<EncryptionResultImpl, EncryptionResultImplBuilder> {
-  _$EncryptionResultImpl? _$v;
+  _$EncryptionResultImpl _$v;
 
-  ListBuilder<int>? _built_data;
+  ListBuilder<int> _built_data;
 
   ListBuilder<int> get built_data => _$this._built_data ??= ListBuilder<int>();
 
   set built_data(ListBuilder<int> built_data) =>
       _$this._built_data = built_data;
 
-  ListBuilder<int>? _built_initializationVector;
+  ListBuilder<int> _built_initializationVector;
 
   ListBuilder<int> get built_initializationVector =>
       _$this._built_initializationVector ??= ListBuilder<int>();
@@ -742,7 +742,7 @@ class EncryptionResultImplBuilder
   set built_initializationVector(ListBuilder<int> built_initializationVector) =>
       _$this._built_initializationVector = built_initializationVector;
 
-  ListBuilder<int>? _built_authenticationTag;
+  ListBuilder<int> _built_authenticationTag;
 
   ListBuilder<int> get built_authenticationTag =>
       _$this._built_authenticationTag ??= ListBuilder<int>();
@@ -750,7 +750,7 @@ class EncryptionResultImplBuilder
   set built_authenticationTag(ListBuilder<int> built_authenticationTag) =>
       _$this._built_authenticationTag = built_authenticationTag;
 
-  ListBuilder<int>? _built_additionalAuthenticatedData;
+  ListBuilder<int> _built_additionalAuthenticatedData;
 
   ListBuilder<int> get built_additionalAuthenticatedData =>
       _$this._built_additionalAuthenticatedData ??= ListBuilder<int>();
@@ -764,11 +764,11 @@ class EncryptionResultImplBuilder
 
   EncryptionResultImplBuilder get _$this {
     if (_$v != null) {
-      _built_data = _$v!.built_data?.toBuilder();
-      _built_initializationVector = _$v!.built_initializationVector?.toBuilder();
-      _built_authenticationTag = _$v!.built_authenticationTag?.toBuilder();
+      _built_data = _$v.built_data?.toBuilder();
+      _built_initializationVector = _$v.built_initializationVector?.toBuilder();
+      _built_authenticationTag = _$v.built_authenticationTag?.toBuilder();
       _built_additionalAuthenticatedData =
-          _$v!.built_additionalAuthenticatedData?.toBuilder();
+          _$v.built_additionalAuthenticatedData?.toBuilder();
       _$v = null;
     }
     return this;
@@ -781,7 +781,7 @@ class EncryptionResultImplBuilder
   }
 
   @override
-  void update(void Function(EncryptionResultImplBuilder b)? updates) {
+  void update(void Function(EncryptionResultImplBuilder b) updates) {
     if (updates != null) updates(this);
   }
 
@@ -797,7 +797,7 @@ class EncryptionResultImplBuilder
               built_additionalAuthenticatedData:
                   _built_additionalAuthenticatedData?.build());
     } catch (_) {
-      late String _$failedField;
+      String _$failedField;
       try {
         _$failedField = 'built_data';
         built_data.build();

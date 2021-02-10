@@ -17,22 +17,22 @@ abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
   }
 
   pc.ECDomainParameters get ecDomainParameters =>
-      createCurveParameters((key as EcKey).curve!);
+      createCurveParameters((key as EcKey).curve);
 
   pc.AsymmetricKeyParameter get keyParameter {
     if (key is RsaPrivateKey) {
       var k = key as RsaPrivateKey;
       return pc.PrivateKeyParameter<pc.RSAPrivateKey>(pc.RSAPrivateKey(
-          k.modulus!,
-          k.privateExponent!,
+          k.modulus,
+          k.privateExponent,
           k.firstPrimeFactor,
           k.secondPrimeFactor));
     }
     if (key is RsaPublicKey) {
       var k = key as RsaPublicKey;
       return pc.PublicKeyParameter<pc.RSAPublicKey>(pc.RSAPublicKey(
-        k.modulus!,
-        k.exponent!,
+        k.modulus,
+        k.exponent,
       ));
     }
     var d = ecDomainParameters;
@@ -47,8 +47,8 @@ abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
     if (key is EcPublicKey) {
       var k = key as EcPublicKey;
 
-      return pc.PublicKeyParameter<pc.ECPublicKey>(pc.ECPublicKey(
-          d.curve.createPoint(k.xCoordinate!, k.yCoordinate!), d));
+      return pc.PublicKeyParameter<pc.ECPublicKey>(
+          pc.ECPublicKey(d.curve.createPoint(k.xCoordinate, k.yCoordinate), d));
     }
     throw StateError('Unexpected key type ${key}');
   }
@@ -60,7 +60,7 @@ class _AsymmetricSigner extends Signer<PrivateKey>
       : super._(algorithm, key);
 
   @override
-  pc.Signer get _algorithm => super._algorithm as pc.Signer;
+  pc.Signer get _algorithm => super._algorithm;
 
   @override
   Signature sign(List<int> data) {
@@ -80,7 +80,7 @@ class _AsymmetricSigner extends Signer<PrivateKey>
         curves.p256k: 32,
         curves.p384: 48,
         curves.p521: 66
-      }[(key as EcKey).curve!]!;
+      }[(key as EcKey).curve];
       var bytes = Uint8List(length * 2);
       bytes.setRange(
           0, length, _bigIntToBytes(sig.r, length).toList().reversed);
@@ -99,13 +99,12 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
       : super._(algorithm, key);
 
   @override
-  pc.Signer get _algorithm => super._algorithm as pc.Signer;
+  pc.Signer get _algorithm => super._algorithm;
 
   @override
   bool verify(Uint8List data, Signature signature) {
     if (key is RsaKey) {
-      _algorithm.init(
-          false, pc.ParametersWithRandom(keyParameter, pc.SecureRandom()));
+      _algorithm.init(false, pc.ParametersWithRandom(keyParameter, null));
       try {
         return _algorithm.verifySignature(
             data, pc.RSASignature(signature.data));
@@ -133,27 +132,26 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
   _AsymmetricEncrypter(Identifier algorithm, Key key) : super._(algorithm, key);
 
   @override
-  pc.AsymmetricBlockCipher get _algorithm =>
-      super._algorithm as pc.AsymmetricBlockCipher;
+  pc.AsymmetricBlockCipher get _algorithm => super._algorithm;
 
   @override
   Uint8List decrypt(EncryptionResult input) {
     _algorithm.init(
         false,
-        pc.ParametersWithRandom(keyParameter,
-            pc.SecureRandom('Fortuna')..seed(pc.KeyParameter(Uint8List(32)))));
+        pc.ParametersWithRandom(keyParameter, null //pc.SecureRandom('Fortuna')
+            //..seed(pc.KeyParameter(Uint8List(32)))
+            ));
 
     return _algorithm.process(input.data);
   }
 
   @override
   EncryptionResult encrypt(List<int> input,
-      {Uint8List? initializationVector,
-      Uint8List? additionalAuthenticatedData}) {
+      {Uint8List initializationVector, Uint8List additionalAuthenticatedData}) {
     _algorithm.init(
         true, pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()));
 
-    return EncryptionResult(_algorithm.process(input as Uint8List));
+    return EncryptionResult(_algorithm.process(input));
   }
 }
 

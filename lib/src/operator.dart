@@ -6,7 +6,7 @@ abstract class Operator<T extends Key> {
   final T key;
 
   /// The algorithm used for this operation
-  final AlgorithmIdentifier<pc.Algorithm> algorithm;
+  final AlgorithmIdentifier algorithm;
 
   final pc.Algorithm _algorithm;
 
@@ -16,8 +16,7 @@ abstract class Operator<T extends Key> {
 
 /// Operator for signing
 abstract class Signer<T extends PrivateKey> extends Operator<T> {
-  Signer._(Identifier algorithm, T key)
-      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, key);
+  Signer._(Identifier algorithm, T key) : super._(algorithm, key);
 
   /// Signs the input [data] using the [key] and [algorithm]
   Signature sign(List<int> data);
@@ -25,8 +24,7 @@ abstract class Signer<T extends PrivateKey> extends Operator<T> {
 
 /// Operator for verifying a signature
 abstract class Verifier<T extends PublicKey> extends Operator<T> {
-  Verifier._(Identifier algorithm, T key)
-      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, key);
+  Verifier._(Identifier algorithm, T key) : super._(algorithm, key);
 
   /// Verifies that [signature] is a valid signature for the input [data] using
   /// the [key] and [algorithm]
@@ -43,16 +41,14 @@ abstract class Signature {
 
 /// Operator for encrypting and decrypting data
 abstract class Encrypter<T extends Key> extends Operator<T> {
-  Encrypter._(Identifier algorithm, T key)
-      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, key);
+  Encrypter._(Identifier algorithm, T key) : super._(algorithm, key);
 
   /// Encrypts the input data using the [key] and [algorithm]
   ///
   /// When the algorithm requires an initialization vector and none is provided,
   /// a random initialization vector is generated.
   EncryptionResult encrypt(Uint8List input,
-      {Uint8List? initializationVector,
-      Uint8List? additionalAuthenticatedData});
+      {Uint8List initializationVector, Uint8List additionalAuthenticatedData});
 
   /// Decrypts the input data using the [key] and [algorithm]
   Uint8List decrypt(EncryptionResult input);
@@ -65,14 +61,14 @@ abstract class EncryptionResult {
 
   /// The initialization vector used for encrypting when required by the
   /// algorithm
-  Uint8List? get initializationVector;
+  Uint8List get initializationVector;
 
-  Uint8List? get authenticationTag;
+  Uint8List get authenticationTag;
 
-  Uint8List? get additionalAuthenticatedData;
+  Uint8List get additionalAuthenticatedData;
 
   factory EncryptionResult(Uint8List data,
-      {Uint8List? initializationVector,
-      Uint8List? authenticationTag,
-      Uint8List? additionalAuthenticatedData}) = EncryptionResultImpl;
+      {Uint8List initializationVector,
+      Uint8List authenticationTag,
+      Uint8List additionalAuthenticatedData}) = EncryptionResultImpl;
 }

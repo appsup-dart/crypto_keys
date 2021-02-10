@@ -5,7 +5,7 @@ abstract class Key {
   /// Creates an [Encrypter] using this key and the specified algorithm
   Encrypter createEncrypter(Identifier algorithm) {
     if (this is SymmetricKey) {
-      return _SymmetricEncrypter(algorithm, this as SymmetricKey);
+      return _SymmetricEncrypter(algorithm, this);
     }
 
     return _AsymmetricEncrypter(algorithm, this);
@@ -15,37 +15,37 @@ abstract class Key {
 /// A cryptographic public key
 abstract class PublicKey implements Key {
   /// Creates a signature [Verifier] using this key and the specified algorithm
-  Verifier createVerifier(Identifier? algorithm) {
+  Verifier createVerifier(Identifier algorithm) {
     if (this is SymmetricKey) {
-      return _SymmetricSignerAndVerifier(algorithm!, this as SymmetricKey);
+      return _SymmetricSignerAndVerifier(algorithm, this);
     }
 
-    return _AsymmetricVerifier(algorithm!, this);
+    return _AsymmetricVerifier(algorithm, this);
   }
 }
 
 /// A cryptographic private key
 abstract class PrivateKey implements Key {
   /// Creates a [Signer] using this key and the specified algorithm.
-  Signer createSigner(Identifier? algorithm) {
+  Signer createSigner(Identifier algorithm) {
     if (this is SymmetricKey) {
-      return _SymmetricSignerAndVerifier(algorithm!, this as SymmetricKey);
+      return _SymmetricSignerAndVerifier(algorithm, this);
     }
 
-    return _AsymmetricSigner(algorithm!, this);
+    return _AsymmetricSigner(algorithm, this);
   }
 }
 
 /// Holds a key pair (private and public key)
 class KeyPair {
   /// The public key
-  final PublicKey? publicKey;
+  final PublicKey publicKey;
 
   /// The private key
-  final PrivateKey? privateKey;
+  final PrivateKey privateKey;
 
   /// Creates a [KeyPair] from a public and private key
-  KeyPair({required this.publicKey, required this.privateKey});
+  KeyPair({@required this.publicKey, @required this.privateKey});
 
   /// Creates a [KeyPair] from a symmetric key
   KeyPair.symmetric(SymmetricKey key) : this(privateKey: key, publicKey: key);
@@ -54,7 +54,7 @@ class KeyPair {
   factory KeyPair.generateSymmetric(int bitLength) =>
       KeyPair.symmetric(SymmetricKey.generate(bitLength));
 
-  factory KeyPair.generateRsa({BigInt? exponent, int bitStrength = 2048}) {
+  factory KeyPair.generateRsa({BigInt exponent, int bitStrength = 2048}) {
     exponent ??= BigInt.from(65537);
 
     var generator = pc.RSAKeyGenerator()
@@ -92,8 +92,8 @@ class KeyPair {
 
     return KeyPair(
         publicKey: EcPublicKey(
-            xCoordinate: (pair.publicKey as pc.ECPublicKey).Q!.x!.toBigInteger(),
-            yCoordinate: (pair.publicKey as pc.ECPublicKey).Q!.y!.toBigInteger(),
+            xCoordinate: (pair.publicKey as pc.ECPublicKey).Q.x.toBigInteger(),
+            yCoordinate: (pair.publicKey as pc.ECPublicKey).Q.y.toBigInteger(),
             curve: curve),
         privateKey: EcPrivateKey(
             eccPrivateKey: (pair.privateKey as pc.ECPrivateKey).d,
@@ -104,7 +104,7 @@ class KeyPair {
   factory KeyPair.fromJwk(Map<String, dynamic> jwk) {
     switch (jwk['kty']) {
       case 'oct':
-        var key = SymmetricKey(keyValue: _base64ToBytes(jwk['k']) as Uint8List?);
+        var key = SymmetricKey(keyValue: _base64ToBytes(jwk['k']));
         return KeyPair(publicKey: key, privateKey: key);
       case 'RSA':
         return KeyPair(
@@ -145,13 +145,13 @@ class KeyPair {
   }
 
   /// Creates a [Signer] using the private key and the specified algorithm.
-  Signer createSigner(Identifier? algorithm) =>
-      privateKey!.createSigner(algorithm);
+  Signer createSigner(Identifier algorithm) =>
+      privateKey.createSigner(algorithm);
 
   /// Creates a signature [Verifier] using the public key and the specified
   /// algorithm
-  Verifier createVerifier(Identifier? algorithm) =>
-      publicKey!.createVerifier(algorithm);
+  Verifier createVerifier(Identifier algorithm) =>
+      publicKey.createVerifier(algorithm);
 }
 
 List<int> _base64ToBytes(String encoded) {
@@ -165,11 +165,11 @@ BigInt _base64ToInt(String encoded) {
       .fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
 }
 
-Identifier? _parseCurve(String? name) {
+Identifier _parseCurve(String name) {
   return {
     'P-256': curves.p256,
     'P-256K': curves.p256k,
     'P-384': curves.p384,
     'P-521': curves.p521,
-  }[name!];
+  }[name];
 }

@@ -12,7 +12,7 @@ void main() {
   // A key pair has a private and public key, possibly one of them is null, if
   // required info was not available when construction
   // The private key can be used for signing
-  var privateKey = keyPair.privateKey!;
+  var privateKey = keyPair.privateKey;
 
   // Create a signer for the key using the HMAC/SHA-256 algorithm
   var signer = privateKey.createSigner(algorithms.signing.hmac.sha256);
@@ -25,7 +25,7 @@ void main() {
   print('Signature: ${signature.data}');
 
   // The public key can be used for verifying the signature
-  var publicKey = keyPair.publicKey!;
+  var publicKey = keyPair.publicKey;
 
   // Create a verifier for the key using the specified algorithm
   var verifier = publicKey.createVerifier(algorithms.signing.hmac.sha256);

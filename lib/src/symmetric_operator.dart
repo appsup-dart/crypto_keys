@@ -6,12 +6,12 @@ class _SymmetricSignerAndVerifier extends Signer<SymmetricKey>
       : super._(algorithm, key);
 
   @override
-  pc.Mac get _algorithm => super._algorithm as pc.Mac;
+  pc.Mac get _algorithm => super._algorithm;
 
   @override
   Signature sign(List<int> data) {
     data = data is Uint8List ? data : Uint8List.fromList(data);
-    _algorithm.init(pc.KeyParameter(key.keyValue!));
+    _algorithm.init(pc.KeyParameter(key.keyValue));
     return Signature(_algorithm.process(data));
   }
 
@@ -24,16 +24,16 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
       : super._(algorithm, key);
 
   @override
-  pc.BlockCipher get _algorithm => super._algorithm as pc.BlockCipher;
+  pc.BlockCipher get _algorithm => super._algorithm;
 
   pc.CipherParameters _getParams(
-      Uint8List? initializationVector, Uint8List? additionalAuthenticatedData) {
-    var keyParam = pc.KeyParameter(key.keyValue!);
+      Uint8List initializationVector, Uint8List additionalAuthenticatedData) {
+    var keyParam = pc.KeyParameter(key.keyValue);
 
     if (_algorithm is pc.AESKeyWrap) return keyParam;
 
-    var paramsWithIV = pc.ParametersWithIVAndAad(keyParam,
-        initializationVector!, additionalAuthenticatedData ?? Uint8List(0));
+    var paramsWithIV = pc.ParametersWithIVAndAad(keyParam, initializationVector,
+        additionalAuthenticatedData ?? Uint8List(0));
 
     if (_algorithm is pc.PaddedBlockCipher) {
       return pc.PaddedBlockCipherParameters(paramsWithIV, null);
@@ -50,17 +50,16 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
             input.initializationVector, input.additionalAuthenticatedData));
     var data = input.data;
     if (input.authenticationTag != null) {
-      data = Uint8List(data.length + input.authenticationTag!.length);
+      data = Uint8List(data.length + input.authenticationTag.length);
       data.setAll(0, input.data);
-      data.setAll(input.data.length, input.authenticationTag!);
+      data.setAll(input.data.length, input.authenticationTag);
     }
     return _algorithm.process(data);
   }
 
   @override
   EncryptionResult encrypt(Uint8List input,
-      {Uint8List? initializationVector,
-      Uint8List? additionalAuthenticatedData}) {
+      {Uint8List initializationVector, Uint8List additionalAuthenticatedData}) {
     initializationVector ??=
         DefaultSecureRandom().nextBytes(_algorithm.blockSize);
 
