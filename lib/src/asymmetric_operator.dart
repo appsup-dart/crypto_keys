@@ -138,8 +138,11 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
 
   @override
   Uint8List decrypt(EncryptionResult input) {
-    _algorithm.init(false,
-        pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')));
+    _algorithm.init(
+        false,
+        pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')
+            // ..seed(pc.KeyParameter(Uint8List(32)))
+            ));
 
     return _algorithm.process(input.data);
   }
