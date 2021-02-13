@@ -15,15 +15,15 @@ class ParametersWithIVAndAad<UnderlyingParameters extends CipherParameters>
 class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
   final BlockCipher _underlyingCipher;
 
-  Uint8List _counter;
+  late Uint8List _counter;
 
-  BigInt _e;
+  late BigInt _e;
 
-  BigInt _h;
-  BigInt _x;
-  BigInt _e0;
+  BigInt? _h;
+  late BigInt _x;
+  late BigInt _e0;
 
-  int _processedBytes;
+  late int _processedBytes;
 
   GCMBlockCipher(this._underlyingCipher);
 
@@ -74,7 +74,7 @@ class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
     _processedBytes = 0;
 
     _h = _computeE(Uint8List(16));
-    _counter = _computeInitialCounter(_iv);
+    _counter = _computeInitialCounter(_iv!);
     _e0 = _computeE(_counter);
     _x = BigInt.zero;
 
@@ -83,16 +83,16 @@ class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
 
   void _processAad() {
     var block = Uint8List(16);
-    for (var i = 0; i < _aad.length; i += 16) {
-      block.setAll(0, _aad.sublist(i, min(i + 16, _aad.length)));
-      block.fillRange(min(i + 16, _aad.length) - i, 16, 0);
+    for (var i = 0; i < _aad!.length; i += 16) {
+      block.setAll(0, _aad!.sublist(i, min(i + 16, _aad!.length)));
+      block.fillRange(min(i + 16, _aad!.length) - i, 16, 0);
       var a = _toBigInt(block);
       _x = _mult(_x ^ a, _h);
     }
   }
 
   @override
-  void initParameters(CipherParameters params) {
+  void initParameters(CipherParameters? params) {
     _underlyingCipher.reset();
     _underlyingCipher.init(true, params);
 
@@ -120,12 +120,12 @@ class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
     }
   }
 
-  BigInt _mult(BigInt x, BigInt y) {
+  BigInt _mult(BigInt x, BigInt? y) {
     var v = x;
     var z = BigInt.zero;
 
     for (var i = 0; i < 128; i++) {
-      if ((y >> (127 - i)) & BigInt.one == BigInt.one) {
+      if ((y! >> (127 - i)) & BigInt.one == BigInt.one) {
         z ^= v;
       }
       if (v & BigInt.one == BigInt.zero) {
@@ -164,7 +164,7 @@ class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
     _writeBigInt(
         o, Uint8List.view(out.buffer, out.offsetInBytes + outOff, length));
 
-    var c = _encrypting ? o : i;
+    var c = _encrypting! ? o : i;
     c <<= padLength;
     _x = _mult(_x ^ c, _h);
 
@@ -173,7 +173,7 @@ class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
 
   @override
   Uint8List finalizeTag() {
-    var len = (BigInt.from(aad.length) << (64 + 3)) +
+    var len = (BigInt.from(aad!.length) << (64 + 3)) +
         (BigInt.from(_processedBytes) << 3);
     _x = _mult(_x ^ len, _h);
 
@@ -191,21 +191,21 @@ String toHex(Iterable<int> bytes) {
 }
 
 abstract class BlockCipherWithAuthenticationTag implements BlockCipher {
-  bool _encrypting;
-  Uint8List _aad;
-  Uint8List _iv;
+  bool? _encrypting;
+  Uint8List? _aad;
+  Uint8List? _iv;
 
-  bool get isEncrypting => _encrypting;
+  bool? get isEncrypting => _encrypting;
 
-  Uint8List get aad => _aad;
+  Uint8List? get aad => _aad;
 
-  Uint8List get iv => _iv;
+  Uint8List? get iv => _iv;
 
   int get tagLength;
 
   @override
   Uint8List process(Uint8List data) {
-    if (isEncrypting) {
+    if (isEncrypting!) {
       var ciphertext = processBlocks(data);
       var tag = finalizeTag();
       var out = Uint8List(ciphertext.length + tag.length);
@@ -243,7 +243,7 @@ abstract class BlockCipherWithAuthenticationTag implements BlockCipher {
 
   Uint8List finalizeTag();
 
-  void initParameters(CipherParameters parameters);
+  void initParameters(CipherParameters? parameters);
 
   @override
   void init(bool forEncryption, covariant ParametersWithIVAndAad params) {
@@ -288,11 +288,11 @@ class AesCbcAuthenticatedCipherWithHash
 
     _underlyingMac.init(KeyParameter(macKey));
     _underlyingCipher.init(
-        isEncrypting,
+        isEncrypting!,
         PaddedBlockCipherParameters(
             ParametersWithIV(
               KeyParameter(encKey),
-              iv,
+              iv!,
             ),
             null));
   }
@@ -307,20 +307,20 @@ class AesCbcAuthenticatedCipherWithHash
     throw UnsupportedError('Should not be called');
   }
 
-  Uint8List _hash;
+  late Uint8List _hash;
 
   @override
   Uint8List processBlocks(Uint8List data) {
     var out = _underlyingCipher.process(data);
 
-    var ciphertext = isEncrypting ? out : data;
+    var ciphertext = isEncrypting! ? out : data;
 
-    var hashInput = Uint8List(aad.length + iv.length + ciphertext.length + 8);
+    var hashInput = Uint8List(aad!.length + iv!.length + ciphertext.length + 8);
 
-    var al = aad.length * 8;
-    hashInput.setAll(0, aad);
-    hashInput.setAll(aad.length, iv);
-    hashInput.setAll(aad.length + iv.length, ciphertext);
+    var al = aad!.length * 8;
+    hashInput.setAll(0, aad!);
+    hashInput.setAll(aad!.length, iv!);
+    hashInput.setAll(aad!.length + iv!.length, ciphertext);
     for (var i = hashInput.length - 1; i > (hashInput.length - 8); i--) {
       hashInput[i] = al % 256;
       al >>= 8;
@@ -358,10 +358,10 @@ class AESKeyWrap implements BlockCipher {
     0xa6,
     0xa6,
   ]);
-  bool _encrypting;
+  late bool _encrypting;
 
   @override
-  void init(bool forEncryption, covariant KeyParameter params) {
+  void init(bool forEncryption, covariant KeyParameter? params) {
     _encrypting = forEncryption;
     _underlyingCipher.init(forEncryption, params);
   }

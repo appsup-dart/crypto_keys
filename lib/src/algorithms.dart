@@ -1,8 +1,8 @@
 library crypto_keys.algorithms;
 
 import 'package:crypto_keys/src/pointycastle_oaep256.dart';
-import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart' as pc hide GCMBlockCipher; // TODO
+import 'package:pointycastle/pointycastle.dart';
 import 'dart:math' show Random;
 import 'pointycastle_ext.dart' as pce;
 import 'dart:typed_data';
@@ -90,9 +90,9 @@ class HybridEncAlgorithms extends Identifier {
   HybridEncAlgorithms() : super._('enc/hybrid');
 
   AlgorithmIdentifier withParameters(
-      {@required keySize,
-      @required Identifier curve,
-      AlgorithmIdentifier hkdfHash}) {
+      {required keySize,
+      required Identifier curve,
+      required AlgorithmIdentifier<Digest> hkdfHash}) {
     return AlgorithmIdentifier._(
         'enc/hybrid', () => pc.HKDFKeyDerivator(hkdfHash.factory()));
   }
@@ -212,9 +212,9 @@ class _RsaPssAlgorithms extends Identifier {
   _RsaPssAlgorithms() : super._('sig/RSA/PSS');
 
   AlgorithmIdentifier withParameters(
-      {@required AlgorithmIdentifier sigHash,
-      @required AlgorithmIdentifier mgf1Hash,
-      @required int saltLength}) {
+      {required AlgorithmIdentifier sigHash,
+      required AlgorithmIdentifier mgf1Hash,
+      required int saltLength}) {
     return AlgorithmIdentifier._(
         'sig/RSA/PSS/$sigHash/mgf1$mgf1Hash/$saltLength',
         () => throw UnimplementedError());
@@ -273,7 +273,7 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
 
   AlgorithmIdentifier._(String name, this.factory) : super._(name);
 
-  static final _jwaAlgorithms = <String, AlgorithmIdentifier>{
+  static final _jwaAlgorithms = <String, AlgorithmIdentifier?>{
     // Algorithms for JWS
 
     /// HMAC using SHA-256
@@ -387,7 +387,7 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
     'A256GCM': algorithms.encryption.aes.gcm,
   };
 
-  static AlgorithmIdentifier getByJwaName(String alg) {
+  static AlgorithmIdentifier? getByJwaName(String alg) {
     var i = _jwaAlgorithms[alg];
     if (i == null && alg != 'none') {
       if (_jwaAlgorithms.containsKey(alg)) {

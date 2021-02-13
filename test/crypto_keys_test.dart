@@ -4,15 +4,15 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 void _testSigning(
-    KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
-    [Uint8List signature, bool isRandom]) {
+    KeyPair keyPair, AlgorithmIdentifier? algorithm, Uint8List data,
+    [Uint8List? signature, bool? isRandom]) {
   var signer = keyPair.createSigner(algorithm);
   var verifier = keyPair.createVerifier(algorithm);
 
   if (signature != null) {
     expect(verifier.verify(data, Signature(signature)), isTrue);
 
-    if (!isRandom) {
+    if (!isRandom!) {
       expect(signer.sign(data).data, signature);
     }
   }
@@ -27,17 +27,17 @@ void _testEncryption(
   KeyPair keyPair,
   AlgorithmIdentifier algorithm,
   Uint8List data, [
-  EncryptionResult encryptedData,
-  bool isRandom,
+  EncryptionResult? encryptedData,
+  bool? isRandom,
   bool biDirectional = true,
 ]) {
-  var encrypter = keyPair.publicKey.createEncrypter(algorithm);
-  var decrypter = keyPair.privateKey.createEncrypter(algorithm);
+  var encrypter = keyPair.publicKey!.createEncrypter(algorithm);
+  var decrypter = keyPair.privateKey!.createEncrypter(algorithm);
 
   if (encryptedData != null) {
     expect(decrypter.decrypt(encryptedData), data);
 
-    if (!isRandom) {
+    if (!isRandom!) {
       expect(
           encrypter.encrypt(data,
               initializationVector: encryptedData.initializationVector,
@@ -695,7 +695,7 @@ void main() {
         var keyPair = KeyPair.generateRsa();
         var alg = algorithms.signing.rsa.sha384;
 
-        _testSigning(keyPair, alg, data);
+        _testSigning(keyPair, alg, data as Uint8List);
       });
     });
 
@@ -1104,7 +1104,7 @@ void main() {
             curves.p521: algorithms.signing.ecdsa.sha512,
           }[curve];
 
-          _testSigning(keyPair, alg, data);
+          _testSigning(keyPair, alg, data as Uint8List);
         }
       });
     });
