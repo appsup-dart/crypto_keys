@@ -11,7 +11,7 @@ abstract class RsaPublicKey extends RsaKey implements PublicKey {
   /// The exponent value for the RSA public key
   BigInt get exponent;
 
-  factory RsaPublicKey({@required BigInt modulus, @required BigInt exponent}) =
+  factory RsaPublicKey({required BigInt modulus, required BigInt exponent}) =
       RsaPublicKeyImpl;
 }
 
@@ -24,11 +24,11 @@ abstract class RsaPrivateKey extends RsaKey implements PrivateKey {
   BigInt get firstPrimeFactor;
 
   /// The second prime factor
-  BigInt get secondPrimeFactor;
+  BigInt? get secondPrimeFactor;
 
   factory RsaPrivateKey(
-      {@required BigInt privateExponent,
-      @required BigInt firstPrimeFactor,
-      @required BigInt secondPrimeFactor,
-      @required BigInt modulus}) = RsaPrivateKeyImpl;
+      {required BigInt privateExponent,
+      required BigInt firstPrimeFactor,
+      required BigInt secondPrimeFactor,
+      required BigInt modulus}) = RsaPrivateKeyImpl;
 }

@@ -13,7 +13,7 @@ class RsaPublicKeyImpl extends PublicKey
   @override
   final BigInt modulus;
 
-  RsaPublicKeyImpl({this.modulus, this.exponent});
+  RsaPublicKeyImpl({required this.modulus, required this.exponent});
 
   @override
   int get hashCode => hash2(exponent, modulus);
@@ -42,10 +42,10 @@ class RsaPrivateKeyImpl extends PrivateKey
   final BigInt secondPrimeFactor;
 
   RsaPrivateKeyImpl(
-      {this.privateExponent,
-      this.firstPrimeFactor,
-      this.secondPrimeFactor,
-      this.modulus});
+      {required this.privateExponent,
+      required this.firstPrimeFactor,
+      required this.secondPrimeFactor,
+      required this.modulus});
 
   @override
   int get hashCode =>
@@ -71,7 +71,10 @@ class EcPublicKeyImpl extends PublicKey with Key implements EcPublicKey, EcKey {
   @override
   final BigInt yCoordinate;
 
-  EcPublicKeyImpl({this.xCoordinate, this.yCoordinate, this.curve});
+  EcPublicKeyImpl(
+      {required this.xCoordinate,
+      required this.yCoordinate,
+      required this.curve});
 
   @override
   int get hashCode => hash3(xCoordinate, yCoordinate, curve);
@@ -94,7 +97,7 @@ class EcPrivateKeyImpl extends PrivateKey
   @override
   final BigInt eccPrivateKey;
 
-  EcPrivateKeyImpl({this.eccPrivateKey, this.curve});
+  EcPrivateKeyImpl({required this.eccPrivateKey, required this.curve});
 
   @override
   int get hashCode => hash2(eccPrivateKey, curve);
@@ -113,7 +116,7 @@ class SymmetricKeyImpl extends Object
   @override
   final Uint8List keyValue;
 
-  SymmetricKeyImpl({this.keyValue});
+  SymmetricKeyImpl({required this.keyValue});
 
   @override
   int get hashCode => const ListEquality().hash(keyValue);
@@ -144,13 +147,13 @@ class EncryptionResultImpl implements EncryptionResult {
   final Uint8List data;
 
   @override
-  final Uint8List initializationVector;
+  final Uint8List? initializationVector;
 
   @override
-  final Uint8List authenticationTag;
+  final Uint8List? authenticationTag;
 
   @override
-  final Uint8List additionalAuthenticatedData;
+  final Uint8List? additionalAuthenticatedData;
 
   EncryptionResultImpl(this.data,
       {this.initializationVector,

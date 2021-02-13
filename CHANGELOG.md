@@ -1,4 +1,8 @@
 
+## 0.2.0-nullsafety.1
+
+- Port to null-safety
+
 ## 0.1.4
 
 - Upgraded dependency to Pointy Castle's new 2.0.0 release.
