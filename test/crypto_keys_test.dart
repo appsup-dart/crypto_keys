@@ -48,12 +48,6 @@ void _testEncryption(
           additionalAuthenticatedData:
               encryptedData?.additionalAuthenticatedData)),
       data);
-  expect(
-      encrypter.decrypt(decrypter.encrypt(data,
-          initializationVector: encryptedData?.initializationVector,
-          additionalAuthenticatedData:
-              encryptedData?.additionalAuthenticatedData)),
-      data);
 }
 
 void main() {

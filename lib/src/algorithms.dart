@@ -1,7 +1,8 @@
 library crypto_keys.algorithms;
 
 import 'package:crypto_keys/src/pointycastle_oaep256.dart';
-import 'package:pointycastle/export.dart' as pc;
+import 'package:meta/meta.dart';
+import 'package:pointycastle/export.dart' as pc hide GCMBlockCipher; // TODO
 import 'dart:math' show Random;
 import 'pointycastle_ext.dart' as pc;
 import 'dart:typed_data';
@@ -24,12 +25,52 @@ class Algorithms {
   /// Contains the identifiers for supported encryption algorithms
   final encryption = EncAlgorithms();
 
+  /// Contains the identifiers for supported digest algorithms
+  final digest = DigestAlgorithms();
+
   final encrypting_aes_cbc = AlgorithmIdentifier._(
       'enc/AES/CBC/PKCS7',
       () => pc.PaddedBlockCipherImpl(
           pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESFastEngine())));
 
   Algorithms();
+}
+
+class DigestAlgorithms extends Identifier {
+  DigestAlgorithms() : super._('digest');
+
+  /// SHA-1 digest
+  final sha1 = AlgorithmIdentifier._('digest/SHA-1', () => pc.SHA1Digest());
+
+  /// SHA-224 digest
+  final sha224 =
+      AlgorithmIdentifier._('digest/SHA-224', () => pc.SHA224Digest());
+
+  /// SHA-256 digest
+  final sha256 =
+      AlgorithmIdentifier._('digest/SHA-256', () => pc.SHA256Digest());
+
+  /// SHA-384 digest
+  final sha384 =
+      AlgorithmIdentifier._('digest/SHA-384', () => pc.SHA384Digest());
+
+  /// SHA-512 digest
+  final sha512 =
+      AlgorithmIdentifier._('digest/SHA-512', () => pc.SHA512Digest());
+
+  /// SHA-512/t digest
+  AlgorithmIdentifier sha512t(int digestSizeBytes) => AlgorithmIdentifier._(
+      'digest/SHA-512/${digestSizeBytes * 8}',
+      () => pc.SHA512tDigest(digestSizeBytes));
+
+  /// MD2 digest
+  final md2 = AlgorithmIdentifier._('digest/MD2', () => pc.MD2Digest());
+
+  /// MD4 digest
+  final md4 = AlgorithmIdentifier._('digest/MD4', () => pc.MD4Digest());
+
+  /// MD5 digest
+  final md5 = AlgorithmIdentifier._('digest/MD5', () => pc.MD5Digest());
 }
 
 class EncAlgorithms extends Identifier {
@@ -39,7 +80,22 @@ class EncAlgorithms extends Identifier {
   /// Contains the identifiers for supported RSA encryption algorithms
   final rsa = _RsaEncAlgorithms();
 
+  /// Contains the identifiers for supported hybrid encryption algorithms
+  final hybrid = HybridEncAlgorithms();
+
   EncAlgorithms() : super._('enc');
+}
+
+class HybridEncAlgorithms extends Identifier {
+  HybridEncAlgorithms() : super._('enc/hybrid');
+
+  AlgorithmIdentifier withParameters(
+      {@required keySize,
+      @required Identifier curve,
+      AlgorithmIdentifier hkdfHash}) {
+    return AlgorithmIdentifier._(
+        'enc/hybrid', () => pc.HKDFKeyDerivator(hkdfHash.factory()));
+  }
 }
 
 class AesEncAlgorithms extends Identifier {
@@ -54,6 +110,10 @@ class AesEncAlgorithms extends Identifier {
   /// AES GCM
   final gcm = AlgorithmIdentifier._(
       'enc/AES/GCM', () => pc.GCMBlockCipher(pc.AESFastEngine()));
+
+  /// AES EAX
+  final eax =
+      AlgorithmIdentifier._('enc/AES/EAX', () => throw UnimplementedError());
 
   /// AES Key Wrap with default initial value
   final keyWrap = AlgorithmIdentifier._('enc/AES/KW', () => pc.AESKeyWrap());
@@ -142,7 +202,24 @@ class _RsaSigAlgorithms extends Identifier {
   final sha512 = AlgorithmIdentifier._('sig/RSA/SHA-512',
       () => pc.RSASigner(pc.SHA512Digest(), '0609608648016503040203'));
 
+  /// Contains the identifiers for supported RSASSA-PSS signing algorithms
+  final pss = _RsaPssAlgorithms();
+
   _RsaSigAlgorithms() : super._('sig/RSA');
+}
+
+class _RsaPssAlgorithms extends Identifier {
+  _RsaPssAlgorithms() : super._('sig/RSA/PSS');
+
+  AlgorithmIdentifier withParameters(
+      {@required AlgorithmIdentifier sigHash,
+      @required AlgorithmIdentifier mgf1Hash,
+      @required int saltLength}) {
+    return AlgorithmIdentifier._(
+        'sig/RSA/PSS/$sigHash/mgf1$mgf1Hash/$saltLength',
+        () => throw UnimplementedError());
+    ;
+  }
 }
 
 class _EcdsaSigAlgorithms extends Identifier {
