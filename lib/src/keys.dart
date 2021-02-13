@@ -66,12 +66,13 @@ class KeyPair {
 
     return KeyPair(
         publicKey: RsaPublicKey(
-          exponent: (pair.publicKey as pc.RSAPublicKey).e,
+          exponent: (pair.publicKey as pc.RSAPublicKey).publicExponent,
           modulus: (pair.publicKey as pc.RSAPublicKey).n,
         ),
         privateKey: RsaPrivateKey(
           modulus: (pair.privateKey as pc.RSAPrivateKey).n,
-          privateExponent: (pair.privateKey as pc.RSAPrivateKey).d,
+          privateExponent:
+              (pair.privateKey as pc.RSAPrivateKey).privateExponent,
           firstPrimeFactor: (pair.privateKey as pc.RSAPrivateKey).p,
           secondPrimeFactor: (pair.privateKey as pc.RSAPrivateKey).q,
         ));

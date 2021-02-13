@@ -4,10 +4,10 @@ version: 0.1.4
 homepage: https://github.com/appsup-dart/crypto_keys
 
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: ">=2.0.0 <3.0.0"
 
 dependencies:
-  pointycastle: ^2.0.1
+  pointycastle: ^2.0.0
   meta: ^1.1.6
   collection: ^1.14.13
   quiver: ^2.1.5
