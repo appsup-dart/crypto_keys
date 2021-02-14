@@ -17,7 +17,7 @@ abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
   }
 
   pc.ECDomainParameters get ecDomainParameters =>
-      createCurveParameters((key as EcKey).curve!);
+      createCurveParameters((key as EcKey).curve);
 
   pc.AsymmetricKeyParameter get keyParameter {
     if (key is RsaPrivateKey) {
@@ -47,8 +47,8 @@ abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
     if (key is EcPublicKey) {
       var k = key as EcPublicKey;
 
-      return pc.PublicKeyParameter<pc.ECPublicKey>(pc.ECPublicKey(
-          d.curve.createPoint(k.xCoordinate!, k.yCoordinate!), d));
+      return pc.PublicKeyParameter<pc.ECPublicKey>(
+          pc.ECPublicKey(d.curve.createPoint(k.xCoordinate, k.yCoordinate), d));
     }
     throw StateError('Unexpected key type ${key}');
   }
@@ -80,7 +80,7 @@ class _AsymmetricSigner extends Signer<PrivateKey>
         curves.p256k: 32,
         curves.p384: 48,
         curves.p521: 66
-      }[(key as EcKey).curve!]!;
+      }[(key as EcKey).curve]!;
       var bytes = Uint8List(length * 2);
       bytes.setRange(
           0, length, _bigIntToBytes(sig.r, length).toList().reversed);

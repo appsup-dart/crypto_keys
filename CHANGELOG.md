@@ -1,5 +1,5 @@
 
-## 0.2.0-nullsafety.1
+## 0.2.0-nullsafety.2
 
 - Port to null-safety
 
