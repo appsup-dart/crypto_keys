@@ -24,7 +24,7 @@ abstract class RsaPrivateKey extends RsaKey implements PrivateKey {
   BigInt get firstPrimeFactor;
 
   /// The second prime factor
-  BigInt? get secondPrimeFactor;
+  BigInt get secondPrimeFactor;
 
   factory RsaPrivateKey(
       {required BigInt privateExponent,
