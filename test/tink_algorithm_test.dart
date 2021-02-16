@@ -1,81 +1,10 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:meta/meta.dart';
-import 'package:quiver/async.dart';
 import 'package:test/test.dart';
 
-import 'package:pointycastle/export.dart' as pc hide GCMBlockCipher; // TODO
-
 void main() {
-  var curve = curves.p256;
-  var hkdf = pc.HKDFKeyDerivator(pc.SHA256Digest());
-
-  var info = bytesFromHexString('4f6465206f6e2061204772656369616e2055726e');
-  var privateKeyResponder = EcPrivateKey(
-      curve: curve,
-      eccPrivateKey: bigIntFromHexString(
-          '0bfbc9b95d6bb528019f8852c67dd2b1e449796cd5ea9d0a4d875ba105c0998b'));
-  var privateKeyInitiater = EcPrivateKey(
-      curve: curve,
-      eccPrivateKey: bigIntFromHexString(
-          '03ca6aa924d700e2ae2e4347e658e05e1543c8cb580683c155ac30bfbe56cb07'));
-  var privateKeyEphemeral = EcPrivateKey(
-      curve: curve,
-      eccPrivateKey: bigIntFromHexString(
-          '4a0fe976e4ef4f3c835739775549689bac1d9e815a84706bc648c02a8ea475e8'));
-
-  var preSharedKey = bytesFromHexString('6d656c6c6f6e');
-  var preSharedKeyId = '456e6e796e20447572696e206172616e204d6f726961';
-
-  var publicKeyResponder = EcPublicKey(
-      curve: curve,
-      xCoordinate: bigIntFromHexString(
-          '04b09c11d56c7ce347cb9d45c8b0d8e7cfeed5792e2dd52430bf79908b98641ec'),
-      yCoordinate: bigIntFromHexString(
-          '91b5b4468376c6e797a0b5d9ff440de0b03d4ab03d69e4a5ab46623b92b7a45d8'));
-  var publicKeyInitiater = EcPublicKey(
-      curve: curve,
-      xCoordinate: bigIntFromHexString(
-          '0465df804f772b75d8349296932f59a17215ab58cb5d1fb3f530840bd2a3a9461'),
-      yCoordinate: bigIntFromHexString(
-          '812706edcdada222a42288ca90e8b9c04560c5acc3f89120f7291bfe5d010e0c1'));
-  var publicKeyEphemeral = EcPublicKey(
-      curve: curve,
-      xCoordinate: bigIntFromHexString(
-          '04b619b60048a5cdd14aa8e5299e2439259f87b92ad890105cd1c5cf191ecb552'),
-      yCoordinate: bigIntFromHexString(
-          '0bde19ced20f4e2bced384351ee4128e3e7147775cf44f33d8623f7b40dee58d6'));
-
-  var enc = EcPublicKey(
-      curve: curve,
-      xCoordinate: bigIntFromHexString(
-          '04b619b60048a5cdd14aa8e5299e2439259f87b92ad890105cd1c5cf191ecb552'),
-      yCoordinate: bigIntFromHexString(
-          '0bde19ced20f4e2bced384351ee4128e3e7147775cf44f33d8623f7b40dee58d6'));
-
-  var sharedSecret = bytesFromHexString(
-      '18bd7013cc5c7accacc968230580615e506f5f4b937f2812141d88537a66fee12c05'
-      '58d9fd9fb9c8645d97e7e7f09cff4692a7c2b701730dfb84d3a36923ba48');
-
-  var context = bytesFromHexString(
-      '0200010001000304b619b60048a5cdd14aa8e5299e2439259f87b92ad890105'
-      'cd1c5cf191ecb5520bde19ced20f4e2bced384351ee4128e3e7147775cf44f33d8623f7b'
-      '40dee58d604b09c11d56c7ce347cb9d45c8b0d8e7cfeed5792e2dd52430bf79908b98641'
-      'ec91b5b4468376c6e797a0b5d9ff440de0b03d4ab03d69e4a5ab46623b92b7a45d80465d'
-      'f804f772b75d8349296932f59a17215ab58cb5d1fb3f530840bd2a3a9461812706edcdad'
-      'a222a42288ca90e8b9c04560c5acc3f89120f7291bfe5d010e0c1e3b0c44298fc1c149af'
-      'bf4c8996fb92427ae41e4649b934ca495991b7852b85555c4040629c64c5efec2f723040'
-      '7d612d16289d7c5d7afcf9340280abd2de1ab');
-
-  var secret = bytesFromHexString(
-      'b4771505c7f85be0c8e1a67793c5181bcf8d78485f03d3df51a632d44a8da4e9');
-
-  var key = bytesFromHexString(
-      'edfd08c4da2c9f3db58cac53cae1798ccbef1e640f1c09072390cbe0b53cdd0c');
-  var nonce = bytesFromHexString('28e30b5955de5fc27aa0d54c');
-
   group('AEAD', () {
     group('AES-GCM', () {
       @isTest
