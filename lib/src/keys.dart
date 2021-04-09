@@ -148,13 +148,21 @@ class KeyPair {
   }
 
   /// Creates a [Signer] using the private key and the specified algorithm.
-  Signer createSigner(Identifier algorithm) =>
-      privateKey!.createSigner(algorithm);
+  Signer createSigner(Identifier algorithm) {
+    if (privateKey == null) {
+      throw StateError('Need a private key to create a signer.');
+    }
+    return privateKey!.createSigner(algorithm);
+  }
 
   /// Creates a signature [Verifier] using the public key and the specified
   /// algorithm
-  Verifier createVerifier(Identifier algorithm) =>
-      publicKey!.createVerifier(algorithm);
+  Verifier createVerifier(Identifier algorithm) {
+    if (publicKey == null) {
+      throw StateError('Need a public key to create a verifier.');
+    }
+    return publicKey!.createVerifier(algorithm);
+  }
 }
 
 List<int> _base64ToBytes(String encoded) {
