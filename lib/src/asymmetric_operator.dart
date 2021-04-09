@@ -50,7 +50,7 @@ abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
       return pc.PublicKeyParameter<pc.ECPublicKey>(
           pc.ECPublicKey(d.curve.createPoint(k.xCoordinate, k.yCoordinate), d));
     }
-    throw StateError('Unexpected key type ${key}');
+    throw StateError('Unexpected key type $key');
   }
 }
 

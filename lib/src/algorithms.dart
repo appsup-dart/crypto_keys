@@ -218,7 +218,6 @@ class _RsaPssAlgorithms extends Identifier {
     return AlgorithmIdentifier._(
         'sig/RSA/PSS/$sigHash/mgf1$mgf1Hash/$saltLength',
         () => throw UnimplementedError());
-    ;
   }
 }
 

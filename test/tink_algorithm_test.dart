@@ -38,65 +38,65 @@ void main() {
       doTest(
           'Test Case 3',
           'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b391aafd255',
           '',
           'cafebabefacedbaddecaf888',
-          '42831ec2217774244b7221b784d0d49c' +
-              'e3aa212f2c02a4e035c17e2329aca12e' +
-              '21d514b25466931c7d8f6a5aac84aa05' +
+          '42831ec2217774244b7221b784d0d49c'
+              'e3aa212f2c02a4e035c17e2329aca12e'
+              '21d514b25466931c7d8f6a5aac84aa05'
               '1ba30b396a0aac973d58e091473f5985',
           '4d5c2af327cd64a62cf35abd2ba6fab4');
       doTest(
           'Test Case 4',
           'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b39',
-          'feedfacedeadbeeffeedfacedeadbeef' + 'abaddad2',
+          'feedfacedeadbeeffeedfacedeadbeefabaddad2',
           'cafebabefacedbaddecaf888',
-          '42831ec2217774244b7221b784d0d49c' +
-              'e3aa212f2c02a4e035c17e2329aca12e' +
-              '21d514b25466931c7d8f6a5aac84aa05' +
+          '42831ec2217774244b7221b784d0d49c'
+              'e3aa212f2c02a4e035c17e2329aca12e'
+              '21d514b25466931c7d8f6a5aac84aa05'
               '1ba30b396a0aac973d58e091',
           '5bc94fbc3221a5db94fae95ae7121a47');
       doTest(
           'Test Case 5',
           'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b39',
-          'feedfacedeadbeeffeedfacedeadbeef' + 'abaddad2',
+          'feedfacedeadbeeffeedfacedeadbeefabaddad2',
           'cafebabefacedbad',
-          '61353b4c2806934a777ff51fa22a4755' +
-              '699b2a714fcdc6f83766e5f97b6c7423' +
-              '73806900e49f24b22b097544d4896b42' +
+          '61353b4c2806934a777ff51fa22a4755'
+              '699b2a714fcdc6f83766e5f97b6c7423'
+              '73806900e49f24b22b097544d4896b42'
               '4989b5e1ebac0f07c23f4598',
           '3612d2e79e3b0785561be14aaca2fccb');
       doTest(
           'Test Case 6',
           'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b39',
-          'feedfacedeadbeeffeedfacedeadbeef' + 'abaddad2',
-          '9313225df88406e555909c5aff5269aa' +
-              '6a7a9538534f7da1e4c303d2a318a728' +
-              'c3c0c95156809539fcf0e2429a6b5254' +
+          'feedfacedeadbeeffeedfacedeadbeefabaddad2',
+          '9313225df88406e555909c5aff5269aa'
+              '6a7a9538534f7da1e4c303d2a318a728'
+              'c3c0c95156809539fcf0e2429a6b5254'
               '16aedbf5a0de6a57a637b39b',
-          '8ce24998625615b603a033aca13fb894' +
-              'be9112a5c3a211a8ba262a3cca7e2ca7' +
-              '01e4a9a4fba43c90ccdcb281d48c7c6f' +
+          '8ce24998625615b603a033aca13fb894'
+              'be9112a5c3a211a8ba262a3cca7e2ca7'
+              '01e4a9a4fba43c90ccdcb281d48c7c6f'
               'd62875d2aca417034c34aee5',
           '619cc5aefffe0bfa462af43c1699d050');
       doTest(
           'Test Case 13',
-          '00000000000000000000000000000000' +
+          '00000000000000000000000000000000'
               '00000000000000000000000000000000',
           '',
           '',
@@ -105,7 +105,7 @@ void main() {
           '530f8afbc74536b9a963b4f1c4cb738b');
       doTest(
           'Test Case 14',
-          '00000000000000000000000000000000' +
+          '00000000000000000000000000000000'
               '00000000000000000000000000000000',
           '00000000000000000000000000000000',
           '',
@@ -114,65 +114,65 @@ void main() {
           'd0d1c8a799996bf0265b98b5d48ab919');
       doTest(
           'Test Case 15',
-          'feffe9928665731c6d6a8f9467308308' +
+          'feffe9928665731c6d6a8f9467308308'
               'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b391aafd255',
           '',
           'cafebabefacedbaddecaf888',
-          '522dc1f099567d07f47f37a32a84427d' +
-              '643a8cdcbfe5c0c97598a2bd2555d1aa' +
-              '8cb08e48590dbb3da7b08b1056828838' +
+          '522dc1f099567d07f47f37a32a84427d'
+              '643a8cdcbfe5c0c97598a2bd2555d1aa'
+              '8cb08e48590dbb3da7b08b1056828838'
               'c5f61e6393ba7a0abcc9f662898015ad',
           'b094dac5d93471bdec1a502270e3cc6c');
       doTest(
           'Test Case 16',
-          'feffe9928665731c6d6a8f9467308308' +
+          'feffe9928665731c6d6a8f9467308308'
               'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b39',
-          'feedfacedeadbeeffeedfacedeadbeef' + 'abaddad2',
+          'feedfacedeadbeeffeedfacedeadbeefabaddad2',
           'cafebabefacedbaddecaf888',
-          '522dc1f099567d07f47f37a32a84427d' +
-              '643a8cdcbfe5c0c97598a2bd2555d1aa' +
-              '8cb08e48590dbb3da7b08b1056828838' +
+          '522dc1f099567d07f47f37a32a84427d'
+              '643a8cdcbfe5c0c97598a2bd2555d1aa'
+              '8cb08e48590dbb3da7b08b1056828838'
               'c5f61e6393ba7a0abcc9f662',
           '76fc6ece0f4e1768cddf8853bb2d551b');
       doTest(
           'Test Case 17',
-          'feffe9928665731c6d6a8f9467308308' +
+          'feffe9928665731c6d6a8f9467308308'
               'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b39',
-          'feedfacedeadbeeffeedfacedeadbeef' + 'abaddad2',
+          'feedfacedeadbeeffeedfacedeadbeefabaddad2',
           'cafebabefacedbad',
-          'c3762df1ca787d32ae47c13bf19844cb' +
-              'af1ae14d0b976afac52ff7d79bba9de0' +
-              'feb582d33934a4f0954cc2363bc73f78' +
+          'c3762df1ca787d32ae47c13bf19844cb'
+              'af1ae14d0b976afac52ff7d79bba9de0'
+              'feb582d33934a4f0954cc2363bc73f78'
               '62ac430e64abe499f47c9b1f',
           '3a337dbf46a792c45e454913fe2ea8f2');
       doTest(
           'Test Case 18',
-          'feffe9928665731c6d6a8f9467308308' +
+          'feffe9928665731c6d6a8f9467308308'
               'feffe9928665731c6d6a8f9467308308',
-          'd9313225f88406e5a55909c5aff5269a' +
-              '86a7a9531534f7da2e4c303d8a318a72' +
-              '1c3c0c95956809532fcf0e2449a6b525' +
+          'd9313225f88406e5a55909c5aff5269a'
+              '86a7a9531534f7da2e4c303d8a318a72'
+              '1c3c0c95956809532fcf0e2449a6b525'
               'b16aedf5aa0de657ba637b39',
-          'feedfacedeadbeeffeedfacedeadbeef' + 'abaddad2',
-          '9313225df88406e555909c5aff5269aa' +
-              '6a7a9538534f7da1e4c303d2a318a728' +
-              'c3c0c95156809539fcf0e2429a6b5254' +
+          'feedfacedeadbeeffeedfacedeadbeefabaddad2',
+          '9313225df88406e555909c5aff5269aa'
+              '6a7a9538534f7da1e4c303d2a318a728'
+              'c3c0c95156809539fcf0e2429a6b5254'
               '16aedbf5a0de6a57a637b39b',
-          '5a8def2f0c9e53f1f75d7853659e2a20' +
-              'eeb2b22aafde6419a058ab4f6f746bf4' +
-              '0fc0c3b780f244452da3ebf1c5d82cde' +
+          '5a8def2f0c9e53f1f75d7853659e2a20'
+              'eeb2b22aafde6419a058ab4f6f746bf4'
+              '0fc0c3b780f244452da3ebf1c5d82cde'
               'a2418997200ef82e44ae7e3f',
           'a44a8266ee1c8eb0c8b5d4cf5ae9f19a');
     });
@@ -312,29 +312,29 @@ void main() {
           curves.p256);
       doTest(
           'Test case 2',
-          'EC3A4E415B4E19A4568618029F427FA5DA9A8BC4AE92E02E06AAE5286B300C64' +
+          'EC3A4E415B4E19A4568618029F427FA5DA9A8BC4AE92E02E06AAE5286B300C64'
               'DEF8F0EA9055866064A254515480BC13',
-          '8015D9B72D7D57244EA8EF9AC0C621896708A59367F9DFB9F54CA84B3F1C9DB1' +
+          '8015D9B72D7D57244EA8EF9AC0C621896708A59367F9DFB9F54CA84B3F1C9DB1'
               '288B231C3AE0D4FE7344FD2533264720',
-          'ED0959D5880AB2D869AE7F6C2915C6D60F96507F9CB3E047C0046861DA4A799C' +
+          'ED0959D5880AB2D869AE7F6C2915C6D60F96507F9CB3E047C0046861DA4A799C'
               'FE30F35CC900056D7C99CD7882433709',
-          '512C8CCEEE3890A84058CE1E22DBC2198F42323CE8ACA9135329F03C068E5112' +
+          '512C8CCEEE3890A84058CE1E22DBC2198F42323CE8ACA9135329F03C068E5112'
               'DC7CC3EF3446DEFCEB01A45C2667FDD5',
           algorithms.signing.ecdsa.sha512,
           curves.p384);
       doTest(
           'Test case 3',
-          '01894550D0785932E00EAA23B694F213F8C3121F86DC97A04E5A7167DB4E5BCD3' +
-              '71123D46E45DB6B5D5370A7F20FB633155D38FFA16D2BD761DCAC474B9A2F502' +
+          '01894550D0785932E00EAA23B694F213F8C3121F86DC97A04E5A7167DB4E5BCD3'
+              '71123D46E45DB6B5D5370A7F20FB633155D38FFA16D2BD761DCAC474B9A2F502'
               '3A4',
-          '00493101C962CD4D2FDDF782285E64584139C2F91B47F87FF82354D6630F746A2' +
-              '8A0DB25741B5B34A828008B22ACC23F924FAAFBD4D33F81EA66956DFEAA2BFDF' +
+          '00493101C962CD4D2FDDF782285E64584139C2F91B47F87FF82354D6630F746A2'
+              '8A0DB25741B5B34A828008B22ACC23F924FAAFBD4D33F81EA66956DFEAA2BFDF'
               'CF5',
-          '013E99020ABF5CEE7525D16B69B229652AB6BDF2AFFCAEF38773B4B7D08725F10' +
-              'CDB93482FDCC54EDCEE91ECA4166B2A7C6265EF0CE2BD7051B7CEF945BABD47E' +
+          '013E99020ABF5CEE7525D16B69B229652AB6BDF2AFFCAEF38773B4B7D08725F10'
+              'CDB93482FDCC54EDCEE91ECA4166B2A7C6265EF0CE2BD7051B7CEF945BABD47E'
               'E6D',
-          '01FBD0013C674AA79CB39849527916CE301C66EA7CE8B80682786AD60F98F7E78' +
-              'A19CA69EFF5C57400E3B3A0AD66CE0978214D13BAF4E9AC60752F7B155E2DE4D' +
+          '01FBD0013C674AA79CB39849527916CE301C66EA7CE8B80682786AD60F98F7E78'
+              'A19CA69EFF5C57400E3B3A0AD66CE0978214D13BAF4E9AC60752F7B155E2DE4D'
               'CE3',
           algorithms.signing.ecdsa.sha512,
           curves.p521);
@@ -421,6 +421,8 @@ void main() {
             eccPrivateKey: bigIntFromHexString(privateKey),
             curve: curves.p256,
           );
+          print(key);
+          // TODO
           throw UnimplementedError();
         });
       }
