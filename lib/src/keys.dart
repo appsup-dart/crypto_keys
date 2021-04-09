@@ -15,24 +15,24 @@ abstract class Key {
 /// A cryptographic public key
 abstract class PublicKey implements Key {
   /// Creates a signature [Verifier] using this key and the specified algorithm
-  Verifier createVerifier(Identifier? algorithm) {
+  Verifier createVerifier(Identifier algorithm) {
     if (this is SymmetricKey) {
-      return _SymmetricSignerAndVerifier(algorithm!, this as SymmetricKey);
+      return _SymmetricSignerAndVerifier(algorithm, this as SymmetricKey);
     }
 
-    return _AsymmetricVerifier(algorithm!, this);
+    return _AsymmetricVerifier(algorithm, this);
   }
 }
 
 /// A cryptographic private key
 abstract class PrivateKey implements Key {
   /// Creates a [Signer] using this key and the specified algorithm.
-  Signer createSigner(Identifier? algorithm) {
+  Signer createSigner(Identifier algorithm) {
     if (this is SymmetricKey) {
-      return _SymmetricSignerAndVerifier(algorithm!, this as SymmetricKey);
+      return _SymmetricSignerAndVerifier(algorithm, this as SymmetricKey);
     }
 
-    return _AsymmetricSigner(algorithm!, this);
+    return _AsymmetricSigner(algorithm, this);
   }
 }
 
@@ -148,12 +148,12 @@ class KeyPair {
   }
 
   /// Creates a [Signer] using the private key and the specified algorithm.
-  Signer createSigner(Identifier? algorithm) =>
+  Signer createSigner(Identifier algorithm) =>
       privateKey!.createSigner(algorithm);
 
   /// Creates a signature [Verifier] using the public key and the specified
   /// algorithm
-  Verifier createVerifier(Identifier? algorithm) =>
+  Verifier createVerifier(Identifier algorithm) =>
       publicKey!.createVerifier(algorithm);
 }
 

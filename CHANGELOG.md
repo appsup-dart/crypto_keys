@@ -1,4 +1,8 @@
 
+## 0.3.0
+
+- It is now a static error to pass a nullable algorithm parameter to `createVerifier` and `createSigner`
+
 ## 0.2.0
 
 - Port to null-safety

@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 void _testSigning(
-    KeyPair keyPair, AlgorithmIdentifier? algorithm, Uint8List data,
+    KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
     [Uint8List? signature, bool? isRandom]) {
   var signer = keyPair.createSigner(algorithm);
   var verifier = keyPair.createVerifier(algorithm);
@@ -1102,7 +1102,7 @@ void main() {
             curves.p256: algorithms.signing.ecdsa.sha256,
             curves.p384: algorithms.signing.ecdsa.sha384,
             curves.p521: algorithms.signing.ecdsa.sha512,
-          }[curve];
+          }[curve]!;
 
           _testSigning(keyPair, alg, data as Uint8List);
         }
