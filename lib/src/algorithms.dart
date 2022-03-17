@@ -1,11 +1,13 @@
 library crypto_keys.algorithms;
 
-import 'package:crypto_keys/src/pointycastle_oaep256.dart';
-import 'package:pointycastle/export.dart' as pc hide GCMBlockCipher; // TODO
-import 'package:pointycastle/pointycastle.dart';
 import 'dart:math' show Random;
-import 'pointycastle_ext.dart' as pce;
 import 'dart:typed_data';
+
+import 'package:crypto_keys/src/pointycastle_oaep256.dart';
+import 'package:pointycastle/export.dart' as pc; // TODO
+import 'package:pointycastle/pointycastle.dart';
+
+import 'pointycastle_ext.dart' as pce;
 
 /// Contains the identifiers for supported algorithms
 ///
@@ -31,7 +33,7 @@ class Algorithms {
   final encrypting_aes_cbc = AlgorithmIdentifier._(
       'enc/AES/CBC/PKCS7',
       () => pc.PaddedBlockCipherImpl(
-          pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESFastEngine())));
+          pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESEngine())));
 
   Algorithms();
 }
@@ -103,13 +105,14 @@ class AesEncAlgorithms extends Identifier {
   final cbc = AlgorithmIdentifier._(
       'enc/AES/CBC/PKCS7',
       () => pc.PaddedBlockCipherImpl(
-          pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESFastEngine())));
+          pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESEngine())));
 
   final cbcWithHmac = AesWithHmacEncAlgorithms();
 
   /// AES GCM
+
   final gcm = AlgorithmIdentifier._(
-      'enc/AES/GCM', () => pce.GCMBlockCipher(pc.AESFastEngine()));
+      "enc/AES/GCM", () => pc.GCMBlockCipher(pc.AESEngine()));
 
   /// AES EAX
   final eax =
