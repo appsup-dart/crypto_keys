@@ -2728,7 +2728,7 @@ void main() {
             base64Url.decode('A0lSKnZfXznJcsx6nRs78tJw9EqXfaCn-tbsMxvITdA=');
 
         _testEncryption(keyPair, algorithms.encryption.rsa.oaep256, data,
-            encryptedData, true);
+            encryptedData, true, false);
       });
     });
   });

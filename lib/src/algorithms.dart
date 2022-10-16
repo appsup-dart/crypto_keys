@@ -3,7 +3,6 @@ library crypto_keys.algorithms;
 import 'dart:math' show Random;
 import 'dart:typed_data';
 
-import 'package:crypto_keys/src/pointycastle_oaep256.dart';
 import 'package:pointycastle/export.dart' as pc; // TODO
 import 'package:pointycastle/pointycastle.dart';
 
@@ -153,12 +152,12 @@ class _RsaEncAlgorithms extends Identifier {
 
   /// RSAES OAEP using default parameters
   final oaep = AlgorithmIdentifier._('enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding',
-      () => pc.OAEPEncoding(pc.RSAEngine()));
+      () => pc.OAEPEncoding.withSHA1(pc.RSAEngine()));
 
   /// RSAES OAEP using SHA-256 and MGF1 with SHA-256
   final oaep256 = AlgorithmIdentifier._(
       'enc/RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
-      () => OAEP256Encoding(pc.RSAEngine()));
+      () => pc.OAEPEncoding.withSHA256(pc.RSAEngine()));
 
   _RsaEncAlgorithms() : super._('enc/RSA');
 }
