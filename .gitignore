@@ -11,3 +11,5 @@ build/
 doc/api/
 
 crypto_keys.iml
+.vscode/
+.idea/
