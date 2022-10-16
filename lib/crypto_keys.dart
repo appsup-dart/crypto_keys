@@ -3,12 +3,11 @@ library crypto_keys;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:pointycastle/export.dart' as pc hide ECCurve_secp256k1;
+import 'package:pointycastle/export.dart' as pc;
 
 import 'src/algorithms.dart';
 import 'src/impl.dart';
 import 'src/pointycastle_ext.dart' as pc;
-import 'src/pointycastle_curves.dart' as pc;
 
 export 'src/algorithms.dart'
     show algorithms, curves, Algorithms, AlgorithmIdentifier, Identifier;
