@@ -29,10 +29,9 @@ class Algorithms {
   /// Contains the identifiers for supported digest algorithms
   final digest = DigestAlgorithms();
 
-  final encrypting_aes_cbc = AlgorithmIdentifier._(
-      'enc/AES/CBC/PKCS7',
-      () => pc.PaddedBlockCipherImpl(
-          pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESEngine())));
+  @Deprecated('Use encryption.aes.cbc instead.')
+  // ignore: non_constant_identifier_names
+  AlgorithmIdentifier get encrypting_aes_cbc => encryption.aes.cbc;
 
   Algorithms();
 }

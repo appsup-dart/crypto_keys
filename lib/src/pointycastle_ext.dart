@@ -104,8 +104,8 @@ class AesCbcAuthenticatedCipherWithHash
   int get blockSize => _underlyingCipher.blockSize;
 
   @override
-  void initParameters(covariant KeyParameter params) {
-    var key = params.key;
+  void initParameters(covariant KeyParameter parameters) {
+    var key = parameters.key;
 
     var macKey = Uint8List.view(key.buffer, key.offsetInBytes, key.length ~/ 2);
     var encKey =

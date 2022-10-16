@@ -71,7 +71,7 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
     _algorithm.init(
         true, _getParams(initializationVector, additionalAuthenticatedData));
     var r = _algorithm.process(input);
-    var tag;
+    Uint8List? tag;
     if (_algorithm is pc.GCMBlockCipher) {
       var tagLength = 16;
       tag = Uint8List.view(
