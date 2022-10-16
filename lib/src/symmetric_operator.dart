@@ -31,6 +31,9 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
     var keyParam = pc.KeyParameter(key.keyValue);
 
     if (_algorithm is pc.AESKeyWrap) return keyParam;
+    if (_algorithm is pc.GCMBlockCipher)
+      return pc.AEADParameters(keyParam, 128, initializationVector!,
+          additionalAuthenticatedData ?? Uint8List(0));
 
     var paramsWithIV = pc.ParametersWithIVAndAad(keyParam,
         initializationVector!, additionalAuthenticatedData ?? Uint8List(0));
@@ -68,10 +71,17 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
         true, _getParams(initializationVector, additionalAuthenticatedData));
     var r = _algorithm.process(input);
     var tag;
+    if (_algorithm is pc.GCMBlockCipher) {
+      var tagLength = 16;
+      tag = Uint8List.view(
+          r.buffer, r.offsetInBytes + r.length - tagLength, tagLength);
+      r = Uint8List.view(r.buffer, r.offsetInBytes, r.length - tagLength);
+    }
     if (_algorithm is pc.BlockCipherWithAuthenticationTag) {
       var tagLength =
           (_algorithm as pc.BlockCipherWithAuthenticationTag).tagLength;
-      tag = Uint8List.view(r.buffer, r.offsetInBytes + r.length - tagLength);
+      tag = Uint8List.view(
+          r.buffer, r.offsetInBytes + r.length - tagLength, tagLength);
       r = Uint8List.view(r.buffer, r.offsetInBytes, r.length - tagLength);
     }
 

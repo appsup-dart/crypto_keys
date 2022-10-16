@@ -1,6 +1,6 @@
-import 'package:pointycastle/export.dart';
 import 'dart:typed_data';
-import 'dart:math' show min;
+
+import 'package:pointycastle/export.dart';
 
 class ParametersWithIVAndAad<UnderlyingParameters extends CipherParameters>
     extends ParametersWithIV<UnderlyingParameters> {
@@ -9,181 +9,6 @@ class ParametersWithIVAndAad<UnderlyingParameters extends CipherParameters>
   ParametersWithIVAndAad(
       UnderlyingParameters parameters, Uint8List iv, this.aad)
       : super(parameters, iv);
-}
-
-/// Implementation of Galois/Counter Mode (GCM) mode on top of a [BlockCipher].
-class GCMBlockCipher extends BlockCipherWithAuthenticationTag {
-  final BlockCipher _underlyingCipher;
-
-  late Uint8List _counter;
-
-  late BigInt _e;
-
-  BigInt? _h;
-  late BigInt _x;
-  late BigInt _e0;
-
-  late int _processedBytes;
-
-  GCMBlockCipher(this._underlyingCipher);
-
-  @override
-  String get algorithmName => '${_underlyingCipher.algorithmName}/GCM';
-
-  @override
-  int get blockSize => _underlyingCipher.blockSize;
-
-  Uint8List _computeInitialCounter(Uint8List iv) {
-    var counter = Uint8List(16);
-
-    if (iv.length == 12) {
-      counter.setAll(0, iv);
-      counter.fillRange(12, 16, 0);
-      counter[15] = 1;
-    } else {
-      var x = BigInt.zero;
-      var block = Uint8List(16);
-      for (var i = 0; i < iv.length; i += 16) {
-        block.setAll(0, iv.sublist(i, min(i + 16, iv.length)));
-        block.fillRange(min(i + 16, iv.length) - i, 16, 0);
-        var a = _toBigInt(block);
-        x = _mult(x ^ a, _h);
-      }
-      x = _mult(x ^ BigInt.from(iv.length * 8), _h);
-
-      counter.fillRange(0, 16, 0);
-      var i = counter.length - 1;
-      while (x.bitLength > 0) {
-        counter[i--] = (x % b256).toInt();
-        x >>= 8;
-      }
-    }
-
-    return counter;
-  }
-
-  static final _computeBuffer = Uint8List(16);
-
-  BigInt _computeE(Uint8List inp) {
-    _underlyingCipher.processBlock(inp, 0, _computeBuffer, 0);
-    return _toBigInt(_computeBuffer);
-  }
-
-  @override
-  void reset() {
-    _processedBytes = 0;
-
-    _h = _computeE(Uint8List(16));
-    _counter = _computeInitialCounter(_iv!);
-    _e0 = _computeE(_counter);
-    _x = BigInt.zero;
-
-    _processAad();
-  }
-
-  void _processAad() {
-    var block = Uint8List(16);
-    for (var i = 0; i < _aad!.length; i += 16) {
-      block.setAll(0, _aad!.sublist(i, min(i + 16, _aad!.length)));
-      block.fillRange(min(i + 16, _aad!.length) - i, 16, 0);
-      var a = _toBigInt(block);
-      _x = _mult(_x ^ a, _h);
-    }
-  }
-
-  @override
-  void initParameters(CipherParameters? params) {
-    _underlyingCipher.reset();
-    _underlyingCipher.init(true, params);
-
-    reset();
-  }
-
-  final BigInt r = BigInt.parse('11100001', radix: 2) << 120;
-  final BigInt b256 = BigInt.from(256);
-  final BigInt b255 = BigInt.parse('0xff');
-
-  BigInt _toBigInt(Iterable<int> bytes) {
-    return bytes.fold(BigInt.zero, (a, b) => (a << 8) + BigInt.from(b));
-  }
-
-  Uint8List _toBytes(BigInt v, int length) {
-    var out = Uint8List(length);
-    _writeBigInt(v, out);
-    return out;
-  }
-
-  void _writeBigInt(BigInt v, Uint8List out) {
-    for (var i = out.length - 1; i >= 0; i--) {
-      out[i] = (v & b255).toInt();
-      v >>= 8;
-    }
-  }
-
-  BigInt _mult(BigInt x, BigInt? y) {
-    var v = x;
-    var z = BigInt.zero;
-
-    for (var i = 0; i < 128; i++) {
-      if ((y! >> (127 - i)) & BigInt.one == BigInt.one) {
-        z ^= v;
-      }
-      if (v & BigInt.one == BigInt.zero) {
-        v = v >> 1;
-      } else {
-        v = (v >> 1) ^ r;
-      }
-    }
-    return z;
-  }
-
-  void _incCounter() {
-    _counter[15]++;
-    for (var i = 15; i >= 12 && _counter[i] == 256; i--) {
-      _counter[i] = 0;
-      if (i > 12) _counter[i - 1]++;
-    }
-
-    _e = _computeE(_counter);
-  }
-
-  @override
-  int processBlock(Uint8List inp, int inpOff, Uint8List out, int outOff) {
-    var length =
-        blockSize < inp.length - inpOff ? blockSize : inp.length - inpOff;
-    _processedBytes += length;
-
-    _incCounter();
-
-    var padLength = (blockSize - length) * 8;
-
-    var i = _toBigInt(inp.skip(inpOff).take(length));
-
-    var o = i ^ (_e >> padLength);
-
-    _writeBigInt(
-        o, Uint8List.view(out.buffer, out.offsetInBytes + outOff, length));
-
-    var c = _encrypting! ? o : i;
-    c <<= padLength;
-    _x = _mult(_x ^ c, _h);
-
-    return length;
-  }
-
-  @override
-  Uint8List finalizeTag() {
-    var len = (BigInt.from(aad!.length) << (64 + 3)) +
-        (BigInt.from(_processedBytes) << 3);
-    _x = _mult(_x ^ len, _h);
-
-    var t = _x ^ _e0;
-
-    return _toBytes(t, tagLength);
-  }
-
-  @override
-  int get tagLength => 16;
 }
 
 String toHex(Iterable<int> bytes) {
@@ -265,7 +90,7 @@ abstract class BlockCipherWithAuthenticationTag implements BlockCipher {
 class AesCbcAuthenticatedCipherWithHash
     extends BlockCipherWithAuthenticationTag {
   final BlockCipher _underlyingCipher =
-      PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESFastEngine()));
+      PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()));
 
   final Mac _underlyingMac;
 
@@ -340,7 +165,7 @@ class AesCbcAuthenticatedCipherWithHash
 }
 
 class AESKeyWrap implements BlockCipher {
-  final BlockCipher _underlyingCipher = AESFastEngine();
+  final BlockCipher _underlyingCipher = AESEngine();
 
   @override
   String get algorithmName => 'AESWrap';
