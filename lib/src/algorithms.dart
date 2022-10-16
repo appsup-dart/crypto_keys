@@ -112,7 +112,7 @@ class AesEncAlgorithms extends Identifier {
   /// AES GCM
 
   final gcm = AlgorithmIdentifier._(
-      "enc/AES/GCM", () => pc.GCMBlockCipher(pc.AESEngine()));
+      'enc/AES/GCM', () => pc.GCMBlockCipher(pc.AESEngine()));
 
   /// AES EAX
   final eax =

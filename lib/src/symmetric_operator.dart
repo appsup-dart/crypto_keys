@@ -31,9 +31,10 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
     var keyParam = pc.KeyParameter(key.keyValue);
 
     if (_algorithm is pc.AESKeyWrap) return keyParam;
-    if (_algorithm is pc.GCMBlockCipher)
+    if (_algorithm is pc.GCMBlockCipher) {
       return pc.AEADParameters(keyParam, 128, initializationVector!,
           additionalAuthenticatedData ?? Uint8List(0));
+    }
 
     var paramsWithIV = pc.ParametersWithIVAndAad(keyParam,
         initializationVector!, additionalAuthenticatedData ?? Uint8List(0));
