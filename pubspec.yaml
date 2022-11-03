@@ -1,6 +1,6 @@
 name: crypto_keys
 description: A library for doing cryptographic signing/verifying and encrypting/decrypting.
-version: 0.3.0
+version: 0.3.0+1
 homepage: https://github.com/appsup-dart/crypto_keys
 
 environment:
