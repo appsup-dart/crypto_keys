@@ -9,7 +9,12 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  pointycastle: ^3.6.2
+  #pointycastle: ^3.6.2
+  pointycastle:
+    git:
+     url: https://github.com/redDwarf03/pc-dart.git
+     ref: gcm-web
+
   meta: ^1.3.0
   collection: ^1.14.13
   quiver: ^3.0.0
