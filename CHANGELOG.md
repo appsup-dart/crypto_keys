@@ -5,6 +5,9 @@
  - **FIX**: A256GCM-encrypted content produced by this package not always decrypted correctly by other tools (pull request [#10](https://github.com/appsup-dart/crypto_keys/issues/10) of tallinn1960). ([45d65b35](https://github.com/appsup-dart/crypto_keys/commit/45d65b357e7bf313b64f25cb80bd23c9d9d682e2))
  - **FIX**: add missing ES256K algorithm to list of supported algorithms (pull request [#11](https://github.com/appsup-dart/crypto_keys/issues/11) from muhammadsaddamnur). ([c7e32c67](https://github.com/appsup-dart/crypto_keys/commit/c7e32c67b92953e30a1b791f4572c5d70567b75a))
 
+## 0.3.1
+
+- Update Pointycastle version
 
 ## 0.3.0
 
