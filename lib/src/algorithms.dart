@@ -171,6 +171,9 @@ class _SigAlgorithms extends Identifier {
   /// Contains the identifiers for supported ECDSA signing algorithms
   final ecdsa = _EcdsaSigAlgorithms();
 
+  /// Contains Identifier for supported edDSA signing algorithms
+  final eddsa = AlgorithmIdentifier._('sig/edDSA', () => pce.EdDSASigner());
+
   _SigAlgorithms() : super._('sig');
 }
 
@@ -253,6 +256,18 @@ class _Curves {
 
   /// P-256K
   final p256k = const Identifier._('curve/P-256K');
+
+  /// Ed25519
+  final ed25519 = const Identifier._('curve/Ed25519');
+
+  /// X25519
+  final x25519 = const Identifier._('curve/X25519');
+
+  /// Ed448
+  final ed448 = const Identifier._('curve/Ed448');
+
+  /// X448
+  final x448 = const Identifier._('curve/X448');
 }
 
 /// An identifier for uniquely identify algorithms and other objects
@@ -305,6 +320,9 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
 
     /// ECDSA using P-521 and SHA-512
     'ES512': algorithms.signing.ecdsa.sha512,
+
+    /// EdDSA using Ed25519 or Ed448 with SHA-512
+    'EdDSA': algorithms.signing.eddsa,
 
     /// RSASSA-PSS using SHA-256 and MGF1 with SHA-256
     'PS256': null,
