@@ -1,8 +1,9 @@
-import '../crypto_keys.dart';
-
 import 'dart:typed_data';
+
 import 'package:collection/collection.dart';
 import 'package:quiver/core.dart';
+
+import '../crypto_keys.dart';
 
 class RsaPublicKeyImpl extends PublicKey
     with Key
@@ -87,6 +88,28 @@ class EcPublicKeyImpl extends PublicKey with Key implements EcPublicKey, EcKey {
           other.curve == curve);
 }
 
+class OkpPublicKeyImpl extends PublicKey
+    with Key
+    implements OkpPublicKey, OkpKey {
+  @override
+  final Identifier curve;
+
+  @override
+  final Uint8List okpPublicKey;
+
+  OkpPublicKeyImpl({required this.okpPublicKey, required this.curve});
+
+  @override
+  int get hashCode => hash2(okpPublicKey, curve);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OkpPublicKey &&
+          other.okpPublicKey == okpPublicKey &&
+          other.curve == curve);
+}
+
 class EcPrivateKeyImpl extends PrivateKey
     with Key
     implements EcPrivateKey, EcKey {
@@ -106,6 +129,28 @@ class EcPrivateKeyImpl extends PrivateKey
       identical(this, other) ||
       (other is EcPrivateKey &&
           other.eccPrivateKey == eccPrivateKey &&
+          other.curve == curve);
+}
+
+class OkpPrivateKeyImpl extends PrivateKey
+    with Key
+    implements OkpPrivateKey, OkpKey {
+  @override
+  final Identifier curve;
+
+  @override
+  final Uint8List okpPrivateKey;
+
+  OkpPrivateKeyImpl({required this.okpPrivateKey, required this.curve});
+
+  @override
+  int get hashCode => hash2(okpPrivateKey, curve);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EcPrivateKey &&
+          other.eccPrivateKey == okpPrivateKey &&
           other.curve == curve);
 }
 
