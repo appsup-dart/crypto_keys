@@ -1,7 +1,7 @@
 part of '../crypto_keys.dart';
 
 /// A cryptographic key
-abstract class Key {
+abstract mixin class Key {
   /// Creates an [Encrypter] using this key and the specified algorithm
   Encrypter createEncrypter(Identifier algorithm) {
     if (this is SymmetricKey) {
@@ -13,7 +13,7 @@ abstract class Key {
 }
 
 /// A cryptographic public key
-abstract class PublicKey implements Key {
+abstract mixin class PublicKey implements Key {
   /// Creates a signature [Verifier] using this key and the specified algorithm
   Verifier createVerifier(Identifier algorithm) {
     if (this is SymmetricKey) {
@@ -25,7 +25,7 @@ abstract class PublicKey implements Key {
 }
 
 /// A cryptographic private key
-abstract class PrivateKey implements Key {
+abstract mixin class PrivateKey implements Key {
   /// Creates a [Signer] using this key and the specified algorithm.
   Signer createSigner(Identifier algorithm) {
     if (this is SymmetricKey) {
@@ -66,15 +66,14 @@ class KeyPair {
 
     return KeyPair(
         publicKey: RsaPublicKey(
-          exponent: (pair.publicKey as pc.RSAPublicKey).publicExponent!,
-          modulus: (pair.publicKey as pc.RSAPublicKey).n!,
+          exponent: pair.publicKey.publicExponent!,
+          modulus: pair.publicKey.n!,
         ),
         privateKey: RsaPrivateKey(
-          modulus: (pair.privateKey as pc.RSAPrivateKey).n!,
-          privateExponent:
-              (pair.privateKey as pc.RSAPrivateKey).privateExponent!,
-          firstPrimeFactor: (pair.privateKey as pc.RSAPrivateKey).p!,
-          secondPrimeFactor: (pair.privateKey as pc.RSAPrivateKey).q!,
+          modulus: (pair.privateKey).n!,
+          privateExponent: pair.privateKey.privateExponent!,
+          firstPrimeFactor: pair.privateKey.p!,
+          secondPrimeFactor: pair.privateKey.q!,
         ));
   }
 
@@ -93,14 +92,11 @@ class KeyPair {
 
     return KeyPair(
         publicKey: EcPublicKey(
-            xCoordinate:
-                (pair.publicKey as pc.ECPublicKey).Q!.x!.toBigInteger()!,
-            yCoordinate:
-                (pair.publicKey as pc.ECPublicKey).Q!.y!.toBigInteger()!,
+            xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
+            yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
             curve: curve),
-        privateKey: EcPrivateKey(
-            eccPrivateKey: (pair.privateKey as pc.ECPrivateKey).d!,
-            curve: curve));
+        privateKey:
+            EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve));
   }
 
   /// Create a key pair from a JsonWebKey

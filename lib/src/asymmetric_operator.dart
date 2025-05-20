@@ -1,6 +1,6 @@
 part of '../crypto_keys.dart';
 
-abstract class _AsymmetricOperator<T extends Key> implements Operator<T> {
+mixin _AsymmetricOperator<T extends Key> on Operator<T> {
   static pc.ECDomainParameters createCurveParameters(Identifier curve) {
     var name = curve.name.split('/').last;
     switch (name) {
