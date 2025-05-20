@@ -2,8 +2,7 @@ part of '../crypto_keys.dart';
 
 class _SymmetricSignerAndVerifier extends Signer<SymmetricKey>
     implements Verifier<SymmetricKey> {
-  _SymmetricSignerAndVerifier(Identifier algorithm, SymmetricKey key)
-      : super._(algorithm, key);
+  _SymmetricSignerAndVerifier(super.algorithm, super.key) : super._();
 
   @override
   pc.Mac get _algorithm => super._algorithm as pc.Mac;
@@ -20,8 +19,7 @@ class _SymmetricSignerAndVerifier extends Signer<SymmetricKey>
 }
 
 class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
-  _SymmetricEncrypter(Identifier algorithm, SymmetricKey key)
-      : super._(algorithm, key);
+  _SymmetricEncrypter(super.algorithm, super.key) : super._();
 
   @override
   pc.BlockCipher get _algorithm => super._algorithm as pc.BlockCipher;

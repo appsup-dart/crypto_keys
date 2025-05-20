@@ -56,8 +56,7 @@ mixin _AsymmetricOperator<T extends Key> on Operator<T> {
 
 class _AsymmetricSigner extends Signer<PrivateKey>
     with _AsymmetricOperator<PrivateKey> {
-  _AsymmetricSigner(Identifier algorithm, PrivateKey key)
-      : super._(algorithm, key);
+  _AsymmetricSigner(super.algorithm, super.key) : super._();
 
   @override
   pc.Signer get _algorithm => super._algorithm as pc.Signer;
@@ -95,8 +94,7 @@ class _AsymmetricSigner extends Signer<PrivateKey>
 
 class _AsymmetricVerifier extends Verifier<PublicKey>
     with _AsymmetricOperator<PublicKey> {
-  _AsymmetricVerifier(Identifier algorithm, PublicKey key)
-      : super._(algorithm, key);
+  _AsymmetricVerifier(super.algorithm, super.key) : super._();
 
   @override
   pc.Signer get _algorithm => super._algorithm as pc.Signer;
@@ -130,7 +128,7 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
 }
 
 class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
-  _AsymmetricEncrypter(Identifier algorithm, Key key) : super._(algorithm, key);
+  _AsymmetricEncrypter(super.algorithm, super.key) : super._();
 
   @override
   pc.AsymmetricBlockCipher get _algorithm =>

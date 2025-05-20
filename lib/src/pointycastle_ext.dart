@@ -6,9 +6,7 @@ class ParametersWithIVAndAad<UnderlyingParameters extends CipherParameters>
     extends ParametersWithIV<UnderlyingParameters> {
   final Uint8List aad;
 
-  ParametersWithIVAndAad(
-      UnderlyingParameters parameters, Uint8List iv, this.aad)
-      : super(parameters, iv);
+  ParametersWithIVAndAad(super.parameters, super.iv, this.aad);
 }
 
 String toHex(Iterable<int> bytes) {

@@ -1,5 +1,3 @@
-library crypto_keys.algorithms;
-
 import 'dart:math' show Random;
 import 'dart:typed_data';
 
@@ -271,7 +269,7 @@ class Identifier {
 class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
   final T Function() factory;
 
-  AlgorithmIdentifier._(String name, this.factory) : super._(name);
+  AlgorithmIdentifier._(super.name, this.factory) : super._();
 
   static final _jwaAlgorithms = <String, AlgorithmIdentifier?>{
     // Algorithms for JWS
