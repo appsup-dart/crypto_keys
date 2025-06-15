@@ -1,7 +1,8 @@
-import 'package:test/test.dart';
-import 'package:crypto_keys/crypto_keys.dart';
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:crypto_keys/crypto_keys.dart';
+import 'package:test/test.dart';
 
 void _testSigning(
     KeyPair keyPair, AlgorithmIdentifier algorithm, Uint8List data,
@@ -1106,6 +1107,153 @@ void main() {
 
           _testSigning(keyPair, alg, data);
         }
+      });
+    });
+
+    group('EdDsa Signing', () {
+      test('Example Signing Using EdDSA with ED25519', () {
+        var jwk = {
+          'kty': 'OKP',
+          'crv': 'Ed25519',
+          'd': 'nWGxne_9WmC6hEr0kuwsxERJxWl7MmkZcDusAxyuf2A',
+          'x': '11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo'
+        };
+        var keyPair = KeyPair.fromJwk(jwk);
+
+        var data = Uint8List.fromList([
+          101,
+          121,
+          74,
+          104,
+          98,
+          71,
+          99,
+          105,
+          79,
+          105,
+          74,
+          70,
+          90,
+          69,
+          82,
+          84,
+          81,
+          83,
+          74,
+          57,
+          46,
+          82,
+          88,
+          104,
+          104,
+          98,
+          88,
+          66,
+          115,
+          90,
+          83,
+          66,
+          118,
+          90,
+          105,
+          66,
+          70,
+          90,
+          68,
+          73,
+          49,
+          78,
+          84,
+          69,
+          53,
+          73,
+          72,
+          78,
+          112,
+          90,
+          50,
+          53,
+          112,
+          98,
+          109,
+          99
+        ]);
+        var signature = Uint8List.fromList([
+          134,
+          12,
+          152,
+          210,
+          41,
+          127,
+          48,
+          96,
+          163,
+          63,
+          66,
+          115,
+          150,
+          114,
+          214,
+          27,
+          83,
+          207,
+          58,
+          222,
+          254,
+          211,
+          211,
+          198,
+          114,
+          243,
+          32,
+          220,
+          2,
+          27,
+          65,
+          30,
+          157,
+          89,
+          184,
+          98,
+          141,
+          195,
+          81,
+          226,
+          72,
+          184,
+          139,
+          41,
+          70,
+          142,
+          14,
+          65,
+          133,
+          91,
+          15,
+          183,
+          216,
+          59,
+          177,
+          91,
+          233,
+          2,
+          191,
+          204,
+          184,
+          205,
+          10,
+          2
+        ]);
+        _testSigning(keyPair, algorithms.signing.eddsa, data, signature, false);
+      });
+
+      test('Example Signing Using EdDSA with ED25519 generated Keys', () {
+        var text = 'Can we sign and verify this text';
+        var data = utf8.encode(text);
+
+        var keyPair = KeyPair.generateOkp(curves.ed25519);
+
+        _testSigning(keyPair, algorithms.signing.eddsa, data);
       });
     });
   });

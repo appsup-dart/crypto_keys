@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 import 'package:pointycastle/export.dart';
 
 class ParametersWithIVAndAad<UnderlyingParameters extends CipherParameters>
@@ -280,4 +281,66 @@ class AESKeyWrap implements BlockCipher {
   void reset() {
     throw UnsupportedError('Should not be called.');
   }
+}
+
+class EdDSASigner implements Signer {
+  Uint8List? _key;
+  @override
+  String get algorithmName => 'EdDSA';
+
+  EdDSASigner();
+
+  @override
+  EdSignature generateSignature(Uint8List message) {
+    var private = ed.newKeyFromSeed(_key!);
+    return EdSignature(ed.sign(private, message));
+  }
+
+  @override
+  void init(bool forSigning, CipherParameters params) {
+    if (params is! Ed25519CipherParameters) {
+      throw ArgumentError('Invalid CipherParameters');
+    }
+    if (forSigning && params.key is! PrivateKey) {
+      throw ArgumentError('Private Key needed for signing');
+    } else {
+      if (params.key is PrivateKey) {
+        _key = (params.key as Ed25519PrivateKey).privateKey;
+      } else {
+        _key = (params.key as Ed25519PublicKey).publicKey;
+      }
+    }
+  }
+
+  @override
+  void reset() {}
+
+  @override
+  bool verifySignature(Uint8List message, Signature signature) {
+    if (signature is! EdSignature) {
+      throw ArgumentError('Invalid signature');
+    }
+    return ed.verify(ed.PublicKey(_key!), message, signature.bytes);
+  }
+}
+
+class Ed25519CipherParameters extends AsymmetricKeyParameter {
+  Ed25519CipherParameters(AsymmetricKeyParameter params) : super(params.key);
+}
+
+class Ed25519PublicKey extends AsymmetricKey implements PublicKey {
+  Uint8List publicKey;
+  Ed25519PublicKey(this.publicKey);
+}
+
+class Ed25519PrivateKey extends AsymmetricKey implements PrivateKey {
+  Uint8List privateKey;
+
+  Ed25519PrivateKey(this.privateKey);
+}
+
+class EdSignature implements Signature {
+  Uint8List bytes;
+
+  EdSignature(this.bytes);
 }

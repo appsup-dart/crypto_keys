@@ -13,7 +13,7 @@ mixin _AsymmetricOperator<T extends Key> on Operator<T> {
       case 'P-521':
         return pc.ECCurve_secp521r1();
     }
-    throw ArgumentError('Unknwon curve type $name');
+    throw ArgumentError('Unknown curve type $name');
   }
 
   pc.ECDomainParameters get ecDomainParameters =>
@@ -34,6 +34,26 @@ mixin _AsymmetricOperator<T extends Key> on Operator<T> {
         k.modulus,
         k.exponent,
       ));
+    }
+    if (key is OkpPublicKey) {
+      var k = key as OkpPublicKey;
+
+      if (k.curve == curves.ed25519) {
+        return pc.PublicKeyParameter<pc.Ed25519PublicKey>(
+            pc.Ed25519PublicKey(k.okpPublicKey));
+      } else {
+        throw UnsupportedError('${k.curve} is not supported for signing now');
+      }
+    }
+    if (key is OkpPrivateKey) {
+      var k = key as OkpPrivateKey;
+
+      if (k.curve == curves.ed25519) {
+        return pc.PrivateKeyParameter<pc.Ed25519PrivateKey>(
+            pc.Ed25519PrivateKey(k.okpPrivateKey));
+      } else {
+        throw UnsupportedError('${k.curve} is not supported for signing now');
+      }
     }
     var d = ecDomainParameters;
 
@@ -64,9 +84,19 @@ class _AsymmetricSigner extends Signer<PrivateKey>
   @override
   Signature sign(List<int> data) {
     data = data is Uint8List ? data : Uint8List.fromList(data);
+
+    if (key is OkpKey) {
+      if (_algorithm.algorithmName != 'EdDSA') {
+        throw ArgumentError(
+            '${_algorithm.algorithmName} cannot be used with this key.');
+      }
+      _algorithm.init(true, pc.Ed25519CipherParameters(keyParameter));
+      return Signature(
+          (_algorithm.generateSignature(data) as pc.EdSignature).bytes);
+    }
+
     _algorithm.init(
         true, pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()));
-
     if (key is RsaKey) {
       return Signature(
           (_algorithm.generateSignature(data) as pc.RSASignature).bytes);
@@ -88,6 +118,7 @@ class _AsymmetricSigner extends Signer<PrivateKey>
 
       return Signature(bytes);
     }
+
     throw UnsupportedError('Unknown key type $key');
   }
 }
@@ -122,6 +153,10 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
             _bigIntFromBytes(signature.data.take(l)),
             _bigIntFromBytes(signature.data.skip(l)),
           ));
+    }
+    if (key is OkpKey) {
+      _algorithm.init(false, pc.Ed25519CipherParameters(keyParameter));
+      return _algorithm.verifySignature(data, pc.EdSignature(signature.data));
     }
     throw UnsupportedError('Unknown key type $key');
   }

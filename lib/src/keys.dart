@@ -99,6 +99,21 @@ class KeyPair {
             EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve));
   }
 
+  factory KeyPair.generateOkp(Identifier curve) {
+    if (curve == curves.ed25519) {
+      var key = ed.generateKey();
+
+      return KeyPair(
+          publicKey: OkpPublicKey(
+              curve: curve,
+              okpPublicKey: Uint8List.fromList(key.publicKey.bytes)),
+          privateKey: OkpPrivateKey(
+              curve: curve, okpPrivateKey: ed.seed(key.privateKey)));
+    } else {
+      throw UnsupportedError('Curve ${curve.name} is not supported');
+    }
+  }
+
   /// Create a key pair from a JsonWebKey
   factory KeyPair.fromJwk(Map<String, dynamic> jwk) {
     switch (jwk['kty']) {
@@ -137,6 +152,18 @@ class KeyPair {
                 ? EcPublicKey(
                     xCoordinate: _base64ToInt(jwk['x']),
                     yCoordinate: _base64ToInt(jwk['y']),
+                    curve: _parseCurve(jwk['crv']))
+                : null);
+      case 'OKP':
+        return KeyPair(
+            privateKey: jwk.containsKey('d') && jwk.containsKey('crv')
+                ? OkpPrivateKey(
+                    okpPrivateKey: Uint8List.fromList(_base64ToBytes(jwk['d'])),
+                    curve: _parseCurve(jwk['crv']))
+                : null,
+            publicKey: jwk.containsKey('x') && jwk.containsKey('crv')
+                ? OkpPublicKey(
+                    okpPublicKey: Uint8List.fromList(_base64ToBytes(jwk['x'])),
                     curve: _parseCurve(jwk['crv']))
                 : null);
     }
@@ -178,6 +205,10 @@ Identifier _parseCurve(String name) {
     'P-256K': curves.p256k,
     'P-384': curves.p384,
     'P-521': curves.p521,
+    'Ed25519': curves.ed25519,
+    'X25519': curves.x25519,
+    'Ed448': curves.ed448,
+    'X448': curves.x448
   }[name];
   if (v == null) {
     throw UnsupportedError('Unknown curve $name');
