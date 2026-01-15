@@ -99,6 +99,19 @@ class KeyPair {
             EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve));
   }
 
+  pc.ECDomainParameters? curveParameters() {
+    final privKey = privateKey;
+    final pubKey = publicKey;
+    if (privKey is EcKey) {
+      return _AsymmetricOperator.createCurveParameters(
+          (privKey as EcKey).curve);
+    } else if (pubKey is EcKey) {
+      return _AsymmetricOperator.createCurveParameters((pubKey as EcKey).curve);
+    } else {
+      return null;
+    }
+  }
+
   /// Create a key pair from a JsonWebKey
   factory KeyPair.fromJwk(Map<String, dynamic> jwk) {
     switch (jwk['kty']) {
@@ -178,6 +191,7 @@ Identifier _parseCurve(String name) {
     'P-256K': curves.p256k,
     'P-384': curves.p384,
     'P-521': curves.p521,
+    'BP-256': curves.bp256r1,
   }[name];
   if (v == null) {
     throw UnsupportedError('Unknown curve $name');

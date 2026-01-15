@@ -251,6 +251,9 @@ class _Curves {
 
   /// P-256K
   final p256k = const Identifier._('curve/P-256K');
+
+  /// BP256R1
+  final bp256r1 = const Identifier._('curve/BP-256');
 }
 
 /// An identifier for uniquely identify algorithms and other objects
@@ -303,6 +306,9 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
 
     /// ECDSA using P-521 and SHA-512
     'ES512': algorithms.signing.ecdsa.sha512,
+
+    /// ECDSA using BP256R1 and SHA-256
+    'BP256R1': algorithms.signing.ecdsa.sha256,
 
     /// RSASSA-PSS using SHA-256 and MGF1 with SHA-256
     'PS256': null,
