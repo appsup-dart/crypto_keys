@@ -88,7 +88,7 @@ class HybridEncAlgorithms extends Identifier {
   HybridEncAlgorithms() : super._('enc/hybrid');
 
   AlgorithmIdentifier withParameters(
-      {required keySize,
+      {required int keySize,
       required Identifier curve,
       required AlgorithmIdentifier<Digest> hkdfHash}) {
     return AlgorithmIdentifier._(
@@ -288,7 +288,8 @@ class _PssSignerFactory implements pc.Signer {
       return _delegate.verifySignature(message, signature);
     }
     if (signature is pc.RSASignature) {
-      return _delegate.verifySignature(message, pc.PSSSignature(signature.bytes));
+      return _delegate.verifySignature(
+          message, pc.PSSSignature(signature.bytes));
     }
     throw ArgumentError(
         'Expected RSA or PSS signature, got ${signature.runtimeType}');

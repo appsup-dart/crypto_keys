@@ -16,5 +16,5 @@ dependencies:
 
 dev_dependencies:
   test: ^1.16.2
-  lints: ^5.1.1
+  lints: ^6.1.0
   melos: ^6.3.2
