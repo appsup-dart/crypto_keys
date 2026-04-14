@@ -1,3 +1,7 @@
+## 0.3.1
+
+ - **FEAT**: add RSA-PSS PS256/PS384/PS512 support. ([c72b4c9c](https://github.com/appsup-dart/crypto_keys/commit/c72b4c9cfbb91b4f3d6b61291d94c73a1161b2bd))
+
 ## 0.3.0+2
 
  - **REFACTOR**: upgrade pointy castle dependency to 4 and minimum sdk to 3 (pr [#18](https://github.com/appsup-dart/crypto_keys/issues/18) from Bishop19). ([9fd6bb31](https://github.com/appsup-dart/crypto_keys/commit/9fd6bb3157fdd53c751e100a760169587bd9b065))
