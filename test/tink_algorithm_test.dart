@@ -408,7 +408,7 @@ void main() {
               sigHash: algorithms.digest.sha512,
               mgf1Hash: algorithms.digest.sha512,
               saltLength: 0));
-    }, skip: 'RSA-SSA-PSS not implemented');
+    });
   });
 
   group('Hybrid Encryption', () {

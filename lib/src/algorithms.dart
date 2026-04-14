@@ -210,13 +210,88 @@ class _RsaSigAlgorithms extends Identifier {
 class _RsaPssAlgorithms extends Identifier {
   _RsaPssAlgorithms() : super._('sig/RSA/PSS');
 
+  /// RSASSA-PSS using SHA-256 and MGF1 with SHA-256
+  late final sha256 = withParameters(
+      sigHash: algorithms.digest.sha256,
+      mgf1Hash: algorithms.digest.sha256,
+      saltLength: 32);
+
+  /// RSASSA-PSS using SHA-384 and MGF1 with SHA-384
+  late final sha384 = withParameters(
+      sigHash: algorithms.digest.sha384,
+      mgf1Hash: algorithms.digest.sha384,
+      saltLength: 48);
+
+  /// RSASSA-PSS using SHA-512 and MGF1 with SHA-512
+  late final sha512 = withParameters(
+      sigHash: algorithms.digest.sha512,
+      mgf1Hash: algorithms.digest.sha512,
+      saltLength: 64);
+
   AlgorithmIdentifier withParameters(
       {required AlgorithmIdentifier sigHash,
       required AlgorithmIdentifier mgf1Hash,
       required int saltLength}) {
     return AlgorithmIdentifier._(
-        'sig/RSA/PSS/$sigHash/mgf1$mgf1Hash/$saltLength',
-        () => throw UnimplementedError());
+        'sig/RSA/PSS/${sigHash.name}/mgf1${mgf1Hash.name}/$saltLength',
+        () => _PssSignerFactory(
+            sigDigest: sigHash.factory() as pc.Digest,
+            mgf1Digest: mgf1Hash.factory() as pc.Digest,
+            saltLength: saltLength));
+  }
+}
+
+class _PssSignerFactory implements pc.Signer {
+  final pc.Digest sigDigest;
+  final pc.Digest mgf1Digest;
+  final int saltLength;
+  late final pc.PSSSigner _delegate;
+
+  _PssSignerFactory(
+      {required this.sigDigest,
+      required this.mgf1Digest,
+      required this.saltLength}) {
+    _delegate = pc.PSSSigner(pc.RSAEngine(), sigDigest, mgf1Digest);
+  }
+
+  @override
+  String get algorithmName => _delegate.algorithmName;
+
+  @override
+  pc.Signature generateSignature(Uint8List message) =>
+      _delegate.generateSignature(message);
+
+  @override
+  void init(bool forSigning, pc.CipherParameters params) {
+    final keyParameters = switch (params) {
+      pc.ParametersWithRandom(:final parameters) => parameters,
+      pc.AsymmetricKeyParameter() => params,
+      _ => throw ArgumentError(
+          'Unsupported parameter type for RSA-PSS: ${params.runtimeType}')
+    };
+    final random = switch (params) {
+      pc.ParametersWithRandom(:final random) => random,
+      _ => DefaultSecureRandom(),
+    };
+    _delegate.init(
+      forSigning,
+      pc.ParametersWithSaltConfiguration(keyParameters, random, saltLength),
+    );
+  }
+
+  @override
+  void reset() => _delegate.reset();
+
+  @override
+  bool verifySignature(Uint8List message, pc.Signature signature) {
+    if (signature is pc.PSSSignature) {
+      return _delegate.verifySignature(message, signature);
+    }
+    if (signature is pc.RSASignature) {
+      return _delegate.verifySignature(message, pc.PSSSignature(signature.bytes));
+    }
+    throw ArgumentError(
+        'Expected RSA or PSS signature, got ${signature.runtimeType}');
   }
 }
 
@@ -305,13 +380,13 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
     'ES512': algorithms.signing.ecdsa.sha512,
 
     /// RSASSA-PSS using SHA-256 and MGF1 with SHA-256
-    'PS256': null,
+    'PS256': algorithms.signing.rsa.pss.sha256,
 
     /// RSASSA-PSS using SHA-384 and MGF1 with SHA-384
-    'PS384': null,
+    'PS384': algorithms.signing.rsa.pss.sha384,
 
     /// RSASSA-PSS using SHA-512 and MGF1 with SHA-512
-    'PS512': null,
+    'PS512': algorithms.signing.rsa.pss.sha512,
 
     /// No digital signature or MAC
     'none': null,

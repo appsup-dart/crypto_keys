@@ -68,8 +68,14 @@ class _AsymmetricSigner extends Signer<PrivateKey>
         true, pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()));
 
     if (key is RsaKey) {
-      return Signature(
-          (_algorithm.generateSignature(data) as pc.RSASignature).bytes);
+      final signature = _algorithm.generateSignature(data);
+      if (signature is pc.RSASignature) {
+        return Signature(signature.bytes);
+      }
+      if (signature is pc.PSSSignature) {
+        return Signature(signature.bytes);
+      }
+      throw UnsupportedError('Unknown RSA signature type ${signature.runtimeType}');
     }
     if (key is EcKey) {
       var sig = _algorithm.generateSignature(data) as pc.ECSignature;
@@ -105,8 +111,10 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
       _algorithm.init(false,
           pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')));
       try {
-        return _algorithm.verifySignature(
-            data, pc.RSASignature(signature.data));
+        final rsaSignature = _algorithm is pc.PSSSigner
+            ? pc.PSSSignature(signature.data)
+            : pc.RSASignature(signature.data);
+        return _algorithm.verifySignature(data, rsaSignature);
       } on ArgumentError {
         return false;
       }
