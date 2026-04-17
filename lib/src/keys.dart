@@ -34,6 +34,14 @@ abstract mixin class PrivateKey implements Key {
 
     return _AsymmetricSigner(algorithm, this);
   }
+
+  /// Creates a [KeyDeriver] using this key and the specified algorithm.
+  KeyDeriver createKeyDeriver(Identifier algorithm) {
+    if (this is SymmetricKey) {
+      throw UnsupportedError('Key derivation requires an asymmetric key pair');
+    }
+    return _AsymmetricKeyDeriver(algorithm, this);
+  }
 }
 
 /// Holds a key pair (private and public key)
@@ -158,6 +166,14 @@ class KeyPair {
       throw StateError('Need a public key to create a verifier.');
     }
     return publicKey!.createVerifier(algorithm);
+  }
+
+  /// Creates a [KeyDeriver] for this key pair.
+  KeyDeriver createKeyDeriver(Identifier algorithm) {
+    if (privateKey == null) {
+      throw StateError('Need a private key to create a key deriver.');
+    }
+    return privateKey!.createKeyDeriver(algorithm);
   }
 }
 

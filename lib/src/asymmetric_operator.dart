@@ -75,7 +75,8 @@ class _AsymmetricSigner extends Signer<PrivateKey>
       if (signature is pc.PSSSignature) {
         return Signature(signature.bytes);
       }
-      throw UnsupportedError('Unknown RSA signature type ${signature.runtimeType}');
+      throw UnsupportedError(
+          'Unknown RSA signature type ${signature.runtimeType}');
     }
     if (key is EcKey) {
       var sig = _algorithm.generateSignature(data) as pc.ECSignature;
@@ -161,6 +162,46 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
         true, pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()));
 
     return EncryptionResult(_algorithm.process(input as Uint8List));
+  }
+}
+
+class _AsymmetricKeyDeriver extends KeyDeriver
+    with _AsymmetricOperator<PrivateKey> {
+  _AsymmetricKeyDeriver(super.algorithm, super.privateKey) : super._();
+
+  @override
+  pc.Digest get _algorithm => super._algorithm as pc.Digest;
+
+  @override
+  Uint8List deriveKey(
+      {required PublicKey peerPublicKey,
+      required int keyBitLength,
+      Uint8List? otherInfo}) {
+    if (key is! EcPrivateKey) {
+      throw UnsupportedError(
+          'Key derivation is only supported for EC private keys');
+    }
+    if (peerPublicKey is! EcPublicKey) {
+      throw UnsupportedError('Key derivation requires an EC public peer key');
+    }
+    final privateEc = key as EcPrivateKey;
+    final peerEc = peerPublicKey;
+    if (privateEc.curve != peerEc.curve) {
+      throw ArgumentError(
+          'ECDH requires matching curves, got ${privateEc.curve.name} '
+          'and ${peerEc.curve.name}');
+    }
+
+    final z = _ecdh.deriveSharedSecret(
+      privateKey: privateEc,
+      publicKey: peerEc,
+    );
+    return _concatKdf.deriveKey(
+      sharedSecret: z,
+      otherInfo: otherInfo ?? Uint8List(0),
+      keyBitLength: keyBitLength,
+      digest: _algorithm,
+    );
   }
 }
 

@@ -97,6 +97,39 @@ main() {
 
 ```
 
+### Key Derivation
+
+Key derivation means: "create a new cryptographic key from existing secret
+material".
+
+In practice, this is useful when:
+
+- ECDH is used: you derive key material from your private key and someone
+  else's public key, while the other person can derive the same key material
+  from their private key and your public key, without transferring the key
+  itself;
+- you want to derive separate keys for different purposes from one shared
+  secret (for example one key for encryption, another for something else);
+- a protocol gives you context data (`otherInfo`) so both sides derive exactly
+  the same key in a safe and predictable way.
+
+Key derivation is exposed through the operator-style API aligned with
+Signer/Verifier/Encrypter:
+
+```dart
+final deriver = myKeyPair.createKeyDeriver(
+  algorithms.derivation.concatKdf.sha256,
+);
+
+final otherInfo = ... // protocol-specific context bytes
+
+final derived = deriver.deriveKey(
+  peerPublicKey: peerPublicEcKey,
+  keyBitLength: 256,
+  otherInfo: otherInfo,
+);
+```
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].

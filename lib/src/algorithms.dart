@@ -27,11 +27,37 @@ class Algorithms {
   /// Contains the identifiers for supported digest algorithms
   final digest = DigestAlgorithms();
 
+  /// Contains the identifiers for supported key derivation algorithms
+  final derivation = DerivationAlgorithms();
+
   @Deprecated('Use encryption.aes.cbc instead.')
   // ignore: non_constant_identifier_names
   AlgorithmIdentifier get encrypting_aes_cbc => encryption.aes.cbc;
 
   Algorithms();
+}
+
+class DerivationAlgorithms extends Identifier {
+  /// Contains the identifiers for supported Concat KDF algorithms
+  final concatKdf = _ConcatKdfAlgorithms();
+
+  DerivationAlgorithms() : super._('derive');
+}
+
+class _ConcatKdfAlgorithms extends Identifier {
+  /// Concat KDF using SHA-256
+  final sha256 = AlgorithmIdentifier._(
+      'derive/ConcatKDF/SHA-256', () => pc.SHA256Digest());
+
+  /// Concat KDF using SHA-384
+  final sha384 = AlgorithmIdentifier._(
+      'derive/ConcatKDF/SHA-384', () => pc.SHA384Digest());
+
+  /// Concat KDF using SHA-512
+  final sha512 = AlgorithmIdentifier._(
+      'derive/ConcatKDF/SHA-512', () => pc.SHA512Digest());
+
+  _ConcatKdfAlgorithms() : super._('derive/ConcatKDF');
 }
 
 class DigestAlgorithms extends Identifier {

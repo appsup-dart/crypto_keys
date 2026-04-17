@@ -15,6 +15,7 @@ export 'src/algorithms.dart'
 part 'src/asymmetric_operator.dart';
 part 'src/ec_keys.dart';
 part 'src/keys.dart';
+part 'src/key_derivation.dart';
 part 'src/operator.dart';
 part 'src/rsa_keys.dart';
 part 'src/symmetric_keys.dart';

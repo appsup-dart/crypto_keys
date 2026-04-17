@@ -33,6 +33,21 @@ abstract class Verifier<T extends PublicKey> extends Operator<T> {
   bool verify(Uint8List data, Signature signature);
 }
 
+/// Operator for deriving shared key material from a private/public key pair.
+///
+/// The local private key is [Operator.key]. The peer public key is provided per
+/// derivation call to support deriving with multiple peers using one operator.
+abstract class KeyDeriver extends Operator<PrivateKey> {
+  KeyDeriver._(Identifier algorithm, PrivateKey privateKey)
+      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, privateKey);
+
+  /// Derives key material from [key] and [peerPublicKey].
+  Uint8List deriveKey(
+      {required PublicKey peerPublicKey,
+      required int keyBitLength,
+      Uint8List? otherInfo});
+}
+
 /// Represents the result of signing some data
 abstract class Signature {
   /// Byte representation of the signature
