@@ -1,7 +1,10 @@
 part of '../crypto_keys.dart';
 
+/// Shared base type for secret material used by operators.
+abstract mixin class KeyMaterial {}
+
 /// A cryptographic key
-abstract mixin class Key {
+abstract mixin class Key implements KeyMaterial {
   /// Creates an [Encrypter] using this key and the specified algorithm
   Encrypter createEncrypter(Identifier algorithm) {
     if (this is SymmetricKey) {
@@ -10,6 +13,20 @@ abstract mixin class Key {
 
     return _AsymmetricEncrypter(algorithm, this);
   }
+}
+
+/// A password input for password-based key derivation.
+class Password with KeyMaterial {
+  final Uint8List value;
+
+  Password(List<int> value) : value = Uint8List.fromList(value);
+
+  factory Password.fromString(String value) =>
+      Password(Uint8List.fromList(utf8.encode(value)));
+
+  /// Creates a [PasswordKeyDeriver] using this password and algorithm.
+  PasswordKeyDeriver createKeyDeriver(Identifier algorithm) =>
+      _PasswordBasedKeyDeriver(algorithm, this);
 }
 
 /// A cryptographic public key

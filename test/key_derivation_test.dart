@@ -98,6 +98,89 @@ void main() {
       expect(key.length, 48);
     });
   });
+
+  group('PasswordKeyDeriver operator', () {
+    test('matches RFC 6070 PBKDF2-HMAC-SHA1 vectors', () {
+      // RFC 6070, section 2:
+      // https://www.rfc-editor.org/rfc/rfc6070#section-2
+      final deriver = Password.fromString('password')
+          .createKeyDeriver(algorithms.derivation.pbkdf2.sha1);
+
+      final dk1 = deriver.deriveKey(
+          salt: Uint8List.fromList('salt'.codeUnits),
+          iterations: 1,
+          keyBitLength: 20 * 8);
+      expect(dk1, _hexToBytes('0c60c80f961f0e71f3a9b524af6012062fe037a6'));
+
+      final dk2 = deriver.deriveKey(
+          salt: Uint8List.fromList('salt'.codeUnits),
+          iterations: 2,
+          keyBitLength: 20 * 8);
+      expect(dk2, _hexToBytes('ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957'));
+
+      final dk3 = deriver.deriveKey(
+          salt: Uint8List.fromList('salt'.codeUnits),
+          iterations: 4096,
+          keyBitLength: 20 * 8);
+      expect(dk3, _hexToBytes('4b007901b765489abead49d926f721d065a429c1'));
+    });
+
+    test('matches known PBKDF2-HMAC-SHA256 test vector', () {
+      final deriver = Password.fromString('password').createKeyDeriver(
+        algorithms.derivation.pbkdf2.sha256,
+      );
+
+      final key = deriver.deriveKey(
+        salt: Uint8List.fromList('salt'.codeUnits),
+        iterations: 1,
+        keyBitLength: 256,
+      );
+
+      expect(
+          key,
+          _hexToBytes(
+              '120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b'));
+    });
+
+    test('derivation is deterministic and parameter-sensitive', () {
+      final deriver = Password.fromString('correct horse battery staple')
+          .createKeyDeriver(algorithms.derivation.pbkdf2.sha512);
+      final salt = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      final key1 =
+          deriver.deriveKey(salt: salt, iterations: 1000, keyBitLength: 256);
+      final key2 =
+          deriver.deriveKey(salt: salt, iterations: 1000, keyBitLength: 256);
+      final differentSalt = deriver.deriveKey(
+          salt: Uint8List.fromList([9, 2, 3, 4, 5, 6, 7, 8]),
+          iterations: 1000,
+          keyBitLength: 256);
+      final differentIterations =
+          deriver.deriveKey(salt: salt, iterations: 2000, keyBitLength: 256);
+
+      expect(key1, key2);
+      expect(differentSalt, isNot(key1));
+      expect(differentIterations, isNot(key1));
+    });
+
+    test('invalid parameters throw', () {
+      final deriver = Password.fromString('pw')
+          .createKeyDeriver(algorithms.derivation.pbkdf2.sha256);
+
+      expect(
+          () => deriver.deriveKey(
+              salt: Uint8List(0), iterations: 1000, keyBitLength: 128),
+          throwsArgumentError);
+      expect(
+          () => deriver.deriveKey(
+              salt: Uint8List.fromList([1]), iterations: 0, keyBitLength: 128),
+          throwsArgumentError);
+      expect(
+          () => deriver.deriveKey(
+              salt: Uint8List.fromList([1]), iterations: 1000, keyBitLength: 0),
+          throwsArgumentError);
+    });
+  });
 }
 
 Uint8List _buildOtherInfo(
@@ -125,4 +208,15 @@ Uint8List _u32be(int value) {
   final b = Uint8List(4);
   b.buffer.asByteData().setUint32(0, value);
   return b;
+}
+
+Uint8List _hexToBytes(String hex) {
+  if (hex.length.isOdd) {
+    throw ArgumentError.value(hex, 'hex', 'Length must be even');
+  }
+  final out = Uint8List(hex.length ~/ 2);
+  for (var i = 0; i < out.length; i++) {
+    out[i] = int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16);
+  }
+  return out;
 }

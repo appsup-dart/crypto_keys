@@ -1,8 +1,8 @@
 part of '../crypto_keys.dart';
 
 /// Base class for cryptographic operations
-abstract class Operator<T extends Key> {
-  /// The key used for this operation
+abstract class Operator<T extends KeyMaterial> {
+  /// The key material used for this operation
   final T key;
 
   /// The algorithm used for this operation
@@ -46,6 +46,18 @@ abstract class KeyDeriver extends Operator<PrivateKey> {
       {required PublicKey peerPublicKey,
       required int keyBitLength,
       Uint8List? otherInfo});
+}
+
+/// Operator for deriving key material from a password.
+abstract class PasswordKeyDeriver extends Operator<Password> {
+  PasswordKeyDeriver._(Identifier algorithm, Password password)
+      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, password);
+
+  /// Derives key material from a password and KDF parameters.
+  Uint8List deriveKey(
+      {required Uint8List salt,
+      required int iterations,
+      required int keyBitLength});
 }
 
 /// Represents the result of signing some data

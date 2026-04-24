@@ -90,3 +90,32 @@ class _ConcatKdf {
     return Uint8List.fromList(output.toBytes().take(keyLen).toList());
   }
 }
+
+class _PasswordBasedKeyDeriver extends PasswordKeyDeriver {
+  _PasswordBasedKeyDeriver(super.algorithm, super.password) : super._();
+
+  @override
+  pc.KeyDerivator get _algorithm => super._algorithm as pc.KeyDerivator;
+
+  @override
+  Uint8List deriveKey(
+      {required Uint8List salt,
+      required int iterations,
+      required int keyBitLength}) {
+    if (salt.isEmpty) {
+      throw ArgumentError.value(salt, 'salt', 'Salt must not be empty');
+    }
+    if (iterations <= 0) {
+      throw ArgumentError.value(
+          iterations, 'iterations', 'Must be greater than 0');
+    }
+    if (keyBitLength <= 0) {
+      throw ArgumentError.value(
+          keyBitLength, 'keyBitLength', 'Must be greater than 0');
+    }
+
+    final keyLength = (keyBitLength + 7) ~/ 8;
+    _algorithm.init(pc.Pbkdf2Parameters(salt, iterations, keyLength));
+    return _algorithm.process(key.value);
+  }
+}

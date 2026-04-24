@@ -41,6 +41,9 @@ class DerivationAlgorithms extends Identifier {
   /// Contains the identifiers for supported Concat KDF algorithms
   final concatKdf = _ConcatKdfAlgorithms();
 
+  /// Contains the identifiers for supported PBKDF2 algorithms.
+  final pbkdf2 = _Pbkdf2Algorithms();
+
   DerivationAlgorithms() : super._('derive');
 }
 
@@ -58,6 +61,30 @@ class _ConcatKdfAlgorithms extends Identifier {
       'derive/ConcatKDF/SHA-512', () => pc.SHA512Digest());
 
   _ConcatKdfAlgorithms() : super._('derive/ConcatKDF');
+}
+
+class _Pbkdf2Algorithms extends Identifier {
+  /// PBKDF2 using HMAC-SHA-1
+  final sha1 = AlgorithmIdentifier._(
+      'derive/PBKDF2/SHA-1',
+      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA1Digest(), 64)));
+
+  /// PBKDF2 using HMAC-SHA-256
+  final sha256 = AlgorithmIdentifier._(
+      'derive/PBKDF2/SHA-256',
+      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA256Digest(), 64)));
+
+  /// PBKDF2 using HMAC-SHA-384
+  final sha384 = AlgorithmIdentifier._(
+      'derive/PBKDF2/SHA-384',
+      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA384Digest(), 128)));
+
+  /// PBKDF2 using HMAC-SHA-512
+  final sha512 = AlgorithmIdentifier._(
+      'derive/PBKDF2/SHA-512',
+      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA512Digest(), 128)));
+
+  _Pbkdf2Algorithms() : super._('derive/PBKDF2');
 }
 
 class DigestAlgorithms extends Identifier {
