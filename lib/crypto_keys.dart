@@ -11,6 +11,11 @@ import 'src/pointycastle_ext.dart' as pc;
 
 export 'src/algorithms.dart'
     show algorithms, curves, Algorithms, AlgorithmIdentifier, Identifier;
+export 'src/errors.dart'
+    show
+        CryptoKeysException,
+        AuthenticationTagMismatchException,
+        KeyUnwrapIntegrityException;
 
 part 'src/asymmetric_operator.dart';
 part 'src/ec_keys.dart';

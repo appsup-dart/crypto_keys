@@ -1399,6 +1399,34 @@ void main() {
             keyPair, algorithms.encryption.aes.cbcWithHmac.sha512, data);
       });
 
+      test('AES_CBC_HMAC throws typed exception on tag mismatch', () {
+        final keyPair = KeyPair.generateSymmetric(256);
+        final algorithm = algorithms.encryption.aes.cbcWithHmac.sha256;
+        final encrypter = keyPair.publicKey!.createEncrypter(algorithm);
+        final decrypter = keyPair.privateKey!.createEncrypter(algorithm);
+
+        final encrypted = encrypter.encrypt(
+          data,
+          initializationVector: Uint8List(16),
+          additionalAuthenticatedData: Uint8List.fromList([1, 2, 3]),
+        );
+        final tamperedTag = Uint8List.fromList(encrypted.authenticationTag!)
+          ..[encrypted.authenticationTag!.length - 1] ^= 0x01;
+
+        expect(
+          () => decrypter.decrypt(
+            EncryptionResult(
+              Uint8List.fromList(encrypted.data),
+              initializationVector: encrypted.initializationVector,
+              additionalAuthenticatedData:
+                  encrypted.additionalAuthenticatedData,
+              authenticationTag: tamperedTag,
+            ),
+          ),
+          throwsA(isA<AuthenticationTagMismatchException>()),
+        );
+      });
+
       test('Example encryption using AES_128_GCM', () {
         var keyPair = KeyPair.generateSymmetric(128);
         _testEncryption(keyPair, algorithms.encryption.aes.gcm, data);
@@ -1748,7 +1776,23 @@ void main() {
           var keyPair = KeyPair.generateSymmetric(256);
           _testEncryption(keyPair, algorithms.encryption.aes.keyWrap, data);
         });
-      }, /*skip: 'AES key wrap not implemented'*/
+
+        test('AES Key Wrap throws typed exception on integrity check failure',
+            () {
+          final keyPair =
+              KeyPair.fromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
+          final encrypter = keyPair.privateKey!
+              .createEncrypter(algorithms.encryption.aes.keyWrap);
+
+          final encrypted = encrypter.encrypt(data);
+          final tampered = Uint8List.fromList(encrypted.data)..[0] ^= 0x01;
+
+          expect(
+            () => encrypter.decrypt(EncryptionResult(tampered)),
+            throwsA(isA<KeyUnwrapIntegrityException>()),
+          );
+        });
+      },
     );
 
     group('Encryption with RSA keys', () {
