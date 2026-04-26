@@ -171,13 +171,8 @@ class _AsymmetricKeyDeriver
   _AsymmetricKeyDeriver(super.algorithm, super.keyMaterial) : super._();
 
   @override
-  pc.Digest get _algorithm => super._algorithm as pc.Digest;
-
-  @override
   Uint8List deriveKey(EcdhKeyDeriverParams params) {
     final peerPublicKey = params.peerPublicKey;
-    final keyBitLength = params.keyBitLength;
-    final otherInfo = params.otherInfo;
     if (key is! EcPrivateKey) {
       throw UnsupportedError(
           'Key derivation is only supported for EC private keys');
@@ -197,12 +192,7 @@ class _AsymmetricKeyDeriver
       privateKey: privateEc,
       publicKey: peerEc,
     );
-    return _concatKdf.deriveKey(
-      sharedSecret: z,
-      otherInfo: otherInfo ?? Uint8List(0),
-      keyBitLength: keyBitLength,
-      digest: _algorithm,
-    );
+    return z;
   }
 }
 

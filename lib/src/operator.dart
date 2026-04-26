@@ -20,13 +20,8 @@ sealed class KeyDeriverParams {
 
   /// Shorthand factory for [EcdhKeyDeriverParams].
   static EcdhKeyDeriverParams ecdh(
-          {required PublicKey peerPublicKey,
-          required int keyBitLength,
-          Uint8List? otherInfo}) =>
-      EcdhKeyDeriverParams(
-          peerPublicKey: peerPublicKey,
-          keyBitLength: keyBitLength,
-          otherInfo: otherInfo);
+          {required PublicKey peerPublicKey}) =>
+      EcdhKeyDeriverParams(peerPublicKey: peerPublicKey);
 
   /// Shorthand factory for [Pbkdf2KeyDeriverParams].
   static Pbkdf2KeyDeriverParams pbkdf2(
@@ -42,18 +37,19 @@ sealed class KeyDeriverParams {
           required int keyBitLength,
           Uint8List? info}) =>
       HkdfKeyDeriverParams(salt: salt, keyBitLength: keyBitLength, info: info);
+
+  /// Shorthand factory for [ConcatKdfKeyDeriverParams].
+  static ConcatKdfKeyDeriverParams concatKdf(
+          {required int keyBitLength, Uint8List? otherInfo}) =>
+      ConcatKdfKeyDeriverParams(
+          keyBitLength: keyBitLength, otherInfo: otherInfo);
 }
 
 /// Parameters for ECDH + Concat KDF derivation.
 class EcdhKeyDeriverParams extends KeyDeriverParams {
   final PublicKey peerPublicKey;
-  final int keyBitLength;
-  final Uint8List? otherInfo;
 
-  const EcdhKeyDeriverParams(
-      {required this.peerPublicKey,
-      required this.keyBitLength,
-      this.otherInfo});
+  const EcdhKeyDeriverParams({required this.peerPublicKey});
 }
 
 /// Parameters for PBKDF2 key derivation.
@@ -76,6 +72,15 @@ class HkdfKeyDeriverParams extends KeyDeriverParams {
 
   const HkdfKeyDeriverParams(
       {required this.salt, this.info, required this.keyBitLength});
+}
+
+/// Parameters for Concat KDF key derivation.
+class ConcatKdfKeyDeriverParams extends KeyDeriverParams {
+  final int keyBitLength;
+  final Uint8List? otherInfo;
+
+  const ConcatKdfKeyDeriverParams(
+      {required this.keyBitLength, this.otherInfo});
 }
 
 /// Operator for signing

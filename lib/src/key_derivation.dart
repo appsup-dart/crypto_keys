@@ -121,31 +121,38 @@ class _PasswordBasedKeyDeriver
   }
 }
 
-class _SecretBytesKeyDeriver
-    extends KeyDeriver<SecretBytes, HkdfKeyDeriverParams> {
+class _SecretBytesKeyDeriver extends KeyDeriver<SecretBytes, KeyDeriverParams> {
   _SecretBytesKeyDeriver(super.algorithm, super.keyMaterial) : super._();
 
   @override
-  pc.KeyDerivator get _algorithm => super._algorithm as pc.KeyDerivator;
-
-  @override
-  Uint8List deriveKey(HkdfKeyDeriverParams params) {
-    if (params.keyBitLength <= 0) {
-      throw ArgumentError.value(
-          params.keyBitLength, 'keyBitLength', 'Must be greater than 0');
-    }
+  Uint8List deriveKey(KeyDeriverParams params) {
     if (key.value.isEmpty) {
       throw ArgumentError.value(
           key.value, 'key', 'Secret bytes must not be empty');
     }
-
-    final keyLength = (params.keyBitLength + 7) ~/ 8;
-    _algorithm.init(pc.HkdfParameters(
-      key.value,
-      keyLength,
-      params.salt,
-      params.info ?? Uint8List(0),
-    ));
-    return _algorithm.process(Uint8List(0));
+    if (params is HkdfKeyDeriverParams) {
+      if (params.keyBitLength <= 0) {
+        throw ArgumentError.value(
+            params.keyBitLength, 'keyBitLength', 'Must be greater than 0');
+      }
+      final keyLength = (params.keyBitLength + 7) ~/ 8;
+      final algorithm = _algorithm as pc.KeyDerivator;
+      algorithm.init(pc.HkdfParameters(
+        key.value,
+        keyLength,
+        params.salt,
+        params.info ?? Uint8List(0),
+      ));
+      return algorithm.process(Uint8List(0));
+    }
+    if (params is ConcatKdfKeyDeriverParams) {
+      return _concatKdf.deriveKey(
+        sharedSecret: key.value,
+        otherInfo: params.otherInfo ?? Uint8List(0),
+        keyBitLength: params.keyBitLength,
+        digest: _algorithm as pc.Digest,
+      );
+    }
+    throw ArgumentError('Unsupported key derivation params: ${params.runtimeType}');
   }
 }

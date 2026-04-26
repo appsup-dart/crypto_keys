@@ -8,10 +8,11 @@ void main() {
     test('both parties derive identical key material', () {
       final a = KeyPair.generateEc(curves.p256);
       final b = KeyPair.generateEc(curves.p256);
-      final alg = algorithms.derivation.concatKdf.sha256;
+      final ecdhAlg = algorithms.derivation.ecdh;
+      final kdfAlg = algorithms.derivation.concatKdf.sha256;
 
-      final aDeriver = a.createKeyDeriver(alg);
-      final bDeriver = b.createKeyDeriver(alg);
+      final aDeriver = a.createKeyDeriver(ecdhAlg);
+      final bDeriver = b.createKeyDeriver(ecdhAlg);
       final otherInfo = _buildOtherInfo(
         algorithmId: Uint8List.fromList('key-agreement'.codeUnits),
         partyUInfo: Uint8List.fromList([1, 2, 3]),
@@ -19,14 +20,15 @@ void main() {
         keyBitLength: 256,
       );
 
-      final aKey = aDeriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!,
-          keyBitLength: 256,
-          otherInfo: otherInfo));
-      final bKey = bDeriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: a.publicKey!,
-          keyBitLength: 256,
-          otherInfo: otherInfo));
+      final aZ = aDeriver
+          .deriveKey(KeyDeriverParams.ecdh(peerPublicKey: b.publicKey!));
+      final bZ = bDeriver
+          .deriveKey(KeyDeriverParams.ecdh(peerPublicKey: a.publicKey!));
+
+      final aKey = SecretBytes(aZ).createKeyDeriver(kdfAlg).deriveKey(
+          KeyDeriverParams.concatKdf(keyBitLength: 256, otherInfo: otherInfo));
+      final bKey = SecretBytes(bZ).createKeyDeriver(kdfAlg).deriveKey(
+          KeyDeriverParams.concatKdf(keyBitLength: 256, otherInfo: otherInfo));
 
       expect(aKey, bKey);
     });
@@ -34,12 +36,11 @@ void main() {
     test('curve mismatch throws', () {
       final a = KeyPair.generateEc(curves.p256);
       final b = KeyPair.generateEc(curves.p384);
-      final deriver =
-          a.createKeyDeriver(algorithms.derivation.concatKdf.sha256);
+      final deriver = a.createKeyDeriver(algorithms.derivation.ecdh);
 
       expect(
-        () => deriver.deriveKey(KeyDeriverParams.ecdh(
-            peerPublicKey: b.publicKey!, keyBitLength: 256)),
+        () => deriver
+            .deriveKey(KeyDeriverParams.ecdh(peerPublicKey: b.publicKey!)),
         throwsArgumentError,
       );
     });
@@ -47,8 +48,8 @@ void main() {
     test('derivation is deterministic and parameter-sensitive', () {
       final a = KeyPair.generateEc(curves.p384);
       final b = KeyPair.generateEc(curves.p384);
-      final deriver =
-          a.createKeyDeriver(algorithms.derivation.concatKdf.sha256);
+      final deriver = a.createKeyDeriver(algorithms.derivation.ecdh);
+      final kdfAlg = algorithms.derivation.concatKdf.sha256;
 
       final baseInfo = _buildOtherInfo(
         algorithmId: Uint8List.fromList('kdf-a'.codeUnits),
@@ -56,30 +57,30 @@ void main() {
         partyVInfo: Uint8List.fromList([2]),
         keyBitLength: 256,
       );
-      final key1 = deriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: baseInfo));
-      final key2 = deriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: baseInfo));
+      final z =
+          deriver.deriveKey(KeyDeriverParams.ecdh(peerPublicKey: b.publicKey!));
+      final kdfDeriver = SecretBytes(z).createKeyDeriver(kdfAlg);
+      final key1 = kdfDeriver.deriveKey(
+          KeyDeriverParams.concatKdf(keyBitLength: 256, otherInfo: baseInfo));
+      final key2 = kdfDeriver.deriveKey(
+          KeyDeriverParams.concatKdf(keyBitLength: 256, otherInfo: baseInfo));
       expect(key1, key2);
 
-      final differentAlg = deriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!,
+      final differentAlg = kdfDeriver.deriveKey(KeyDeriverParams.concatKdf(
           keyBitLength: 256,
           otherInfo: _buildOtherInfo(
               algorithmId: Uint8List.fromList('kdf-b'.codeUnits),
               partyUInfo: Uint8List.fromList([1]),
               partyVInfo: Uint8List.fromList([2]),
               keyBitLength: 256)));
-      final differentU = deriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!,
+      final differentU = kdfDeriver.deriveKey(KeyDeriverParams.concatKdf(
           keyBitLength: 256,
           otherInfo: _buildOtherInfo(
               algorithmId: Uint8List.fromList('kdf-a'.codeUnits),
               partyUInfo: Uint8List.fromList([9]),
               partyVInfo: Uint8List.fromList([2]),
               keyBitLength: 256)));
-      final differentV = deriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!,
+      final differentV = kdfDeriver.deriveKey(KeyDeriverParams.concatKdf(
           keyBitLength: 256,
           otherInfo: _buildOtherInfo(
               algorithmId: Uint8List.fromList('kdf-a'.codeUnits),
@@ -95,11 +96,14 @@ void main() {
     test('derived key length equals requested bit length', () {
       final a = KeyPair.generateEc(curves.p521);
       final b = KeyPair.generateEc(curves.p521);
-      final deriver =
-          a.createKeyDeriver(algorithms.derivation.concatKdf.sha512);
+      final deriver = a.createKeyDeriver(algorithms.derivation.ecdh);
+      final kdfAlg = algorithms.derivation.concatKdf.sha512;
 
-      final key = deriver.deriveKey(KeyDeriverParams.ecdh(
-          peerPublicKey: b.publicKey!, keyBitLength: 384));
+      final z =
+          deriver.deriveKey(KeyDeriverParams.ecdh(peerPublicKey: b.publicKey!));
+      final key = SecretBytes(z)
+          .createKeyDeriver(kdfAlg)
+          .deriveKey(KeyDeriverParams.concatKdf(keyBitLength: 384));
       expect(key.length, 48);
     });
   });

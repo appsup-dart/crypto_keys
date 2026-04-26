@@ -44,7 +44,7 @@ class SecretBytes with KeyMaterial, CanDeriveKey {
 
   /// Creates a [KeyDeriver] using these bytes and algorithm.
   @override
-  KeyDeriver<SecretBytes, HkdfKeyDeriverParams> createKeyDeriver(
+  KeyDeriver<SecretBytes, KeyDeriverParams> createKeyDeriver(
           Identifier algorithm) =>
       _SecretBytesKeyDeriver(algorithm, this);
 }

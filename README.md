@@ -118,13 +118,18 @@ Signer/Verifier/Encrypter:
 
 ```dart
 final deriver = myKeyPair.createKeyDeriver(
-  algorithms.derivation.concatKdf.sha256,
+  algorithms.derivation.ecdh,
 );
 
 final otherInfo = ... // protocol-specific context bytes
 
-final derived = deriver.deriveKey(.ecdh(
+final sharedSecret = deriver.deriveKey(KeyDeriverParams.ecdh(
   peerPublicKey: peerPublicEcKey,
+));
+
+final derived = SecretBytes(sharedSecret)
+    .createKeyDeriver(algorithms.derivation.concatKdf.sha256)
+    .deriveKey(KeyDeriverParams.concatKdf(
   keyBitLength: 256,
   otherInfo: otherInfo,
 ));

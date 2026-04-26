@@ -38,6 +38,12 @@ class Algorithms {
 }
 
 class DerivationAlgorithms extends Identifier {
+  /// ECDH shared-secret derivation.
+  // Internal note: PointyCastle's ECDH agreement is not a pc.Algorithm,
+  // so this identifier uses a placeholder factory and is handled specially
+  // by the ECDH deriver implementation.
+  final ecdh = AlgorithmIdentifier._('derive/ECDH', () => pc.SHA256Digest());
+
   /// Contains the identifiers for supported Concat KDF algorithms
   final concatKdf = _ConcatKdfAlgorithms();
 
