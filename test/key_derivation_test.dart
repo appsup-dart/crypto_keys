@@ -188,6 +188,71 @@ void main() {
           throwsArgumentError);
     });
   });
+
+  group('SecretBytes HKDF operator', () {
+    test('matches RFC 5869 HKDF-SHA256 test vector case 1', () {
+      // RFC 5869, appendix A.1:
+      // https://www.rfc-editor.org/rfc/rfc5869#appendix-A.1
+      final ikm = Uint8List.fromList(List.filled(22, 0x0b));
+      final deriver =
+          SecretBytes(ikm).createKeyDeriver(algorithms.derivation.hkdf.sha256);
+
+      final okm = deriver.deriveKey(KeyDeriverParams.hkdf(
+        salt: _hexToBytes('000102030405060708090a0b0c'),
+        info: _hexToBytes('f0f1f2f3f4f5f6f7f8f9'),
+        keyBitLength: 42 * 8,
+      ));
+
+      expect(
+        okm,
+        _hexToBytes(
+            '3cb25f25faacd57a90434f64d0362f2a2d2d0a90cf1a5a4c5db02d56ecc4c5bf34007208d5b887185865'),
+      );
+    });
+
+    test('derivation is deterministic and parameter-sensitive', () {
+      final deriver =
+          SecretBytes(_hexToBytes('00112233445566778899aabbccddeeff'))
+              .createKeyDeriver(algorithms.derivation.hkdf.sha512);
+
+      final key1 = deriver.deriveKey(KeyDeriverParams.hkdf(
+          salt: Uint8List.fromList([1, 2, 3]),
+          info: Uint8List.fromList([9, 8, 7]),
+          keyBitLength: 256));
+      final key2 = deriver.deriveKey(KeyDeriverParams.hkdf(
+          salt: Uint8List.fromList([1, 2, 3]),
+          info: Uint8List.fromList([9, 8, 7]),
+          keyBitLength: 256));
+      final differentInfo = deriver.deriveKey(KeyDeriverParams.hkdf(
+          salt: Uint8List.fromList([1, 2, 3]),
+          info: Uint8List.fromList([9, 8, 6]),
+          keyBitLength: 256));
+      final differentSalt = deriver.deriveKey(KeyDeriverParams.hkdf(
+          salt: Uint8List.fromList([3, 2, 1]),
+          info: Uint8List.fromList([9, 8, 7]),
+          keyBitLength: 256));
+
+      expect(key1, key2);
+      expect(differentInfo, isNot(key1));
+      expect(differentSalt, isNot(key1));
+    });
+
+    test('invalid parameters throw', () {
+      final deriver = SecretBytes([1, 2, 3])
+          .createKeyDeriver(algorithms.derivation.hkdf.sha256);
+      expect(
+          () => deriver.deriveKey(
+              KeyDeriverParams.hkdf(salt: Uint8List(0), keyBitLength: 0)),
+          throwsArgumentError);
+
+      final emptySecretDeriver =
+          SecretBytes([]).createKeyDeriver(algorithms.derivation.hkdf.sha256);
+      expect(
+          () => emptySecretDeriver.deriveKey(
+              KeyDeriverParams.hkdf(salt: Uint8List(0), keyBitLength: 128)),
+          throwsArgumentError);
+    });
+  });
 }
 
 Uint8List _buildOtherInfo(

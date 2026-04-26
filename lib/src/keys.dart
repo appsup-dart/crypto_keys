@@ -36,6 +36,19 @@ class Password with KeyMaterial, CanDeriveKey {
       _PasswordBasedKeyDeriver(algorithm, this);
 }
 
+/// Generic secret bytes input for key derivation APIs such as HKDF.
+class SecretBytes with KeyMaterial, CanDeriveKey {
+  final Uint8List value;
+
+  SecretBytes(List<int> value) : value = Uint8List.fromList(value);
+
+  /// Creates a [KeyDeriver] using these bytes and algorithm.
+  @override
+  KeyDeriver<SecretBytes, HkdfKeyDeriverParams> createKeyDeriver(
+          Identifier algorithm) =>
+      _SecretBytesKeyDeriver(algorithm, this);
+}
+
 /// A cryptographic public key
 abstract mixin class PublicKey implements Key {
   /// Creates a signature [Verifier] using this key and the specified algorithm

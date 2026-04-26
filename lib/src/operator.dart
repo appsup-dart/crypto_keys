@@ -35,6 +35,13 @@ sealed class KeyDeriverParams {
           required int keyBitLength}) =>
       Pbkdf2KeyDeriverParams(
           salt: salt, iterations: iterations, keyBitLength: keyBitLength);
+
+  /// Shorthand factory for [HkdfKeyDeriverParams].
+  static HkdfKeyDeriverParams hkdf(
+          {required Uint8List salt,
+          required int keyBitLength,
+          Uint8List? info}) =>
+      HkdfKeyDeriverParams(salt: salt, keyBitLength: keyBitLength, info: info);
 }
 
 /// Parameters for ECDH + Concat KDF derivation.
@@ -59,6 +66,16 @@ class Pbkdf2KeyDeriverParams extends KeyDeriverParams {
       {required this.salt,
       required this.iterations,
       required this.keyBitLength});
+}
+
+/// Parameters for HKDF key derivation.
+class HkdfKeyDeriverParams extends KeyDeriverParams {
+  final Uint8List salt;
+  final Uint8List? info;
+  final int keyBitLength;
+
+  const HkdfKeyDeriverParams(
+      {required this.salt, this.info, required this.keyBitLength});
 }
 
 /// Operator for signing
@@ -87,8 +104,7 @@ abstract class Verifier<T extends PublicKey> extends Operator<T> {
 abstract class KeyDeriver<T extends KeyMaterial, P extends KeyDeriverParams>
     extends Operator<T> {
   KeyDeriver._(Identifier algorithm, T keyMaterial)
-      : super._(
-            algorithm as AlgorithmIdentifier<pc.Algorithm>, keyMaterial);
+      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, keyMaterial);
 
   /// Derives key material using algorithm-specific [params].
   Uint8List deriveKey(P params);

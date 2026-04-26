@@ -120,3 +120,32 @@ class _PasswordBasedKeyDeriver
     return _algorithm.process(key.value);
   }
 }
+
+class _SecretBytesKeyDeriver
+    extends KeyDeriver<SecretBytes, HkdfKeyDeriverParams> {
+  _SecretBytesKeyDeriver(super.algorithm, super.keyMaterial) : super._();
+
+  @override
+  pc.KeyDerivator get _algorithm => super._algorithm as pc.KeyDerivator;
+
+  @override
+  Uint8List deriveKey(HkdfKeyDeriverParams params) {
+    if (params.keyBitLength <= 0) {
+      throw ArgumentError.value(
+          params.keyBitLength, 'keyBitLength', 'Must be greater than 0');
+    }
+    if (key.value.isEmpty) {
+      throw ArgumentError.value(
+          key.value, 'key', 'Secret bytes must not be empty');
+    }
+
+    final keyLength = (params.keyBitLength + 7) ~/ 8;
+    _algorithm.init(pc.HkdfParameters(
+      key.value,
+      keyLength,
+      params.salt,
+      params.info ?? Uint8List(0),
+    ));
+    return _algorithm.process(Uint8List(0));
+  }
+}
