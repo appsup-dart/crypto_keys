@@ -19,8 +19,7 @@ sealed class KeyDeriverParams {
   const KeyDeriverParams();
 
   /// Shorthand factory for [EcdhKeyDeriverParams].
-  static EcdhKeyDeriverParams ecdh(
-          {required PublicKey peerPublicKey}) =>
+  static EcdhKeyDeriverParams ecdh({required PublicKey peerPublicKey}) =>
       EcdhKeyDeriverParams(peerPublicKey: peerPublicKey);
 
   /// Shorthand factory for [Pbkdf2KeyDeriverParams].
@@ -79,8 +78,7 @@ class ConcatKdfKeyDeriverParams extends KeyDeriverParams {
   final int keyBitLength;
   final Uint8List? otherInfo;
 
-  const ConcatKdfKeyDeriverParams(
-      {required this.keyBitLength, this.otherInfo});
+  const ConcatKdfKeyDeriverParams({required this.keyBitLength, this.otherInfo});
 }
 
 /// Operator for signing

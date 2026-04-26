@@ -153,6 +153,7 @@ class _SecretBytesKeyDeriver extends KeyDeriver<SecretBytes, KeyDeriverParams> {
         digest: _algorithm as pc.Digest,
       );
     }
-    throw ArgumentError('Unsupported key derivation params: ${params.runtimeType}');
+    throw ArgumentError(
+        'Unsupported key derivation params: ${params.runtimeType}');
   }
 }

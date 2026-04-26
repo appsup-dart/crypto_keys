@@ -165,8 +165,7 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
   }
 }
 
-class _AsymmetricKeyDeriver
-    extends KeyDeriver<PrivateKey, EcdhKeyDeriverParams>
+class _AsymmetricKeyDeriver extends KeyDeriver<PrivateKey, EcdhKeyDeriverParams>
     with _AsymmetricOperator<PrivateKey> {
   _AsymmetricKeyDeriver(super.algorithm, super.keyMaterial) : super._();
 
