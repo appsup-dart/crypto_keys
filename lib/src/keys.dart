@@ -3,6 +3,11 @@ part of '../crypto_keys.dart';
 /// Shared base type for secret material used by operators.
 abstract mixin class KeyMaterial {}
 
+/// Shared capability for types that can derive keys.
+mixin CanDeriveKey on KeyMaterial {
+  KeyDeriver createKeyDeriver(Identifier algorithm);
+}
+
 /// A cryptographic key
 abstract mixin class Key implements KeyMaterial {
   /// Creates an [Encrypter] using this key and the specified algorithm
@@ -16,7 +21,7 @@ abstract mixin class Key implements KeyMaterial {
 }
 
 /// A password input for password-based key derivation.
-class Password with KeyMaterial {
+class Password with KeyMaterial, CanDeriveKey {
   final Uint8List value;
 
   Password(List<int> value) : value = Uint8List.fromList(value);
@@ -24,8 +29,10 @@ class Password with KeyMaterial {
   factory Password.fromString(String value) =>
       Password(Uint8List.fromList(utf8.encode(value)));
 
-  /// Creates a [PasswordKeyDeriver] using this password and algorithm.
-  PasswordKeyDeriver createKeyDeriver(Identifier algorithm) =>
+  /// Creates a [KeyDeriver] using this password and algorithm.
+  @override
+  KeyDeriver<Password, Pbkdf2KeyDeriverParams> createKeyDeriver(
+          Identifier algorithm) =>
       _PasswordBasedKeyDeriver(algorithm, this);
 }
 
@@ -42,7 +49,7 @@ abstract mixin class PublicKey implements Key {
 }
 
 /// A cryptographic private key
-abstract mixin class PrivateKey implements Key {
+abstract mixin class PrivateKey implements Key, CanDeriveKey {
   /// Creates a [Signer] using this key and the specified algorithm.
   Signer createSigner(Identifier algorithm) {
     if (this is SymmetricKey) {
@@ -53,7 +60,9 @@ abstract mixin class PrivateKey implements Key {
   }
 
   /// Creates a [KeyDeriver] using this key and the specified algorithm.
-  KeyDeriver createKeyDeriver(Identifier algorithm) {
+  @override
+  KeyDeriver<PrivateKey, EcdhKeyDeriverParams> createKeyDeriver(
+      Identifier algorithm) {
     if (this is SymmetricKey) {
       throw UnsupportedError('Key derivation requires an asymmetric key pair');
     }
@@ -186,7 +195,8 @@ class KeyPair {
   }
 
   /// Creates a [KeyDeriver] for this key pair.
-  KeyDeriver createKeyDeriver(Identifier algorithm) {
+  KeyDeriver<PrivateKey, EcdhKeyDeriverParams> createKeyDeriver(
+      Identifier algorithm) {
     if (privateKey == null) {
       throw StateError('Need a private key to create a key deriver.');
     }

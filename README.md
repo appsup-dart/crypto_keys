@@ -123,11 +123,11 @@ final deriver = myKeyPair.createKeyDeriver(
 
 final otherInfo = ... // protocol-specific context bytes
 
-final derived = deriver.deriveKey(
+final derived = deriver.deriveKey(.ecdh(
   peerPublicKey: peerPublicEcKey,
   keyBitLength: 256,
   otherInfo: otherInfo,
-);
+));
 ```
 
 ## Features and bugs

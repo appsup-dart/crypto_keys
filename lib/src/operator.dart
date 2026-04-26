@@ -14,6 +14,53 @@ abstract class Operator<T extends KeyMaterial> {
       : _algorithm = algorithm.createAlgorithm();
 }
 
+/// Marker base class for key derivation parameter objects.
+sealed class KeyDeriverParams {
+  const KeyDeriverParams();
+
+  /// Shorthand factory for [EcdhKeyDeriverParams].
+  static EcdhKeyDeriverParams ecdh(
+          {required PublicKey peerPublicKey,
+          required int keyBitLength,
+          Uint8List? otherInfo}) =>
+      EcdhKeyDeriverParams(
+          peerPublicKey: peerPublicKey,
+          keyBitLength: keyBitLength,
+          otherInfo: otherInfo);
+
+  /// Shorthand factory for [Pbkdf2KeyDeriverParams].
+  static Pbkdf2KeyDeriverParams pbkdf2(
+          {required Uint8List salt,
+          required int iterations,
+          required int keyBitLength}) =>
+      Pbkdf2KeyDeriverParams(
+          salt: salt, iterations: iterations, keyBitLength: keyBitLength);
+}
+
+/// Parameters for ECDH + Concat KDF derivation.
+class EcdhKeyDeriverParams extends KeyDeriverParams {
+  final PublicKey peerPublicKey;
+  final int keyBitLength;
+  final Uint8List? otherInfo;
+
+  const EcdhKeyDeriverParams(
+      {required this.peerPublicKey,
+      required this.keyBitLength,
+      this.otherInfo});
+}
+
+/// Parameters for PBKDF2 key derivation.
+class Pbkdf2KeyDeriverParams extends KeyDeriverParams {
+  final Uint8List salt;
+  final int iterations;
+  final int keyBitLength;
+
+  const Pbkdf2KeyDeriverParams(
+      {required this.salt,
+      required this.iterations,
+      required this.keyBitLength});
+}
+
 /// Operator for signing
 abstract class Signer<T extends PrivateKey> extends Operator<T> {
   Signer._(Identifier algorithm, T key)
@@ -37,27 +84,14 @@ abstract class Verifier<T extends PublicKey> extends Operator<T> {
 ///
 /// The local private key is [Operator.key]. The peer public key is provided per
 /// derivation call to support deriving with multiple peers using one operator.
-abstract class KeyDeriver extends Operator<PrivateKey> {
-  KeyDeriver._(Identifier algorithm, PrivateKey privateKey)
-      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, privateKey);
+abstract class KeyDeriver<T extends KeyMaterial, P extends KeyDeriverParams>
+    extends Operator<T> {
+  KeyDeriver._(Identifier algorithm, T keyMaterial)
+      : super._(
+            algorithm as AlgorithmIdentifier<pc.Algorithm>, keyMaterial);
 
-  /// Derives key material from [key] and [peerPublicKey].
-  Uint8List deriveKey(
-      {required PublicKey peerPublicKey,
-      required int keyBitLength,
-      Uint8List? otherInfo});
-}
-
-/// Operator for deriving key material from a password.
-abstract class PasswordKeyDeriver extends Operator<Password> {
-  PasswordKeyDeriver._(Identifier algorithm, Password password)
-      : super._(algorithm as AlgorithmIdentifier<pc.Algorithm>, password);
-
-  /// Derives key material from a password and KDF parameters.
-  Uint8List deriveKey(
-      {required Uint8List salt,
-      required int iterations,
-      required int keyBitLength});
+  /// Derives key material using algorithm-specific [params].
+  Uint8List deriveKey(P params);
 }
 
 /// Represents the result of signing some data

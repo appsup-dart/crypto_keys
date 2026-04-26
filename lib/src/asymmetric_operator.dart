@@ -165,18 +165,19 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
   }
 }
 
-class _AsymmetricKeyDeriver extends KeyDeriver
+class _AsymmetricKeyDeriver
+    extends KeyDeriver<PrivateKey, EcdhKeyDeriverParams>
     with _AsymmetricOperator<PrivateKey> {
-  _AsymmetricKeyDeriver(super.algorithm, super.privateKey) : super._();
+  _AsymmetricKeyDeriver(super.algorithm, super.keyMaterial) : super._();
 
   @override
   pc.Digest get _algorithm => super._algorithm as pc.Digest;
 
   @override
-  Uint8List deriveKey(
-      {required PublicKey peerPublicKey,
-      required int keyBitLength,
-      Uint8List? otherInfo}) {
+  Uint8List deriveKey(EcdhKeyDeriverParams params) {
+    final peerPublicKey = params.peerPublicKey;
+    final keyBitLength = params.keyBitLength;
+    final otherInfo = params.otherInfo;
     if (key is! EcPrivateKey) {
       throw UnsupportedError(
           'Key derivation is only supported for EC private keys');

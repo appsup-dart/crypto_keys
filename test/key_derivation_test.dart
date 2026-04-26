@@ -19,10 +19,14 @@ void main() {
         keyBitLength: 256,
       );
 
-      final aKey = aDeriver.deriveKey(
-          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: otherInfo);
-      final bKey = bDeriver.deriveKey(
-          peerPublicKey: a.publicKey!, keyBitLength: 256, otherInfo: otherInfo);
+      final aKey = aDeriver.deriveKey(KeyDeriverParams.ecdh(
+          peerPublicKey: b.publicKey!,
+          keyBitLength: 256,
+          otherInfo: otherInfo));
+      final bKey = bDeriver.deriveKey(KeyDeriverParams.ecdh(
+          peerPublicKey: a.publicKey!,
+          keyBitLength: 256,
+          otherInfo: otherInfo));
 
       expect(aKey, bKey);
     });
@@ -34,7 +38,8 @@ void main() {
           a.createKeyDeriver(algorithms.derivation.concatKdf.sha256);
 
       expect(
-        () => deriver.deriveKey(peerPublicKey: b.publicKey!, keyBitLength: 256),
+        () => deriver.deriveKey(KeyDeriverParams.ecdh(
+            peerPublicKey: b.publicKey!, keyBitLength: 256)),
         throwsArgumentError,
       );
     });
@@ -51,36 +56,36 @@ void main() {
         partyVInfo: Uint8List.fromList([2]),
         keyBitLength: 256,
       );
-      final key1 = deriver.deriveKey(
-          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: baseInfo);
-      final key2 = deriver.deriveKey(
-          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: baseInfo);
+      final key1 = deriver.deriveKey(KeyDeriverParams.ecdh(
+          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: baseInfo));
+      final key2 = deriver.deriveKey(KeyDeriverParams.ecdh(
+          peerPublicKey: b.publicKey!, keyBitLength: 256, otherInfo: baseInfo));
       expect(key1, key2);
 
-      final differentAlg = deriver.deriveKey(
+      final differentAlg = deriver.deriveKey(KeyDeriverParams.ecdh(
           peerPublicKey: b.publicKey!,
           keyBitLength: 256,
           otherInfo: _buildOtherInfo(
               algorithmId: Uint8List.fromList('kdf-b'.codeUnits),
               partyUInfo: Uint8List.fromList([1]),
               partyVInfo: Uint8List.fromList([2]),
-              keyBitLength: 256));
-      final differentU = deriver.deriveKey(
+              keyBitLength: 256)));
+      final differentU = deriver.deriveKey(KeyDeriverParams.ecdh(
           peerPublicKey: b.publicKey!,
           keyBitLength: 256,
           otherInfo: _buildOtherInfo(
               algorithmId: Uint8List.fromList('kdf-a'.codeUnits),
               partyUInfo: Uint8List.fromList([9]),
               partyVInfo: Uint8List.fromList([2]),
-              keyBitLength: 256));
-      final differentV = deriver.deriveKey(
+              keyBitLength: 256)));
+      final differentV = deriver.deriveKey(KeyDeriverParams.ecdh(
           peerPublicKey: b.publicKey!,
           keyBitLength: 256,
           otherInfo: _buildOtherInfo(
               algorithmId: Uint8List.fromList('kdf-a'.codeUnits),
               partyUInfo: Uint8List.fromList([1]),
               partyVInfo: Uint8List.fromList([9]),
-              keyBitLength: 256));
+              keyBitLength: 256)));
 
       expect(differentAlg, isNot(key1));
       expect(differentU, isNot(key1));
@@ -93,8 +98,8 @@ void main() {
       final deriver =
           a.createKeyDeriver(algorithms.derivation.concatKdf.sha512);
 
-      final key =
-          deriver.deriveKey(peerPublicKey: b.publicKey!, keyBitLength: 384);
+      final key = deriver.deriveKey(KeyDeriverParams.ecdh(
+          peerPublicKey: b.publicKey!, keyBitLength: 384));
       expect(key.length, 48);
     });
   });
@@ -106,22 +111,22 @@ void main() {
       final deriver = Password.fromString('password')
           .createKeyDeriver(algorithms.derivation.pbkdf2.sha1);
 
-      final dk1 = deriver.deriveKey(
+      final dk1 = deriver.deriveKey(KeyDeriverParams.pbkdf2(
           salt: Uint8List.fromList('salt'.codeUnits),
           iterations: 1,
-          keyBitLength: 20 * 8);
+          keyBitLength: 20 * 8));
       expect(dk1, _hexToBytes('0c60c80f961f0e71f3a9b524af6012062fe037a6'));
 
-      final dk2 = deriver.deriveKey(
+      final dk2 = deriver.deriveKey(KeyDeriverParams.pbkdf2(
           salt: Uint8List.fromList('salt'.codeUnits),
           iterations: 2,
-          keyBitLength: 20 * 8);
+          keyBitLength: 20 * 8));
       expect(dk2, _hexToBytes('ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957'));
 
-      final dk3 = deriver.deriveKey(
+      final dk3 = deriver.deriveKey(KeyDeriverParams.pbkdf2(
           salt: Uint8List.fromList('salt'.codeUnits),
           iterations: 4096,
-          keyBitLength: 20 * 8);
+          keyBitLength: 20 * 8));
       expect(dk3, _hexToBytes('4b007901b765489abead49d926f721d065a429c1'));
     });
 
@@ -130,11 +135,11 @@ void main() {
         algorithms.derivation.pbkdf2.sha256,
       );
 
-      final key = deriver.deriveKey(
+      final key = deriver.deriveKey(KeyDeriverParams.pbkdf2(
         salt: Uint8List.fromList('salt'.codeUnits),
         iterations: 1,
         keyBitLength: 256,
-      );
+      ));
 
       expect(
           key,
@@ -147,16 +152,16 @@ void main() {
           .createKeyDeriver(algorithms.derivation.pbkdf2.sha512);
       final salt = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8]);
 
-      final key1 =
-          deriver.deriveKey(salt: salt, iterations: 1000, keyBitLength: 256);
-      final key2 =
-          deriver.deriveKey(salt: salt, iterations: 1000, keyBitLength: 256);
-      final differentSalt = deriver.deriveKey(
+      final key1 = deriver.deriveKey(KeyDeriverParams.pbkdf2(
+          salt: salt, iterations: 1000, keyBitLength: 256));
+      final key2 = deriver.deriveKey(KeyDeriverParams.pbkdf2(
+          salt: salt, iterations: 1000, keyBitLength: 256));
+      final differentSalt = deriver.deriveKey(KeyDeriverParams.pbkdf2(
           salt: Uint8List.fromList([9, 2, 3, 4, 5, 6, 7, 8]),
           iterations: 1000,
-          keyBitLength: 256);
-      final differentIterations =
-          deriver.deriveKey(salt: salt, iterations: 2000, keyBitLength: 256);
+          keyBitLength: 256));
+      final differentIterations = deriver.deriveKey(KeyDeriverParams.pbkdf2(
+          salt: salt, iterations: 2000, keyBitLength: 256));
 
       expect(key1, key2);
       expect(differentSalt, isNot(key1));
@@ -168,16 +173,18 @@ void main() {
           .createKeyDeriver(algorithms.derivation.pbkdf2.sha256);
 
       expect(
-          () => deriver.deriveKey(
-              salt: Uint8List(0), iterations: 1000, keyBitLength: 128),
+          () => deriver.deriveKey(KeyDeriverParams.pbkdf2(
+              salt: Uint8List(0), iterations: 1000, keyBitLength: 128)),
           throwsArgumentError);
       expect(
-          () => deriver.deriveKey(
-              salt: Uint8List.fromList([1]), iterations: 0, keyBitLength: 128),
+          () => deriver.deriveKey(KeyDeriverParams.pbkdf2(
+              salt: Uint8List.fromList([1]), iterations: 0, keyBitLength: 128)),
           throwsArgumentError);
       expect(
-          () => deriver.deriveKey(
-              salt: Uint8List.fromList([1]), iterations: 1000, keyBitLength: 0),
+          () => deriver.deriveKey(KeyDeriverParams.pbkdf2(
+              salt: Uint8List.fromList([1]),
+              iterations: 1000,
+              keyBitLength: 0)),
           throwsArgumentError);
     });
   });

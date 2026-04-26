@@ -91,17 +91,18 @@ class _ConcatKdf {
   }
 }
 
-class _PasswordBasedKeyDeriver extends PasswordKeyDeriver {
-  _PasswordBasedKeyDeriver(super.algorithm, super.password) : super._();
+class _PasswordBasedKeyDeriver
+    extends KeyDeriver<Password, Pbkdf2KeyDeriverParams> {
+  _PasswordBasedKeyDeriver(super.algorithm, super.keyMaterial) : super._();
 
   @override
   pc.KeyDerivator get _algorithm => super._algorithm as pc.KeyDerivator;
 
   @override
-  Uint8List deriveKey(
-      {required Uint8List salt,
-      required int iterations,
-      required int keyBitLength}) {
+  Uint8List deriveKey(Pbkdf2KeyDeriverParams params) {
+    final salt = params.salt;
+    final iterations = params.iterations;
+    final keyBitLength = params.keyBitLength;
     if (salt.isEmpty) {
       throw ArgumentError.value(salt, 'salt', 'Salt must not be empty');
     }
