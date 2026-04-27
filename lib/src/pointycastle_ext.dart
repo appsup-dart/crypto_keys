@@ -38,9 +38,14 @@ abstract class BlockCipherWithAuthenticationTag implements BlockCipher {
       return out;
     } else {
       var ciphertext = Uint8List.view(
-          data.buffer, data.offsetInBytes, data.length - tagLength);
-      var inTag =
-          Uint8List.view(data.buffer, data.offsetInBytes + ciphertext.length);
+        data.buffer,
+        data.offsetInBytes,
+        data.length - tagLength,
+      );
+      var inTag = Uint8List.view(
+        data.buffer,
+        data.offsetInBytes + ciphertext.length,
+      );
       var plaintext = processBlocks(ciphertext);
 
       var tag = finalizeTag();
@@ -88,8 +93,10 @@ abstract class BlockCipherWithAuthenticationTag implements BlockCipher {
 
 class AesCbcAuthenticatedCipherWithHash
     extends BlockCipherWithAuthenticationTag {
-  final BlockCipher _underlyingCipher =
-      PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()));
+  final BlockCipher _underlyingCipher = PaddedBlockCipherImpl(
+    PKCS7Padding(),
+    CBCBlockCipher(AESEngine()),
+  );
 
   final Mac _underlyingMac;
 
@@ -107,18 +114,19 @@ class AesCbcAuthenticatedCipherWithHash
     var key = parameters.key;
 
     var macKey = Uint8List.view(key.buffer, key.offsetInBytes, key.length ~/ 2);
-    var encKey =
-        Uint8List.view(key.buffer, key.offsetInBytes + key.length ~/ 2);
+    var encKey = Uint8List.view(
+      key.buffer,
+      key.offsetInBytes + key.length ~/ 2,
+    );
 
     _underlyingMac.init(KeyParameter(macKey));
     _underlyingCipher.init(
-        isEncrypting!,
-        PaddedBlockCipherParameters(
-            ParametersWithIV(
-              KeyParameter(encKey),
-              iv!,
-            ),
-            null));
+      isEncrypting!,
+      PaddedBlockCipherParameters(
+        ParametersWithIV(KeyParameter(encKey), iv!),
+        null,
+      ),
+    );
   }
 
   @override

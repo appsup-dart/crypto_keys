@@ -14,18 +14,23 @@ class _Ecdh {
   ///
   /// The input keys must both be EC keys and use the same curve (`P-256`,
   /// `P-384`, or `P-521`). The output is fixed-length, big-endian bytes.
-  Uint8List deriveSharedSecret(
-      {required EcPrivateKey privateKey, required EcPublicKey publicKey}) {
+  Uint8List deriveSharedSecret({
+    required EcPrivateKey privateKey,
+    required EcPublicKey publicKey,
+  }) {
     if (privateKey.curve != publicKey.curve) {
-      throw ArgumentError('ECDH requires matching curves, got '
-          '${privateKey.curve.name} and ${publicKey.curve.name}');
+      throw ArgumentError(
+        'ECDH requires matching curves, got '
+        '${privateKey.curve.name} and ${publicKey.curve.name}',
+      );
     }
 
     final domain = _AsymmetricOperator.createCurveParameters(privateKey.curve);
     final pcPrivate = pc.ECPrivateKey(privateKey.eccPrivateKey, domain);
     final pcPublic = pc.ECPublicKey(
-        domain.curve.createPoint(publicKey.xCoordinate, publicKey.yCoordinate),
-        domain);
+      domain.curve.createPoint(publicKey.xCoordinate, publicKey.yCoordinate),
+      domain,
+    );
 
     final agreement = pc.ECDHBasicAgreement()..init(pcPrivate);
     final zInt = agreement.calculateAgreement(pcPublic);
@@ -54,19 +59,26 @@ class _ConcatKdf {
   const _ConcatKdf();
 
   /// Derives key material from shared secret and caller-provided `otherInfo`.
-  Uint8List deriveKey(
-      {required Uint8List sharedSecret,
-      required Uint8List otherInfo,
-      required int keyBitLength,
-      AlgorithmIdentifier<pc.Digest>? hash,
-      pc.Digest? digest}) {
+  Uint8List deriveKey({
+    required Uint8List sharedSecret,
+    required Uint8List otherInfo,
+    required int keyBitLength,
+    AlgorithmIdentifier<pc.Digest>? hash,
+    pc.Digest? digest,
+  }) {
     if (keyBitLength <= 0) {
       throw ArgumentError.value(
-          keyBitLength, 'keyBitLength', 'Must be greater than 0');
+        keyBitLength,
+        'keyBitLength',
+        'Must be greater than 0',
+      );
     }
     if (sharedSecret.isEmpty) {
       throw ArgumentError.value(
-          sharedSecret, 'sharedSecret', 'Shared secret must not be empty');
+        sharedSecret,
+        'sharedSecret',
+        'Shared secret must not be empty',
+      );
     }
 
     final selectedDigest =
@@ -108,11 +120,17 @@ class _PasswordBasedKeyDeriver
     }
     if (iterations <= 0) {
       throw ArgumentError.value(
-          iterations, 'iterations', 'Must be greater than 0');
+        iterations,
+        'iterations',
+        'Must be greater than 0',
+      );
     }
     if (keyBitLength <= 0) {
       throw ArgumentError.value(
-          keyBitLength, 'keyBitLength', 'Must be greater than 0');
+        keyBitLength,
+        'keyBitLength',
+        'Must be greater than 0',
+      );
     }
 
     final keyLength = (keyBitLength + 7) ~/ 8;
@@ -128,21 +146,29 @@ class _SecretBytesKeyDeriver extends KeyDeriver<SecretBytes, KeyDeriverParams> {
   Uint8List deriveKey(KeyDeriverParams params) {
     if (key.value.isEmpty) {
       throw ArgumentError.value(
-          key.value, 'key', 'Secret bytes must not be empty');
+        key.value,
+        'key',
+        'Secret bytes must not be empty',
+      );
     }
     if (params is HkdfKeyDeriverParams) {
       if (params.keyBitLength <= 0) {
         throw ArgumentError.value(
-            params.keyBitLength, 'keyBitLength', 'Must be greater than 0');
+          params.keyBitLength,
+          'keyBitLength',
+          'Must be greater than 0',
+        );
       }
       final keyLength = (params.keyBitLength + 7) ~/ 8;
       final algorithm = _algorithm as pc.KeyDerivator;
-      algorithm.init(pc.HkdfParameters(
-        key.value,
-        keyLength,
-        params.salt,
-        params.info ?? Uint8List(0),
-      ));
+      algorithm.init(
+        pc.HkdfParameters(
+          key.value,
+          keyLength,
+          params.salt,
+          params.info ?? Uint8List(0),
+        ),
+      );
       return algorithm.process(Uint8List(0));
     }
     if (params is ConcatKdfKeyDeriverParams) {
@@ -154,6 +180,7 @@ class _SecretBytesKeyDeriver extends KeyDeriver<SecretBytes, KeyDeriverParams> {
       );
     }
     throw ArgumentError(
-        'Unsupported key derivation params: ${params.runtimeType}');
+      'Unsupported key derivation params: ${params.runtimeType}',
+    );
   }
 }

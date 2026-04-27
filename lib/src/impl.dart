@@ -40,11 +40,12 @@ class RsaPrivateKeyImpl extends PrivateKey
   @override
   final BigInt secondPrimeFactor;
 
-  RsaPrivateKeyImpl(
-      {required this.privateExponent,
-      required this.firstPrimeFactor,
-      required this.secondPrimeFactor,
-      required this.modulus});
+  RsaPrivateKeyImpl({
+    required this.privateExponent,
+    required this.firstPrimeFactor,
+    required this.secondPrimeFactor,
+    required this.modulus,
+  });
 
   @override
   int get hashCode =>
@@ -70,10 +71,11 @@ class EcPublicKeyImpl extends PublicKey with Key implements EcPublicKey, EcKey {
   @override
   final BigInt yCoordinate;
 
-  EcPublicKeyImpl(
-      {required this.xCoordinate,
-      required this.yCoordinate,
-      required this.curve});
+  EcPublicKeyImpl({
+    required this.xCoordinate,
+    required this.yCoordinate,
+    required this.curve,
+  });
 
   @override
   int get hashCode => hash3(xCoordinate, yCoordinate, curve);
@@ -154,25 +156,32 @@ class EncryptionResultImpl implements EncryptionResult {
   @override
   final Uint8List? additionalAuthenticatedData;
 
-  EncryptionResultImpl(this.data,
-      {this.initializationVector,
-      this.authenticationTag,
-      this.additionalAuthenticatedData});
+  EncryptionResultImpl(
+    this.data, {
+    this.initializationVector,
+    this.authenticationTag,
+    this.additionalAuthenticatedData,
+  });
 
   @override
   int get hashCode => hash4(
-      const ListEquality().hash(data),
-      const ListEquality().hash(initializationVector),
-      const ListEquality().hash(authenticationTag),
-      const ListEquality().hash(additionalAuthenticatedData));
+    const ListEquality().hash(data),
+    const ListEquality().hash(initializationVector),
+    const ListEquality().hash(authenticationTag),
+    const ListEquality().hash(additionalAuthenticatedData),
+  );
 
   @override
   bool operator ==(other) =>
       other is EncryptionResult &&
       const ListEquality().equals(other.data, data) &&
-      const ListEquality()
-          .equals(other.initializationVector, initializationVector) &&
+      const ListEquality().equals(
+        other.initializationVector,
+        initializationVector,
+      ) &&
       const ListEquality().equals(other.authenticationTag, authenticationTag) &&
       const ListEquality().equals(
-          other.additionalAuthenticatedData, additionalAuthenticatedData);
+        other.additionalAuthenticatedData,
+        additionalAuthenticatedData,
+      );
 }

@@ -8,11 +8,13 @@ class CryptoKeysException implements Exception {
 }
 
 class AuthenticationTagMismatchException extends CryptoKeysException {
-  const AuthenticationTagMismatchException(
-      [super.message = 'Authentication tag verification failed.']);
+  const AuthenticationTagMismatchException([
+    super.message = 'Authentication tag verification failed.',
+  ]);
 }
 
 class KeyUnwrapIntegrityException extends CryptoKeysException {
-  const KeyUnwrapIntegrityException(
-      [super.message = 'AES key unwrap integrity check failed.']);
+  const KeyUnwrapIntegrityException([
+    super.message = 'AES key unwrap integrity check failed.',
+  ]);
 }

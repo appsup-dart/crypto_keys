@@ -5,8 +5,9 @@ void main() {
   // Create a key pair from a JWK representation
   var keyPair = KeyPair.fromJwk({
     'kty': 'oct',
-    'k': 'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75'
-        'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow'
+    'k':
+        'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75'
+        'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow',
   });
 
   // A key pair has a private and public key, possibly one of them is null, if
@@ -30,8 +31,10 @@ void main() {
   // Create a verifier for the key using the specified algorithm
   var verifier = publicKey.createVerifier(algorithms.signing.hmac.sha256);
 
-  var verified =
-      verifier.verify(Uint8List.fromList(content.codeUnits), signature);
+  var verified = verifier.verify(
+    Uint8List.fromList(content.codeUnits),
+    signature,
+  );
   if (verified) {
     print('Verification succeeded');
   } else {

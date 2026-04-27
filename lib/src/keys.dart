@@ -32,8 +32,8 @@ class Password with KeyMaterial, CanDeriveKey {
   /// Creates a [KeyDeriver] using this password and algorithm.
   @override
   KeyDeriver<Password, Pbkdf2KeyDeriverParams> createKeyDeriver(
-          Identifier algorithm) =>
-      _PasswordBasedKeyDeriver(algorithm, this);
+    Identifier algorithm,
+  ) => _PasswordBasedKeyDeriver(algorithm, this);
 }
 
 /// Generic secret bytes input for key derivation APIs such as HKDF.
@@ -45,8 +45,8 @@ class SecretBytes with KeyMaterial, CanDeriveKey {
   /// Creates a [KeyDeriver] using these bytes and algorithm.
   @override
   KeyDeriver<SecretBytes, KeyDeriverParams> createKeyDeriver(
-          Identifier algorithm) =>
-      _SecretBytesKeyDeriver(algorithm, this);
+    Identifier algorithm,
+  ) => _SecretBytesKeyDeriver(algorithm, this);
 }
 
 /// A cryptographic public key
@@ -75,7 +75,8 @@ abstract mixin class PrivateKey implements Key, CanDeriveKey {
   /// Creates a [KeyDeriver] using this key and the specified algorithm.
   @override
   KeyDeriver<PrivateKey, EcdhKeyDeriverParams> createKeyDeriver(
-      Identifier algorithm) {
+    Identifier algorithm,
+  ) {
     if (this is SymmetricKey) {
       throw UnsupportedError('Key derivation requires an asymmetric key pair');
     }
@@ -105,23 +106,27 @@ class KeyPair {
     exponent ??= BigInt.from(65537);
 
     var generator = pc.RSAKeyGenerator()
-      ..init(pc.ParametersWithRandom(
+      ..init(
+        pc.ParametersWithRandom(
           pc.RSAKeyGeneratorParameters(exponent, bitStrength, 5),
-          DefaultSecureRandom()));
+          DefaultSecureRandom(),
+        ),
+      );
 
     var pair = generator.generateKeyPair();
 
     return KeyPair(
-        publicKey: RsaPublicKey(
-          exponent: pair.publicKey.publicExponent!,
-          modulus: pair.publicKey.n!,
-        ),
-        privateKey: RsaPrivateKey(
-          modulus: (pair.privateKey).n!,
-          privateExponent: pair.privateKey.privateExponent!,
-          firstPrimeFactor: pair.privateKey.p!,
-          secondPrimeFactor: pair.privateKey.q!,
-        ));
+      publicKey: RsaPublicKey(
+        exponent: pair.publicKey.publicExponent!,
+        modulus: pair.publicKey.n!,
+      ),
+      privateKey: RsaPrivateKey(
+        modulus: (pair.privateKey).n!,
+        privateExponent: pair.privateKey.privateExponent!,
+        firstPrimeFactor: pair.privateKey.p!,
+        secondPrimeFactor: pair.privateKey.q!,
+      ),
+    );
   }
 
   factory KeyPair.generateEc(Identifier curve) {
@@ -138,12 +143,13 @@ class KeyPair {
     var pair = generator.generateKeyPair();
 
     return KeyPair(
-        publicKey: EcPublicKey(
-            xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
-            yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
-            curve: curve),
-        privateKey:
-            EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve));
+      publicKey: EcPublicKey(
+        xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
+        yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
+        curve: curve,
+      ),
+      privateKey: EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve),
+    );
   }
 
   /// Create a key pair from a JsonWebKey
@@ -154,38 +160,44 @@ class KeyPair {
         return KeyPair(publicKey: key, privateKey: key);
       case 'RSA':
         return KeyPair(
-            publicKey: jwk.containsKey('n') && jwk.containsKey('e')
-                ? RsaPublicKey(
-                    modulus: _base64ToInt(jwk['n']),
-                    exponent: _base64ToInt(jwk['e']),
-                  )
-                : null,
-            privateKey: jwk.containsKey('n') &&
-                    jwk.containsKey('d') &&
-                    jwk.containsKey('p') &&
-                    jwk.containsKey('q')
-                ? RsaPrivateKey(
-                    modulus: _base64ToInt(jwk['n']),
-                    privateExponent: _base64ToInt(jwk['d']),
-                    firstPrimeFactor: _base64ToInt(jwk['p']),
-                    secondPrimeFactor: _base64ToInt(jwk['q']),
-                  )
-                : null);
+          publicKey: jwk.containsKey('n') && jwk.containsKey('e')
+              ? RsaPublicKey(
+                  modulus: _base64ToInt(jwk['n']),
+                  exponent: _base64ToInt(jwk['e']),
+                )
+              : null,
+          privateKey:
+              jwk.containsKey('n') &&
+                  jwk.containsKey('d') &&
+                  jwk.containsKey('p') &&
+                  jwk.containsKey('q')
+              ? RsaPrivateKey(
+                  modulus: _base64ToInt(jwk['n']),
+                  privateExponent: _base64ToInt(jwk['d']),
+                  firstPrimeFactor: _base64ToInt(jwk['p']),
+                  secondPrimeFactor: _base64ToInt(jwk['q']),
+                )
+              : null,
+        );
       case 'EC':
         return KeyPair(
-            privateKey: jwk.containsKey('d') && jwk.containsKey('crv')
-                ? EcPrivateKey(
-                    eccPrivateKey: _base64ToInt(jwk['d']),
-                    curve: _parseCurve(jwk['crv']))
-                : null,
-            publicKey: jwk.containsKey('x') &&
-                    jwk.containsKey('y') &&
-                    jwk.containsKey('crv')
-                ? EcPublicKey(
-                    xCoordinate: _base64ToInt(jwk['x']),
-                    yCoordinate: _base64ToInt(jwk['y']),
-                    curve: _parseCurve(jwk['crv']))
-                : null);
+          privateKey: jwk.containsKey('d') && jwk.containsKey('crv')
+              ? EcPrivateKey(
+                  eccPrivateKey: _base64ToInt(jwk['d']),
+                  curve: _parseCurve(jwk['crv']),
+                )
+              : null,
+          publicKey:
+              jwk.containsKey('x') &&
+                  jwk.containsKey('y') &&
+                  jwk.containsKey('crv')
+              ? EcPublicKey(
+                  xCoordinate: _base64ToInt(jwk['x']),
+                  yCoordinate: _base64ToInt(jwk['y']),
+                  curve: _parseCurve(jwk['crv']),
+                )
+              : null,
+        );
     }
     throw ArgumentError('Unknown key type ${jwk['kty']}');
   }
@@ -209,7 +221,8 @@ class KeyPair {
 
   /// Creates a [KeyDeriver] for this key pair.
   KeyDeriver<PrivateKey, EcdhKeyDeriverParams> createKeyDeriver(
-      Identifier algorithm) {
+    Identifier algorithm,
+  ) {
     if (privateKey == null) {
       throw StateError('Need a private key to create a key deriver.');
     }
@@ -224,8 +237,9 @@ List<int> _base64ToBytes(String encoded) {
 
 BigInt _base64ToInt(String encoded) {
   final b256 = BigInt.from(256);
-  return _base64ToBytes(encoded)
-      .fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
+  return _base64ToBytes(
+    encoded,
+  ).fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
 }
 
 Identifier _parseCurve(String name) {

@@ -22,33 +22,35 @@ mixin _AsymmetricOperator<T extends Key> on Operator<T> {
   pc.AsymmetricKeyParameter get keyParameter {
     if (key is RsaPrivateKey) {
       var k = key as RsaPrivateKey;
-      return pc.PrivateKeyParameter<pc.RSAPrivateKey>(pc.RSAPrivateKey(
+      return pc.PrivateKeyParameter<pc.RSAPrivateKey>(
+        pc.RSAPrivateKey(
           k.modulus,
           k.privateExponent,
           k.firstPrimeFactor,
-          k.secondPrimeFactor));
+          k.secondPrimeFactor,
+        ),
+      );
     }
     if (key is RsaPublicKey) {
       var k = key as RsaPublicKey;
-      return pc.PublicKeyParameter<pc.RSAPublicKey>(pc.RSAPublicKey(
-        k.modulus,
-        k.exponent,
-      ));
+      return pc.PublicKeyParameter<pc.RSAPublicKey>(
+        pc.RSAPublicKey(k.modulus, k.exponent),
+      );
     }
     var d = ecDomainParameters;
 
     if (key is EcPrivateKey) {
       var k = key as EcPrivateKey;
-      return pc.PrivateKeyParameter<pc.ECPrivateKey>(pc.ECPrivateKey(
-        k.eccPrivateKey,
-        d,
-      ));
+      return pc.PrivateKeyParameter<pc.ECPrivateKey>(
+        pc.ECPrivateKey(k.eccPrivateKey, d),
+      );
     }
     if (key is EcPublicKey) {
       var k = key as EcPublicKey;
 
       return pc.PublicKeyParameter<pc.ECPublicKey>(
-          pc.ECPublicKey(d.curve.createPoint(k.xCoordinate, k.yCoordinate), d));
+        pc.ECPublicKey(d.curve.createPoint(k.xCoordinate, k.yCoordinate), d),
+      );
     }
     throw StateError('Unexpected key type $key');
   }
@@ -65,7 +67,9 @@ class _AsymmetricSigner extends Signer<PrivateKey>
   Signature sign(List<int> data) {
     data = data is Uint8List ? data : Uint8List.fromList(data);
     _algorithm.init(
-        true, pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()));
+      true,
+      pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()),
+    );
 
     if (key is RsaKey) {
       final signature = _algorithm.generateSignature(data);
@@ -76,7 +80,8 @@ class _AsymmetricSigner extends Signer<PrivateKey>
         return Signature(signature.bytes);
       }
       throw UnsupportedError(
-          'Unknown RSA signature type ${signature.runtimeType}');
+        'Unknown RSA signature type ${signature.runtimeType}',
+      );
     }
     if (key is EcKey) {
       var sig = _algorithm.generateSignature(data) as pc.ECSignature;
@@ -85,13 +90,19 @@ class _AsymmetricSigner extends Signer<PrivateKey>
         curves.p256: 32,
         curves.p256k: 32,
         curves.p384: 48,
-        curves.p521: 66
+        curves.p521: 66,
       }[(key as EcKey).curve]!;
       var bytes = Uint8List(length * 2);
       bytes.setRange(
-          0, length, _bigIntToBytes(sig.r, length).toList().reversed);
+        0,
+        length,
+        _bigIntToBytes(sig.r, length).toList().reversed,
+      );
       bytes.setRange(
-          length, length * 2, _bigIntToBytes(sig.s, length).toList().reversed);
+        length,
+        length * 2,
+        _bigIntToBytes(sig.s, length).toList().reversed,
+      );
 
       return Signature(bytes);
     }
@@ -109,8 +120,10 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
   @override
   bool verify(Uint8List data, Signature signature) {
     if (key is RsaKey) {
-      _algorithm.init(false,
-          pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')));
+      _algorithm.init(
+        false,
+        pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')),
+      );
       try {
         final rsaSignature = _algorithm is pc.PSSSigner
             ? pc.PSSSignature(signature.data)
@@ -126,11 +139,12 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
       var l = signature.data.length ~/ 2;
 
       return _algorithm.verifySignature(
-          data,
-          pc.ECSignature(
-            _bigIntFromBytes(signature.data.take(l)),
-            _bigIntFromBytes(signature.data.skip(l)),
-          ));
+        data,
+        pc.ECSignature(
+          _bigIntFromBytes(signature.data.take(l)),
+          _bigIntFromBytes(signature.data.skip(l)),
+        ),
+      );
     }
     throw UnsupportedError('Unknown key type $key');
   }
@@ -146,20 +160,27 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
   @override
   Uint8List decrypt(EncryptionResult input) {
     _algorithm.init(
-        false,
-        pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')
-            // ..seed(pc.KeyParameter(Uint8List(32)))
-            ));
+      false,
+      pc.ParametersWithRandom(
+        keyParameter,
+        pc.SecureRandom('Fortuna'),
+        // ..seed(pc.KeyParameter(Uint8List(32)))
+      ),
+    );
 
     return _algorithm.process(input.data);
   }
 
   @override
-  EncryptionResult encrypt(List<int> input,
-      {Uint8List? initializationVector,
-      Uint8List? additionalAuthenticatedData}) {
+  EncryptionResult encrypt(
+    List<int> input, {
+    Uint8List? initializationVector,
+    Uint8List? additionalAuthenticatedData,
+  }) {
     _algorithm.init(
-        true, pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()));
+      true,
+      pc.ParametersWithRandom(keyParameter, DefaultSecureRandom()),
+    );
 
     return EncryptionResult(_algorithm.process(input as Uint8List));
   }
@@ -174,7 +195,8 @@ class _AsymmetricKeyDeriver extends KeyDeriver<PrivateKey, EcdhKeyDeriverParams>
     final peerPublicKey = params.peerPublicKey;
     if (key is! EcPrivateKey) {
       throw UnsupportedError(
-          'Key derivation is only supported for EC private keys');
+        'Key derivation is only supported for EC private keys',
+      );
     }
     if (peerPublicKey is! EcPublicKey) {
       throw UnsupportedError('Key derivation requires an EC public peer key');
@@ -183,8 +205,9 @@ class _AsymmetricKeyDeriver extends KeyDeriver<PrivateKey, EcdhKeyDeriverParams>
     final peerEc = peerPublicKey;
     if (privateEc.curve != peerEc.curve) {
       throw ArgumentError(
-          'ECDH requires matching curves, got ${privateEc.curve.name} '
-          'and ${peerEc.curve.name}');
+        'ECDH requires matching curves, got ${privateEc.curve.name} '
+        'and ${peerEc.curve.name}',
+      );
     }
 
     final z = _ecdh.deriveSharedSecret(

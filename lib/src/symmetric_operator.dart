@@ -25,17 +25,26 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
   pc.BlockCipher get _algorithm => super._algorithm as pc.BlockCipher;
 
   pc.CipherParameters _getParams(
-      Uint8List? initializationVector, Uint8List? additionalAuthenticatedData) {
+    Uint8List? initializationVector,
+    Uint8List? additionalAuthenticatedData,
+  ) {
     var keyParam = pc.KeyParameter(key.keyValue);
 
     if (_algorithm is pc.AESKeyWrap) return keyParam;
     if (_algorithm is pc.GCMBlockCipher) {
-      return pc.AEADParameters(keyParam, 128, initializationVector!,
-          additionalAuthenticatedData ?? Uint8List(0));
+      return pc.AEADParameters(
+        keyParam,
+        128,
+        initializationVector!,
+        additionalAuthenticatedData ?? Uint8List(0),
+      );
     }
 
-    var paramsWithIV = pc.ParametersWithIVAndAad(keyParam,
-        initializationVector!, additionalAuthenticatedData ?? Uint8List(0));
+    var paramsWithIV = pc.ParametersWithIVAndAad(
+      keyParam,
+      initializationVector!,
+      additionalAuthenticatedData ?? Uint8List(0),
+    );
 
     if (_algorithm is pc.PaddedBlockCipher) {
       return pc.PaddedBlockCipherParameters(paramsWithIV, null);
@@ -47,9 +56,9 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
   @override
   Uint8List decrypt(EncryptionResult input) {
     _algorithm.init(
-        false,
-        _getParams(
-            input.initializationVector, input.additionalAuthenticatedData));
+      false,
+      _getParams(input.initializationVector, input.additionalAuthenticatedData),
+    );
     var data = input.data;
     if (input.authenticationTag != null) {
       data = Uint8List(data.length + input.authenticationTag!.length);
@@ -60,34 +69,48 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
   }
 
   @override
-  EncryptionResult encrypt(Uint8List input,
-      {Uint8List? initializationVector,
-      Uint8List? additionalAuthenticatedData}) {
-    initializationVector ??=
-        DefaultSecureRandom().nextBytes(_algorithm.blockSize);
+  EncryptionResult encrypt(
+    Uint8List input, {
+    Uint8List? initializationVector,
+    Uint8List? additionalAuthenticatedData,
+  }) {
+    initializationVector ??= DefaultSecureRandom().nextBytes(
+      _algorithm.blockSize,
+    );
 
     _algorithm.init(
-        true, _getParams(initializationVector, additionalAuthenticatedData));
+      true,
+      _getParams(initializationVector, additionalAuthenticatedData),
+    );
     var r = _algorithm.process(input);
     Uint8List? tag;
     if (_algorithm is pc.GCMBlockCipher) {
       var tagLength = 16;
       tag = Uint8List.view(
-          r.buffer, r.offsetInBytes + r.length - tagLength, tagLength);
+        r.buffer,
+        r.offsetInBytes + r.length - tagLength,
+        tagLength,
+      );
       r = Uint8List.view(r.buffer, r.offsetInBytes, r.length - tagLength);
     }
     if (_algorithm is pc.BlockCipherWithAuthenticationTag) {
       var tagLength =
           (_algorithm as pc.BlockCipherWithAuthenticationTag).tagLength;
       tag = Uint8List.view(
-          r.buffer, r.offsetInBytes + r.length - tagLength, tagLength);
+        r.buffer,
+        r.offsetInBytes + r.length - tagLength,
+        tagLength,
+      );
       r = Uint8List.view(r.buffer, r.offsetInBytes, r.length - tagLength);
     }
 
-    return EncryptionResult(r,
-        initializationVector:
-            _algorithm is pc.AESKeyWrap ? null : initializationVector,
-        additionalAuthenticatedData: additionalAuthenticatedData,
-        authenticationTag: tag);
+    return EncryptionResult(
+      r,
+      initializationVector: _algorithm is pc.AESKeyWrap
+          ? null
+          : initializationVector,
+      additionalAuthenticatedData: additionalAuthenticatedData,
+      authenticationTag: tag,
+    );
   }
 }

@@ -26,9 +26,10 @@ abstract class RsaPrivateKey extends RsaKey implements PrivateKey {
   /// The second prime factor
   BigInt get secondPrimeFactor;
 
-  factory RsaPrivateKey(
-      {required BigInt privateExponent,
-      required BigInt firstPrimeFactor,
-      required BigInt secondPrimeFactor,
-      required BigInt modulus}) = RsaPrivateKeyImpl;
+  factory RsaPrivateKey({
+    required BigInt privateExponent,
+    required BigInt firstPrimeFactor,
+    required BigInt secondPrimeFactor,
+    required BigInt modulus,
+  }) = RsaPrivateKeyImpl;
 }

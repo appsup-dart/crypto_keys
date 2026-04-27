@@ -59,35 +59,49 @@ class DerivationAlgorithms extends Identifier {
 class _ConcatKdfAlgorithms extends Identifier {
   /// Concat KDF using SHA-256
   final sha256 = AlgorithmIdentifier._(
-      'derive/ConcatKDF/SHA-256', () => pc.SHA256Digest());
+    'derive/ConcatKDF/SHA-256',
+    () => pc.SHA256Digest(),
+  );
 
   /// Concat KDF using SHA-384
   final sha384 = AlgorithmIdentifier._(
-      'derive/ConcatKDF/SHA-384', () => pc.SHA384Digest());
+    'derive/ConcatKDF/SHA-384',
+    () => pc.SHA384Digest(),
+  );
 
   /// Concat KDF using SHA-512
   final sha512 = AlgorithmIdentifier._(
-      'derive/ConcatKDF/SHA-512', () => pc.SHA512Digest());
+    'derive/ConcatKDF/SHA-512',
+    () => pc.SHA512Digest(),
+  );
 
   _ConcatKdfAlgorithms() : super._('derive/ConcatKDF');
 }
 
 class _Pbkdf2Algorithms extends Identifier {
   /// PBKDF2 using HMAC-SHA-1
-  final sha1 = AlgorithmIdentifier._('derive/PBKDF2/SHA-1',
-      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA1Digest(), 64)));
+  final sha1 = AlgorithmIdentifier._(
+    'derive/PBKDF2/SHA-1',
+    () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA1Digest(), 64)),
+  );
 
   /// PBKDF2 using HMAC-SHA-256
-  final sha256 = AlgorithmIdentifier._('derive/PBKDF2/SHA-256',
-      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA256Digest(), 64)));
+  final sha256 = AlgorithmIdentifier._(
+    'derive/PBKDF2/SHA-256',
+    () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA256Digest(), 64)),
+  );
 
   /// PBKDF2 using HMAC-SHA-384
-  final sha384 = AlgorithmIdentifier._('derive/PBKDF2/SHA-384',
-      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA384Digest(), 128)));
+  final sha384 = AlgorithmIdentifier._(
+    'derive/PBKDF2/SHA-384',
+    () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA384Digest(), 128)),
+  );
 
   /// PBKDF2 using HMAC-SHA-512
-  final sha512 = AlgorithmIdentifier._('derive/PBKDF2/SHA-512',
-      () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA512Digest(), 128)));
+  final sha512 = AlgorithmIdentifier._(
+    'derive/PBKDF2/SHA-512',
+    () => pc.PBKDF2KeyDerivator(pc.HMac(pc.SHA512Digest(), 128)),
+  );
 
   _Pbkdf2Algorithms() : super._('derive/PBKDF2');
 }
@@ -95,15 +109,21 @@ class _Pbkdf2Algorithms extends Identifier {
 class _HkdfAlgorithms extends Identifier {
   /// HKDF using SHA-256
   final sha256 = AlgorithmIdentifier._(
-      'derive/HKDF/SHA-256', () => pc.HKDFKeyDerivator(pc.SHA256Digest()));
+    'derive/HKDF/SHA-256',
+    () => pc.HKDFKeyDerivator(pc.SHA256Digest()),
+  );
 
   /// HKDF using SHA-384
   final sha384 = AlgorithmIdentifier._(
-      'derive/HKDF/SHA-384', () => pc.HKDFKeyDerivator(pc.SHA384Digest()));
+    'derive/HKDF/SHA-384',
+    () => pc.HKDFKeyDerivator(pc.SHA384Digest()),
+  );
 
   /// HKDF using SHA-512
   final sha512 = AlgorithmIdentifier._(
-      'derive/HKDF/SHA-512', () => pc.HKDFKeyDerivator(pc.SHA512Digest()));
+    'derive/HKDF/SHA-512',
+    () => pc.HKDFKeyDerivator(pc.SHA512Digest()),
+  );
 
   _HkdfAlgorithms() : super._('derive/HKDF');
 }
@@ -115,25 +135,34 @@ class DigestAlgorithms extends Identifier {
   final sha1 = AlgorithmIdentifier._('digest/SHA-1', () => pc.SHA1Digest());
 
   /// SHA-224 digest
-  final sha224 =
-      AlgorithmIdentifier._('digest/SHA-224', () => pc.SHA224Digest());
+  final sha224 = AlgorithmIdentifier._(
+    'digest/SHA-224',
+    () => pc.SHA224Digest(),
+  );
 
   /// SHA-256 digest
-  final sha256 =
-      AlgorithmIdentifier._('digest/SHA-256', () => pc.SHA256Digest());
+  final sha256 = AlgorithmIdentifier._(
+    'digest/SHA-256',
+    () => pc.SHA256Digest(),
+  );
 
   /// SHA-384 digest
-  final sha384 =
-      AlgorithmIdentifier._('digest/SHA-384', () => pc.SHA384Digest());
+  final sha384 = AlgorithmIdentifier._(
+    'digest/SHA-384',
+    () => pc.SHA384Digest(),
+  );
 
   /// SHA-512 digest
-  final sha512 =
-      AlgorithmIdentifier._('digest/SHA-512', () => pc.SHA512Digest());
+  final sha512 = AlgorithmIdentifier._(
+    'digest/SHA-512',
+    () => pc.SHA512Digest(),
+  );
 
   /// SHA-512/t digest
   AlgorithmIdentifier sha512t(int digestSizeBytes) => AlgorithmIdentifier._(
-      'digest/SHA-512/${digestSizeBytes * 8}',
-      () => pc.SHA512tDigest(digestSizeBytes));
+    'digest/SHA-512/${digestSizeBytes * 8}',
+    () => pc.SHA512tDigest(digestSizeBytes),
+  );
 
   /// MD2 digest
   final md2 = AlgorithmIdentifier._('digest/MD2', () => pc.MD2Digest());
@@ -161,32 +190,42 @@ class EncAlgorithms extends Identifier {
 class HybridEncAlgorithms extends Identifier {
   HybridEncAlgorithms() : super._('enc/hybrid');
 
-  AlgorithmIdentifier withParameters(
-      {required int keySize,
-      required Identifier curve,
-      required AlgorithmIdentifier<Digest> hkdfHash}) {
+  AlgorithmIdentifier withParameters({
+    required int keySize,
+    required Identifier curve,
+    required AlgorithmIdentifier<Digest> hkdfHash,
+  }) {
     return AlgorithmIdentifier._(
-        'enc/hybrid', () => pc.HKDFKeyDerivator(hkdfHash.factory()));
+      'enc/hybrid',
+      () => pc.HKDFKeyDerivator(hkdfHash.factory()),
+    );
   }
 }
 
 class AesEncAlgorithms extends Identifier {
   /// AES CBC
   final cbc = AlgorithmIdentifier._(
-      'enc/AES/CBC/PKCS7',
-      () => pc.PaddedBlockCipherImpl(
-          pc.PKCS7Padding(), pc.CBCBlockCipher(pc.AESEngine())));
+    'enc/AES/CBC/PKCS7',
+    () => pc.PaddedBlockCipherImpl(
+      pc.PKCS7Padding(),
+      pc.CBCBlockCipher(pc.AESEngine()),
+    ),
+  );
 
   final cbcWithHmac = AesWithHmacEncAlgorithms();
 
   /// AES GCM
 
   final gcm = AlgorithmIdentifier._(
-      'enc/AES/GCM', () => pc.GCMBlockCipher(pc.AESEngine()));
+    'enc/AES/GCM',
+    () => pc.GCMBlockCipher(pc.AESEngine()),
+  );
 
   /// AES EAX
-  final eax =
-      AlgorithmIdentifier._('enc/AES/EAX', () => throw UnimplementedError());
+  final eax = AlgorithmIdentifier._(
+    'enc/AES/EAX',
+    () => throw UnimplementedError(),
+  );
 
   /// AES Key Wrap with default initial value
   final keyWrap = AlgorithmIdentifier._('enc/AES/KW', () => pce.AESKeyWrap());
@@ -197,21 +236,27 @@ class AesEncAlgorithms extends Identifier {
 class AesWithHmacEncAlgorithms extends Identifier {
   /// AES_128_CBC_HMAC_SHA_256 authenticated encryption algorithm
   final sha256 = AlgorithmIdentifier._(
-      'enc/AES/CBC/PKCS7+HMAC/SHA-256',
-      () => pce.AesCbcAuthenticatedCipherWithHash(
-          algorithms.signing.hmac.sha256.createAlgorithm()));
+    'enc/AES/CBC/PKCS7+HMAC/SHA-256',
+    () => pce.AesCbcAuthenticatedCipherWithHash(
+      algorithms.signing.hmac.sha256.createAlgorithm(),
+    ),
+  );
 
   /// AES_192_CBC_HMAC_SHA_384 authenticated encryption algorithm
   final sha384 = AlgorithmIdentifier._(
-      'enc/AES/CBC/PKCS7+HMAC/SHA-384',
-      () => pce.AesCbcAuthenticatedCipherWithHash(
-          algorithms.signing.hmac.sha384.createAlgorithm()));
+    'enc/AES/CBC/PKCS7+HMAC/SHA-384',
+    () => pce.AesCbcAuthenticatedCipherWithHash(
+      algorithms.signing.hmac.sha384.createAlgorithm(),
+    ),
+  );
 
   /// AES_256_CBC_HMAC_SHA_512 authenticated encryption algorithm
   final sha512 = AlgorithmIdentifier._(
-      'enc/AES/CBC/PKCS7+HMAC/SHA-512',
-      () => pce.AesCbcAuthenticatedCipherWithHash(
-          algorithms.signing.hmac.sha512.createAlgorithm()));
+    'enc/AES/CBC/PKCS7+HMAC/SHA-512',
+    () => pce.AesCbcAuthenticatedCipherWithHash(
+      algorithms.signing.hmac.sha512.createAlgorithm(),
+    ),
+  );
 
   AesWithHmacEncAlgorithms() : super._('enc/AES/CBC/PKCS7+HMAC');
 }
@@ -219,16 +264,21 @@ class AesWithHmacEncAlgorithms extends Identifier {
 class _RsaEncAlgorithms extends Identifier {
   /// RSAES-PKCS1-v1_5
   final pkcs1 = AlgorithmIdentifier._(
-      'enc/RSA/PKCS1', () => pc.PKCS1Encoding(pc.RSAEngine()));
+    'enc/RSA/PKCS1',
+    () => pc.PKCS1Encoding(pc.RSAEngine()),
+  );
 
   /// RSAES OAEP using default parameters
-  final oaep = AlgorithmIdentifier._('enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding',
-      () => pc.OAEPEncoding.withSHA1(pc.RSAEngine()));
+  final oaep = AlgorithmIdentifier._(
+    'enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding',
+    () => pc.OAEPEncoding.withSHA1(pc.RSAEngine()),
+  );
 
   /// RSAES OAEP using SHA-256 and MGF1 with SHA-256
   final oaep256 = AlgorithmIdentifier._(
-      'enc/RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
-      () => pc.OAEPEncoding.withSHA256(pc.RSAEngine()));
+    'enc/RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
+    () => pc.OAEPEncoding.withSHA256(pc.RSAEngine()),
+  );
 
   _RsaEncAlgorithms() : super._('enc/RSA');
 }
@@ -249,31 +299,43 @@ class _SigAlgorithms extends Identifier {
 class _HmacSigAlgorithms extends Identifier {
   /// HMAC using SHA-256
   final sha256 = AlgorithmIdentifier._(
-      'sig/HMAC/SHA-256', () => pc.HMac(pc.SHA256Digest(), 64));
+    'sig/HMAC/SHA-256',
+    () => pc.HMac(pc.SHA256Digest(), 64),
+  );
 
   /// HMAC using SHA-384
   final sha384 = AlgorithmIdentifier._(
-      'sig/HMAC/SHA-384', () => pc.HMac(pc.SHA384Digest(), 128));
+    'sig/HMAC/SHA-384',
+    () => pc.HMac(pc.SHA384Digest(), 128),
+  );
 
   /// HMAC using SHA-512
   final sha512 = AlgorithmIdentifier._(
-      'sig/HMAC/SHA-512', () => pc.HMac(pc.SHA512Digest(), 128));
+    'sig/HMAC/SHA-512',
+    () => pc.HMac(pc.SHA512Digest(), 128),
+  );
 
   _HmacSigAlgorithms() : super._('sig/HMAC');
 }
 
 class _RsaSigAlgorithms extends Identifier {
   /// RSASSA-PKCS1-v1_5 using SHA-256
-  final sha256 = AlgorithmIdentifier._('sig/RSA/SHA-256',
-      () => pc.RSASigner(pc.SHA256Digest(), '0609608648016503040201'));
+  final sha256 = AlgorithmIdentifier._(
+    'sig/RSA/SHA-256',
+    () => pc.RSASigner(pc.SHA256Digest(), '0609608648016503040201'),
+  );
 
   /// RSASSA-PKCS1-v1_5 using SHA-384
-  final sha384 = AlgorithmIdentifier._('sig/RSA/SHA-384',
-      () => pc.RSASigner(pc.SHA384Digest(), '0609608648016503040202'));
+  final sha384 = AlgorithmIdentifier._(
+    'sig/RSA/SHA-384',
+    () => pc.RSASigner(pc.SHA384Digest(), '0609608648016503040202'),
+  );
 
   /// RSASSA-PKCS1-v1_5 using SHA-512
-  final sha512 = AlgorithmIdentifier._('sig/RSA/SHA-512',
-      () => pc.RSASigner(pc.SHA512Digest(), '0609608648016503040203'));
+  final sha512 = AlgorithmIdentifier._(
+    'sig/RSA/SHA-512',
+    () => pc.RSASigner(pc.SHA512Digest(), '0609608648016503040203'),
+  );
 
   /// Contains the identifiers for supported RSASSA-PSS signing algorithms
   final pss = _RsaPssAlgorithms();
@@ -286,32 +348,38 @@ class _RsaPssAlgorithms extends Identifier {
 
   /// RSASSA-PSS using SHA-256 and MGF1 with SHA-256
   late final sha256 = withParameters(
-      sigHash: algorithms.digest.sha256,
-      mgf1Hash: algorithms.digest.sha256,
-      saltLength: 32);
+    sigHash: algorithms.digest.sha256,
+    mgf1Hash: algorithms.digest.sha256,
+    saltLength: 32,
+  );
 
   /// RSASSA-PSS using SHA-384 and MGF1 with SHA-384
   late final sha384 = withParameters(
-      sigHash: algorithms.digest.sha384,
-      mgf1Hash: algorithms.digest.sha384,
-      saltLength: 48);
+    sigHash: algorithms.digest.sha384,
+    mgf1Hash: algorithms.digest.sha384,
+    saltLength: 48,
+  );
 
   /// RSASSA-PSS using SHA-512 and MGF1 with SHA-512
   late final sha512 = withParameters(
-      sigHash: algorithms.digest.sha512,
-      mgf1Hash: algorithms.digest.sha512,
-      saltLength: 64);
+    sigHash: algorithms.digest.sha512,
+    mgf1Hash: algorithms.digest.sha512,
+    saltLength: 64,
+  );
 
-  AlgorithmIdentifier withParameters(
-      {required AlgorithmIdentifier sigHash,
-      required AlgorithmIdentifier mgf1Hash,
-      required int saltLength}) {
+  AlgorithmIdentifier withParameters({
+    required AlgorithmIdentifier sigHash,
+    required AlgorithmIdentifier mgf1Hash,
+    required int saltLength,
+  }) {
     return AlgorithmIdentifier._(
-        'sig/RSA/PSS/${sigHash.name}/mgf1${mgf1Hash.name}/$saltLength',
-        () => _PssSignerFactory(
-            sigDigest: sigHash.factory() as pc.Digest,
-            mgf1Digest: mgf1Hash.factory() as pc.Digest,
-            saltLength: saltLength));
+      'sig/RSA/PSS/${sigHash.name}/mgf1${mgf1Hash.name}/$saltLength',
+      () => _PssSignerFactory(
+        sigDigest: sigHash.factory() as pc.Digest,
+        mgf1Digest: mgf1Hash.factory() as pc.Digest,
+        saltLength: saltLength,
+      ),
+    );
   }
 }
 
@@ -321,10 +389,11 @@ class _PssSignerFactory implements pc.Signer {
   final int saltLength;
   late final pc.PSSSigner _delegate;
 
-  _PssSignerFactory(
-      {required this.sigDigest,
-      required this.mgf1Digest,
-      required this.saltLength}) {
+  _PssSignerFactory({
+    required this.sigDigest,
+    required this.mgf1Digest,
+    required this.saltLength,
+  }) {
     _delegate = pc.PSSSigner(pc.RSAEngine(), sigDigest, mgf1Digest);
   }
 
@@ -341,7 +410,8 @@ class _PssSignerFactory implements pc.Signer {
       pc.ParametersWithRandom(:final parameters) => parameters,
       pc.AsymmetricKeyParameter() => params,
       _ => throw ArgumentError(
-          'Unsupported parameter type for RSA-PSS: ${params.runtimeType}')
+        'Unsupported parameter type for RSA-PSS: ${params.runtimeType}',
+      ),
     };
     final random = switch (params) {
       pc.ParametersWithRandom(:final random) => random,
@@ -363,25 +433,34 @@ class _PssSignerFactory implements pc.Signer {
     }
     if (signature is pc.RSASignature) {
       return _delegate.verifySignature(
-          message, pc.PSSSignature(signature.bytes));
+        message,
+        pc.PSSSignature(signature.bytes),
+      );
     }
     throw ArgumentError(
-        'Expected RSA or PSS signature, got ${signature.runtimeType}');
+      'Expected RSA or PSS signature, got ${signature.runtimeType}',
+    );
   }
 }
 
 class _EcdsaSigAlgorithms extends Identifier {
   /// ECDSA using P-256 and SHA-256
   final sha256 = AlgorithmIdentifier._(
-      'sig/ECDSA/SHA-256', () => pc.ECDSASigner(pc.SHA256Digest(), null));
+    'sig/ECDSA/SHA-256',
+    () => pc.ECDSASigner(pc.SHA256Digest(), null),
+  );
 
   /// ECDSA using P-384 and SHA-384
   final sha384 = AlgorithmIdentifier._(
-      'sig/ECDSA/SHA-384', () => pc.ECDSASigner(pc.SHA384Digest(), null));
+    'sig/ECDSA/SHA-384',
+    () => pc.ECDSASigner(pc.SHA384Digest(), null),
+  );
 
   /// ECDSA using P-521 and SHA-512
   final sha512 = AlgorithmIdentifier._(
-      'sig/ECDSA/SHA-512', () => pc.ECDSASigner(pc.SHA512Digest(), null));
+    'sig/ECDSA/SHA-512',
+    () => pc.ECDSASigner(pc.SHA512Digest(), null),
+  );
 
   _EcdsaSigAlgorithms() : super._('sig/ECDSA');
 }
@@ -433,9 +512,12 @@ class DefaultSecureRandom implements pc.SecureRandom {
   @override
   BigInt nextBigInteger(int bitLength) {
     return BigInt.parse(
-        Iterable.generate(bitLength, (_) => random.nextBool() ? '1' : '0')
-            .join(''),
-        radix: 2);
+      Iterable.generate(
+        bitLength,
+        (_) => random.nextBool() ? '1' : '0',
+      ).join(''),
+      radix: 2,
+    );
   }
 
   @override

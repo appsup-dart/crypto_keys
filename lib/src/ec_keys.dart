@@ -14,10 +14,11 @@ abstract class EcPublicKey extends EcKey implements PublicKey {
   /// The y coordinate for the Elliptic Curve point
   BigInt get yCoordinate;
 
-  factory EcPublicKey(
-      {required BigInt xCoordinate,
-      required BigInt yCoordinate,
-      required Identifier curve}) = EcPublicKeyImpl;
+  factory EcPublicKey({
+    required BigInt xCoordinate,
+    required BigInt yCoordinate,
+    required Identifier curve,
+  }) = EcPublicKeyImpl;
 }
 
 /// An elliptic curve (EC) private key
@@ -25,7 +26,8 @@ abstract class EcPrivateKey extends EcKey implements PrivateKey {
   /// The Elliptic Curve private key value
   BigInt get eccPrivateKey;
 
-  factory EcPrivateKey(
-      {required BigInt eccPrivateKey,
-      required Identifier curve}) = EcPrivateKeyImpl;
+  factory EcPrivateKey({
+    required BigInt eccPrivateKey,
+    required Identifier curve,
+  }) = EcPrivateKeyImpl;
 }
