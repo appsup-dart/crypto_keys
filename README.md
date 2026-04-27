@@ -113,23 +113,17 @@ In practice, this is useful when:
 - a protocol gives you context data (`otherInfo`) so both sides derive exactly
   the same key in a safe and predictable way.
 
-Key derivation is exposed through the operator-style API aligned with
-Signer/Verifier/Encrypter:
+Key derivation is exposed directly on the key material:
 
 ```dart
-final deriver = myKeyPair.createKeyDeriver(
-  algorithms.derivation.ecdh,
-);
-
 final otherInfo = ... // protocol-specific context bytes
 
-final sharedSecret = deriver.deriveKey(KeyDeriverParams.ecdh(
+final sharedSecretBytes = myEcPrivateKey.deriveSharedSecret(.ecdh(
   peerPublicKey: peerPublicEcKey,
 ));
 
-final derived = SecretBytes(sharedSecret)
-    .createKeyDeriver(algorithms.derivation.concatKdf.sha256)
-    .deriveKey(KeyDeriverParams.concatKdf(
+final derived = sharedSecretBytes.deriveBits(.concatKdf(
+  hash: .sha256,
   keyBitLength: 256,
   otherInfo: otherInfo,
 ));

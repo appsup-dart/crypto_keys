@@ -103,84 +103,123 @@ class _ConcatKdf {
   }
 }
 
-class _PasswordBasedKeyDeriver
-    extends KeyDeriver<Password, Pbkdf2KeyDeriverParams> {
-  _PasswordBasedKeyDeriver(super.algorithm, super.keyMaterial) : super._();
+SecretBytes _deriveEcdhSharedSecret({
+  required EcPrivateKey privateKey,
+  required EcdhKeyDeriverParams params,
+}) {
+  final peerPublicKey = params.peerPublicKey;
+  final privateEc = privateKey;
+  final peerEc = peerPublicKey;
+  if (privateEc.curve != peerEc.curve) {
+    throw ArgumentError(
+      'ECDH requires matching curves, got '
+      '${privateEc.curve.name} and ${peerEc.curve.name}',
+    );
+  }
+  return SecretBytes(
+    _ecdh.deriveSharedSecret(privateKey: privateEc, publicKey: peerEc),
+  );
+}
 
-  @override
-  pc.KeyDerivator get _algorithm => super._algorithm as pc.KeyDerivator;
+Uint8List _derivePbkdf2Bits({
+  required Password password,
+  required Pbkdf2KeyDeriverParams params,
+}) {
+  final salt = params.salt;
+  final iterations = params.iterations;
+  final keyBitLength = params.keyBitLength;
+  if (salt.isEmpty) {
+    throw ArgumentError.value(salt, 'salt', 'Salt must not be empty');
+  }
+  if (iterations <= 0) {
+    throw ArgumentError.value(
+      iterations,
+      'iterations',
+      'Must be greater than 0',
+    );
+  }
+  if (keyBitLength <= 0) {
+    throw ArgumentError.value(
+      keyBitLength,
+      'keyBitLength',
+      'Must be greater than 0',
+    );
+  }
+  final keyLength = (keyBitLength + 7) ~/ 8;
+  final algorithm = pc.PBKDF2KeyDerivator(
+    pc.HMac(params.hash.createAlgorithm(), _hmacBlockLength(params.hash)),
+  );
+  algorithm.init(pc.Pbkdf2Parameters(salt, iterations, keyLength));
+  return algorithm.process(password.value);
+}
 
-  @override
-  Uint8List deriveKey(Pbkdf2KeyDeriverParams params) {
-    final salt = params.salt;
-    final iterations = params.iterations;
-    final keyBitLength = params.keyBitLength;
-    if (salt.isEmpty) {
-      throw ArgumentError.value(salt, 'salt', 'Salt must not be empty');
-    }
-    if (iterations <= 0) {
-      throw ArgumentError.value(
-        iterations,
-        'iterations',
-        'Must be greater than 0',
-      );
-    }
-    if (keyBitLength <= 0) {
-      throw ArgumentError.value(
-        keyBitLength,
-        'keyBitLength',
-        'Must be greater than 0',
-      );
-    }
+Uint8List _deriveHkdfBits({
+  required SecretBytes secret,
+  required HkdfKeyDeriverParams params,
+}) {
+  if (secret.value.isEmpty) {
+    throw ArgumentError.value(
+      secret.value,
+      'key',
+      'Secret bytes must not be empty',
+    );
+  }
+  if (params.keyBitLength <= 0) {
+    throw ArgumentError.value(
+      params.keyBitLength,
+      'keyBitLength',
+      'Must be greater than 0',
+    );
+  }
+  _ensureSupportsHkdf(params.hash);
+  final keyLength = (params.keyBitLength + 7) ~/ 8;
+  final algorithm = pc.HKDFKeyDerivator(params.hash.createAlgorithm());
+  algorithm.init(
+    pc.HkdfParameters(
+      secret.value,
+      keyLength,
+      params.salt,
+      params.info ?? Uint8List(0),
+    ),
+  );
+  return algorithm.process(Uint8List(0));
+}
 
-    final keyLength = (keyBitLength + 7) ~/ 8;
-    _algorithm.init(pc.Pbkdf2Parameters(salt, iterations, keyLength));
-    return _algorithm.process(key.value);
+Uint8List _deriveConcatKdfBits({
+  required SecretBytes secret,
+  required ConcatKdfKeyDeriverParams params,
+}) {
+  if (secret.value.isEmpty) {
+    throw ArgumentError.value(
+      secret.value,
+      'key',
+      'Secret bytes must not be empty',
+    );
+  }
+  _ensureSupportsConcatKdf(params.hash);
+  return _concatKdf.deriveKey(
+    sharedSecret: secret.value,
+    otherInfo: params.otherInfo ?? Uint8List(0),
+    keyBitLength: params.keyBitLength,
+    digest: params.hash.createAlgorithm(),
+  );
+}
+
+int _hmacBlockLength(DigestAlgorithmIdentifier hash) => switch (hash.name) {
+  'digest/SHA-384' || 'digest/SHA-512' => 128,
+  _ => 64,
+};
+
+void _ensureSupportsHkdf(DigestAlgorithmIdentifier hash) {
+  if (hash == DigestAlgorithmIdentifier.sha1) {
+    throw UnsupportedError('HKDF supports SHA-256, SHA-384 and SHA-512 only');
   }
 }
 
-class _SecretBytesKeyDeriver extends KeyDeriver<SecretBytes, KeyDeriverParams> {
-  _SecretBytesKeyDeriver(super.algorithm, super.keyMaterial) : super._();
-
-  @override
-  Uint8List deriveKey(KeyDeriverParams params) {
-    if (key.value.isEmpty) {
-      throw ArgumentError.value(
-        key.value,
-        'key',
-        'Secret bytes must not be empty',
-      );
-    }
-    if (params is HkdfKeyDeriverParams) {
-      if (params.keyBitLength <= 0) {
-        throw ArgumentError.value(
-          params.keyBitLength,
-          'keyBitLength',
-          'Must be greater than 0',
-        );
-      }
-      final keyLength = (params.keyBitLength + 7) ~/ 8;
-      final algorithm = _algorithm as pc.KeyDerivator;
-      algorithm.init(
-        pc.HkdfParameters(
-          key.value,
-          keyLength,
-          params.salt,
-          params.info ?? Uint8List(0),
-        ),
-      );
-      return algorithm.process(Uint8List(0));
-    }
-    if (params is ConcatKdfKeyDeriverParams) {
-      return _concatKdf.deriveKey(
-        sharedSecret: key.value,
-        otherInfo: params.otherInfo ?? Uint8List(0),
-        keyBitLength: params.keyBitLength,
-        digest: _algorithm as pc.Digest,
-      );
-    }
-    throw ArgumentError(
-      'Unsupported key derivation params: ${params.runtimeType}',
+void _ensureSupportsConcatKdf(DigestAlgorithmIdentifier hash) {
+  if (hash == DigestAlgorithmIdentifier.sha1) {
+    throw UnsupportedError(
+      'ConcatKDF supports SHA-256, SHA-384 and SHA-512 only',
     );
   }
 }

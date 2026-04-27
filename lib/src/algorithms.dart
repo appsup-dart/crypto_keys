@@ -132,46 +132,50 @@ class DigestAlgorithms extends Identifier {
   DigestAlgorithms() : super._('digest');
 
   /// SHA-1 digest
-  final sha1 = AlgorithmIdentifier._('digest/SHA-1', () => pc.SHA1Digest());
+  final sha1 = DigestAlgorithmIdentifier._(
+    'digest/SHA-1',
+    () => pc.SHA1Digest(),
+  );
 
   /// SHA-224 digest
-  final sha224 = AlgorithmIdentifier._(
+  final sha224 = DigestAlgorithmIdentifier._(
     'digest/SHA-224',
     () => pc.SHA224Digest(),
   );
 
   /// SHA-256 digest
-  final sha256 = AlgorithmIdentifier._(
+  final sha256 = DigestAlgorithmIdentifier._(
     'digest/SHA-256',
     () => pc.SHA256Digest(),
   );
 
   /// SHA-384 digest
-  final sha384 = AlgorithmIdentifier._(
+  final sha384 = DigestAlgorithmIdentifier._(
     'digest/SHA-384',
     () => pc.SHA384Digest(),
   );
 
   /// SHA-512 digest
-  final sha512 = AlgorithmIdentifier._(
+  final sha512 = DigestAlgorithmIdentifier._(
     'digest/SHA-512',
     () => pc.SHA512Digest(),
   );
 
   /// SHA-512/t digest
-  AlgorithmIdentifier sha512t(int digestSizeBytes) => AlgorithmIdentifier._(
-    'digest/SHA-512/${digestSizeBytes * 8}',
-    () => pc.SHA512tDigest(digestSizeBytes),
-  );
+  DigestAlgorithmIdentifier sha512t(int digestSizeBytes) =>
+      DigestAlgorithmIdentifier._(
+        'digest/SHA-512/${digestSizeBytes * 8}',
+        () => pc.SHA512tDigest(digestSizeBytes),
+      );
 
   /// MD2 digest
-  final md2 = AlgorithmIdentifier._('digest/MD2', () => pc.MD2Digest());
+  final md2 = DigestAlgorithmIdentifier._('digest/MD2', () => pc.MD2Digest());
 
   /// MD4 digest
-  final md4 = AlgorithmIdentifier._('digest/MD4', () => pc.MD4Digest());
+  final md4 = DigestAlgorithmIdentifier._('digest/MD4', () => pc.MD4Digest());
 
   /// MD5 digest
-  final md5 = AlgorithmIdentifier._('digest/MD5', () => pc.MD5Digest());
+  final md5 = DigestAlgorithmIdentifier._('digest/MD5', () => pc.MD5Digest());
 }
 
 class EncAlgorithms extends Identifier {
@@ -501,6 +505,16 @@ class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
   AlgorithmIdentifier._(super.name, this.factory) : super._();
 
   T createAlgorithm() => factory();
+}
+
+class DigestAlgorithmIdentifier extends AlgorithmIdentifier<pc.Digest> {
+  DigestAlgorithmIdentifier._(super.name, super.factory) : super._();
+
+  static DigestAlgorithmIdentifier get sha1 => algorithms.digest.sha1;
+  static DigestAlgorithmIdentifier get sha224 => algorithms.digest.sha224;
+  static DigestAlgorithmIdentifier get sha256 => algorithms.digest.sha256;
+  static DigestAlgorithmIdentifier get sha384 => algorithms.digest.sha384;
+  static DigestAlgorithmIdentifier get sha512 => algorithms.digest.sha512;
 }
 
 class DefaultSecureRandom implements pc.SecureRandom {

@@ -3,11 +3,6 @@ part of '../crypto_keys.dart';
 /// Shared base type for secret material used by operators.
 abstract mixin class KeyMaterial {}
 
-/// Shared capability for types that can derive keys.
-mixin CanDeriveKey on KeyMaterial {
-  KeyDeriver createKeyDeriver(Identifier algorithm);
-}
-
 /// A cryptographic key
 abstract mixin class Key implements KeyMaterial {
   /// Creates an [Encrypter] using this key and the specified algorithm
@@ -21,7 +16,7 @@ abstract mixin class Key implements KeyMaterial {
 }
 
 /// A password input for password-based key derivation.
-class Password with KeyMaterial, CanDeriveKey {
+class Password with KeyMaterial {
   final Uint8List value;
 
   Password(List<int> value) : value = Uint8List.fromList(value);
@@ -29,24 +24,33 @@ class Password with KeyMaterial, CanDeriveKey {
   factory Password.fromString(String value) =>
       Password(Uint8List.fromList(utf8.encode(value)));
 
-  /// Creates a [KeyDeriver] using this password and algorithm.
-  @override
-  KeyDeriver<Password, Pbkdf2KeyDeriverParams> createKeyDeriver(
-    Identifier algorithm,
-  ) => _PasswordBasedKeyDeriver(algorithm, this);
+  /// Derives bytes using password-based KDF parameters.
+  Uint8List deriveBits(PasswordKeyDeriverParams params) {
+    if (params case Pbkdf2KeyDeriverParams()) {
+      return _derivePbkdf2Bits(password: this, params: params);
+    }
+    throw UnsupportedError(
+      'Unsupported password key derivation params: ${params.runtimeType}',
+    );
+  }
 }
 
 /// Generic secret bytes input for key derivation APIs such as HKDF.
-class SecretBytes with KeyMaterial, CanDeriveKey {
+class SecretBytes with KeyMaterial {
   final Uint8List value;
 
   SecretBytes(List<int> value) : value = Uint8List.fromList(value);
 
-  /// Creates a [KeyDeriver] using these bytes and algorithm.
-  @override
-  KeyDeriver<SecretBytes, KeyDeriverParams> createKeyDeriver(
-    Identifier algorithm,
-  ) => _SecretBytesKeyDeriver(algorithm, this);
+  /// Derives bytes from this secret using shared-secret KDF parameters.
+  Uint8List deriveBits(SecretBytesKeyDeriverParams params) {
+    return switch (params) {
+      HkdfKeyDeriverParams() => _deriveHkdfBits(secret: this, params: params),
+      ConcatKdfKeyDeriverParams() => _deriveConcatKdfBits(
+        secret: this,
+        params: params,
+      ),
+    };
+  }
 }
 
 /// A cryptographic public key
@@ -62,7 +66,7 @@ abstract mixin class PublicKey implements Key {
 }
 
 /// A cryptographic private key
-abstract mixin class PrivateKey implements Key, CanDeriveKey {
+abstract mixin class PrivateKey implements Key {
   /// Creates a [Signer] using this key and the specified algorithm.
   Signer createSigner(Identifier algorithm) {
     if (this is SymmetricKey) {
@@ -70,17 +74,6 @@ abstract mixin class PrivateKey implements Key, CanDeriveKey {
     }
 
     return _AsymmetricSigner(algorithm, this);
-  }
-
-  /// Creates a [KeyDeriver] using this key and the specified algorithm.
-  @override
-  KeyDeriver<PrivateKey, EcdhKeyDeriverParams> createKeyDeriver(
-    Identifier algorithm,
-  ) {
-    if (this is SymmetricKey) {
-      throw UnsupportedError('Key derivation requires an asymmetric key pair');
-    }
-    return _AsymmetricKeyDeriver(algorithm, this);
   }
 }
 
@@ -217,16 +210,6 @@ class KeyPair {
       throw StateError('Need a public key to create a verifier.');
     }
     return publicKey!.createVerifier(algorithm);
-  }
-
-  /// Creates a [KeyDeriver] for this key pair.
-  KeyDeriver<PrivateKey, EcdhKeyDeriverParams> createKeyDeriver(
-    Identifier algorithm,
-  ) {
-    if (privateKey == null) {
-      throw StateError('Need a private key to create a key deriver.');
-    }
-    return privateKey!.createKeyDeriver(algorithm);
   }
 }
 

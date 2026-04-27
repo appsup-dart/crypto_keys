@@ -10,7 +10,13 @@ import 'src/impl.dart';
 import 'src/pointycastle_ext.dart' as pc;
 
 export 'src/algorithms.dart'
-    show algorithms, curves, Algorithms, AlgorithmIdentifier, Identifier;
+    show
+        algorithms,
+        curves,
+        Algorithms,
+        AlgorithmIdentifier,
+        DigestAlgorithmIdentifier,
+        Identifier;
 export 'src/errors.dart'
     show
         CryptoKeysException,
@@ -21,6 +27,7 @@ part 'src/asymmetric_operator.dart';
 part 'src/ec_keys.dart';
 part 'src/keys.dart';
 part 'src/key_derivation.dart';
+part 'src/key_derivation_params.dart';
 part 'src/operator.dart';
 part 'src/rsa_keys.dart';
 part 'src/symmetric_keys.dart';

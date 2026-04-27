@@ -186,38 +186,6 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
   }
 }
 
-class _AsymmetricKeyDeriver extends KeyDeriver<PrivateKey, EcdhKeyDeriverParams>
-    with _AsymmetricOperator<PrivateKey> {
-  _AsymmetricKeyDeriver(super.algorithm, super.keyMaterial) : super._();
-
-  @override
-  Uint8List deriveKey(EcdhKeyDeriverParams params) {
-    final peerPublicKey = params.peerPublicKey;
-    if (key is! EcPrivateKey) {
-      throw UnsupportedError(
-        'Key derivation is only supported for EC private keys',
-      );
-    }
-    if (peerPublicKey is! EcPublicKey) {
-      throw UnsupportedError('Key derivation requires an EC public peer key');
-    }
-    final privateEc = key as EcPrivateKey;
-    final peerEc = peerPublicKey;
-    if (privateEc.curve != peerEc.curve) {
-      throw ArgumentError(
-        'ECDH requires matching curves, got ${privateEc.curve.name} '
-        'and ${peerEc.curve.name}',
-      );
-    }
-
-    final z = _ecdh.deriveSharedSecret(
-      privateKey: privateEc,
-      publicKey: peerEc,
-    );
-    return z;
-  }
-}
-
 final _b256 = BigInt.from(256);
 
 Iterable<int> _bigIntToBytes(BigInt v, int length) sync* {

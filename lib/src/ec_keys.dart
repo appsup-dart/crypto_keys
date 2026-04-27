@@ -31,3 +31,15 @@ abstract class EcPrivateKey extends EcKey implements PrivateKey {
     required Identifier curve,
   }) = EcPrivateKeyImpl;
 }
+
+extension EcPrivateKeyDerivation on EcPrivateKey {
+  /// Derives an ECDH shared secret with a peer EC public key.
+  SecretBytes deriveSharedSecret(EcKeyAgreementParams params) {
+    return switch (params) {
+      EcdhKeyDeriverParams() => _deriveEcdhSharedSecret(
+        privateKey: this,
+        params: params,
+      ),
+    };
+  }
+}
