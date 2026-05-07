@@ -1,3 +1,7 @@
+## 0.3.0+2
+
+ - **REFACTOR**: upgrade pointy castle dependency to 4 and minimum sdk to 3 (pr [#18](https://github.com/appsup-dart/crypto_keys/issues/18) from Bishop19). ([9fd6bb31](https://github.com/appsup-dart/crypto_keys/commit/9fd6bb3157fdd53c751e100a760169587bd9b065))
+
 ## 0.3.0+1
 
  - **REFACTOR**: use OAEPEncoding.withSHA256 implementation from pointycastle. ([00510d2e](https://github.com/appsup-dart/crypto_keys/commit/00510d2e3df5b24541230832c162f06c571cd18c))

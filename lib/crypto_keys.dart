@@ -1,4 +1,4 @@
-library crypto_keys;
+library;
 
 import 'dart:convert';
 import 'dart:typed_data';
