@@ -63,7 +63,7 @@ class _ConcatKdf {
     required Uint8List sharedSecret,
     required Uint8List otherInfo,
     required int keyBitLength,
-    AlgorithmIdentifier<pc.Digest>? hash,
+    DigestAlgorithmIdentifier? hash,
     pc.Digest? digest,
   }) {
     if (keyBitLength <= 0) {

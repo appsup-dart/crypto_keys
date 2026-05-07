@@ -5,7 +5,7 @@ import 'dart:convert';
 
 void _testSigning(
   KeyPair keyPair,
-  AlgorithmIdentifier algorithm,
+  SigningAlgorithmIdentifier algorithm,
   Uint8List data, [
   Uint8List? signature,
   bool? isRandom,
@@ -29,7 +29,7 @@ void _testSigning(
 
 void _testEncryption(
   KeyPair keyPair,
-  AlgorithmIdentifier algorithm,
+  EncryptionAlgorithmIdentifier algorithm,
   Uint8List data, [
   EncryptionResult? encryptedData,
   bool? isRandom,

@@ -6,7 +6,7 @@ abstract mixin class KeyMaterial {}
 /// A cryptographic key
 abstract mixin class Key implements KeyMaterial {
   /// Creates an [Encrypter] using this key and the specified algorithm
-  Encrypter createEncrypter(Identifier algorithm) {
+  Encrypter createEncrypter(EncryptionAlgorithmIdentifier algorithm) {
     if (this is SymmetricKey) {
       return _SymmetricEncrypter(algorithm, this as SymmetricKey);
     }
@@ -56,7 +56,7 @@ class SecretBytes with KeyMaterial {
 /// A cryptographic public key
 abstract mixin class PublicKey implements Key {
   /// Creates a signature [Verifier] using this key and the specified algorithm
-  Verifier createVerifier(Identifier algorithm) {
+  Verifier createVerifier(SigningAlgorithmIdentifier algorithm) {
     if (this is SymmetricKey) {
       return _SymmetricSignerAndVerifier(algorithm, this as SymmetricKey);
     }
@@ -68,7 +68,7 @@ abstract mixin class PublicKey implements Key {
 /// A cryptographic private key
 abstract mixin class PrivateKey implements Key {
   /// Creates a [Signer] using this key and the specified algorithm.
-  Signer createSigner(Identifier algorithm) {
+  Signer createSigner(SigningAlgorithmIdentifier algorithm) {
     if (this is SymmetricKey) {
       return _SymmetricSignerAndVerifier(algorithm, this as SymmetricKey);
     }
@@ -196,7 +196,7 @@ class KeyPair {
   }
 
   /// Creates a [Signer] using the private key and the specified algorithm.
-  Signer createSigner(Identifier algorithm) {
+  Signer createSigner(SigningAlgorithmIdentifier algorithm) {
     if (privateKey == null) {
       throw StateError('Need a private key to create a signer.');
     }
@@ -205,7 +205,7 @@ class KeyPair {
 
   /// Creates a signature [Verifier] using the public key and the specified
   /// algorithm
-  Verifier createVerifier(Identifier algorithm) {
+  Verifier createVerifier(SigningAlgorithmIdentifier algorithm) {
     if (publicKey == null) {
       throw StateError('Need a public key to create a verifier.');
     }

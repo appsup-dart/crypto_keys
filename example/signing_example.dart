@@ -16,7 +16,7 @@ void main() {
   var privateKey = keyPair.privateKey!;
 
   // Create a signer for the key using the HMAC/SHA-256 algorithm
-  var signer = privateKey.createSigner(algorithms.signing.hmac.sha256);
+  var signer = privateKey.createSigner(.hmac(.sha256));
 
   // Sign some content, to be integrity protected
   var content = "It's me, really me";
@@ -29,7 +29,7 @@ void main() {
   var publicKey = keyPair.publicKey!;
 
   // Create a verifier for the key using the specified algorithm
-  var verifier = publicKey.createVerifier(algorithms.signing.hmac.sha256);
+  var verifier = publicKey.createVerifier(.hmac(.sha256));
 
   var verified = verifier.verify(
     Uint8List.fromList(content.codeUnits),

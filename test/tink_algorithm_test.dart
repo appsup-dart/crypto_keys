@@ -336,7 +336,7 @@ void main() {
         String xCoordinate,
         String yCoordinate,
         String signature,
-        AlgorithmIdentifier algorithm,
+        SigningAlgorithmIdentifier algorithm,
         Identifier curve,
       ) {
         test(name, () {
@@ -403,7 +403,7 @@ void main() {
         String exponent,
         String message,
         String signature,
-        AlgorithmIdentifier algorithm,
+        SigningAlgorithmIdentifier algorithm,
       ) {
         test(name, () {
           var key = RsaPublicKey(
@@ -445,7 +445,7 @@ void main() {
         String exponent,
         String message,
         String signature,
-        AlgorithmIdentifier algorithm,
+        SigningAlgorithmIdentifier algorithm,
       ) {
         test(name, () {
           var key = RsaPublicKey(

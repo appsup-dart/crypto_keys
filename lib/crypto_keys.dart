@@ -15,6 +15,10 @@ export 'src/algorithms.dart'
         curves,
         Algorithms,
         AlgorithmIdentifier,
+        SigningAlgorithmIdentifier,
+        EncryptionAlgorithmIdentifier,
+        KeyManagementAlgorithmIdentifier,
+        DerivationAlgorithmIdentifier,
         DigestAlgorithmIdentifier,
         Identifier;
 export 'src/errors.dart'
