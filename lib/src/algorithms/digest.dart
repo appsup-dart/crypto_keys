@@ -32,7 +32,7 @@ class DigestAlgorithms extends Identifier {
   DigestAlgorithmIdentifier get md5 => .md5;
 }
 
-class DigestAlgorithmIdentifier extends AlgorithmIdentifier<pc.Digest> {
+class DigestAlgorithmIdentifier extends AlgorithmIdentifier {
   DigestAlgorithmIdentifier._(super.name, super.factory) : super._();
 
   static final DigestAlgorithmIdentifier sha1 = ._(

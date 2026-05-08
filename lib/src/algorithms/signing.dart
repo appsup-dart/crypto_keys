@@ -92,8 +92,8 @@ class _RsaPssAlgorithms extends Identifier {
     return SigningAlgorithmIdentifier._(
       'sig/RSA/PSS/${sigHash.name}/mgf1${mgf1Hash.name}/$saltLength',
       () => _PssSignerFactory(
-        sigDigest: sigHash.factory(),
-        mgf1Digest: mgf1Hash.factory(),
+        sigDigest: sigHash.createAlgorithm() as pc.Digest,
+        mgf1Digest: mgf1Hash.createAlgorithm() as pc.Digest,
         saltLength: saltLength,
       ),
     );
@@ -182,8 +182,7 @@ class _EcdsaSigAlgorithms extends Identifier {
   _EcdsaSigAlgorithms() : super._('sig/ECDSA');
 }
 
-class SigningAlgorithmIdentifier<T extends pc.Algorithm>
-    extends AlgorithmIdentifier<T> {
+class SigningAlgorithmIdentifier extends AlgorithmIdentifier {
   SigningAlgorithmIdentifier._(super.name, super.factory) : super._();
 
   /// HMAC with the given [hash].

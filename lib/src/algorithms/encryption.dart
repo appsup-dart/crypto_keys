@@ -23,7 +23,7 @@ class HybridEncAlgorithms extends Identifier {
   }) {
     return EncryptionAlgorithmIdentifier._(
       'enc/hybrid',
-      () => pc.HKDFKeyDerivator(hkdfHash.factory()),
+      () => pc.HKDFKeyDerivator(hkdfHash.createAlgorithm() as pc.Digest),
     );
   }
 }
@@ -66,7 +66,7 @@ class AesWithHmacEncAlgorithms extends Identifier {
   final sha256 = EncryptionAlgorithmIdentifier._(
     'enc/AES/CBC/PKCS7+HMAC/SHA-256',
     () => pce.AesCbcAuthenticatedCipherWithHash(
-      algorithms.signing.hmac.sha256.createAlgorithm(),
+      algorithms.signing.hmac.sha256.createAlgorithm() as pc.Mac,
     ),
   );
 
@@ -74,7 +74,7 @@ class AesWithHmacEncAlgorithms extends Identifier {
   final sha384 = EncryptionAlgorithmIdentifier._(
     'enc/AES/CBC/PKCS7+HMAC/SHA-384',
     () => pce.AesCbcAuthenticatedCipherWithHash(
-      algorithms.signing.hmac.sha384.createAlgorithm(),
+      algorithms.signing.hmac.sha384.createAlgorithm() as pc.Mac,
     ),
   );
 
@@ -82,7 +82,7 @@ class AesWithHmacEncAlgorithms extends Identifier {
   final sha512 = EncryptionAlgorithmIdentifier._(
     'enc/AES/CBC/PKCS7+HMAC/SHA-512',
     () => pce.AesCbcAuthenticatedCipherWithHash(
-      algorithms.signing.hmac.sha512.createAlgorithm(),
+      algorithms.signing.hmac.sha512.createAlgorithm() as pc.Mac,
     ),
   );
 
@@ -111,12 +111,10 @@ class _RsaEncAlgorithms extends Identifier {
   _RsaEncAlgorithms() : super._('enc/RSA');
 }
 
-class EncryptionAlgorithmIdentifier<T extends pc.Algorithm>
-    extends AlgorithmIdentifier<T> {
+class EncryptionAlgorithmIdentifier extends AlgorithmIdentifier {
   EncryptionAlgorithmIdentifier._(super.name, super.factory) : super._();
 }
 
-class KeyManagementAlgorithmIdentifier<T extends pc.Algorithm>
-    extends EncryptionAlgorithmIdentifier<T> {
+class KeyManagementAlgorithmIdentifier extends EncryptionAlgorithmIdentifier {
   KeyManagementAlgorithmIdentifier._(super.name, super.factory) : super._();
 }

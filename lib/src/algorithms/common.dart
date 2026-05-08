@@ -50,12 +50,14 @@ class Identifier {
   bool operator ==(other) => other is Identifier && other.name == name;
 }
 
-class AlgorithmIdentifier<T extends pc.Algorithm> extends Identifier {
-  final T Function() factory;
+class AlgorithmIdentifier extends Identifier {
+  final pc.Algorithm Function() _factory;
 
-  AlgorithmIdentifier._(super.name, this.factory) : super._();
+  AlgorithmIdentifier._(super.name, this._factory) : super._();
+}
 
-  T createAlgorithm() => factory();
+extension AlgorithmIdentifierInternal on AlgorithmIdentifier {
+  pc.Algorithm createAlgorithm() => _factory();
 }
 
 class DefaultSecureRandom implements pc.SecureRandom {

@@ -82,7 +82,8 @@ class _ConcatKdf {
     }
 
     final selectedDigest =
-        digest ?? (hash ?? algorithms.digest.sha256).createAlgorithm();
+        digest ??
+        (hash ?? algorithms.digest.sha256).createAlgorithm() as pc.Digest;
     final hashLen = selectedDigest.digestSize;
     final reps = (keyBitLength + hashLen * 8 - 1) ~/ (hashLen * 8);
     final output = BytesBuilder(copy: false);
@@ -147,7 +148,10 @@ Uint8List _derivePbkdf2Bits({
   }
   final keyLength = (keyBitLength + 7) ~/ 8;
   final algorithm = pc.PBKDF2KeyDerivator(
-    pc.HMac(params.hash.createAlgorithm(), _hmacBlockLength(params.hash)),
+    pc.HMac(
+      params.hash.createAlgorithm() as pc.Digest,
+      _hmacBlockLength(params.hash),
+    ),
   );
   algorithm.init(pc.Pbkdf2Parameters(salt, iterations, keyLength));
   return algorithm.process(password.value);
@@ -173,7 +177,9 @@ Uint8List _deriveHkdfBits({
   }
   _ensureSupportsHkdf(params.hash);
   final keyLength = (params.keyBitLength + 7) ~/ 8;
-  final algorithm = pc.HKDFKeyDerivator(params.hash.createAlgorithm());
+  final algorithm = pc.HKDFKeyDerivator(
+    params.hash.createAlgorithm() as pc.Digest,
+  );
   algorithm.init(
     pc.HkdfParameters(
       secret.value,
@@ -201,7 +207,7 @@ Uint8List _deriveConcatKdfBits({
     sharedSecret: secret.value,
     otherInfo: params.otherInfo ?? Uint8List(0),
     keyBitLength: params.keyBitLength,
-    digest: params.hash.createAlgorithm(),
+    digest: params.hash.createAlgorithm() as pc.Digest,
   );
 }
 

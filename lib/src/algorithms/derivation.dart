@@ -94,7 +94,6 @@ class _HkdfAlgorithms extends Identifier {
   _HkdfAlgorithms() : super._('derive/HKDF');
 }
 
-class DerivationAlgorithmIdentifier<T extends pc.Algorithm>
-    extends AlgorithmIdentifier<T> {
+class DerivationAlgorithmIdentifier extends AlgorithmIdentifier {
   DerivationAlgorithmIdentifier._(super.name, super.factory) : super._();
 }
