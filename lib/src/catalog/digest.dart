@@ -22,4 +22,16 @@ class DigestAlgorithms extends Identifier {
   /// SHA-512/t digest
   DigestAlgorithmIdentifier sha512t(int digestSizeBytes) =>
       .sha512t(digestSizeBytes);
+
+  /// SHA3-224 digest
+  DigestAlgorithmIdentifier get sha3_224 => .sha3_224;
+
+  /// SHA3-256 digest
+  DigestAlgorithmIdentifier get sha3_256 => .sha3_256;
+
+  /// SHA3-384 digest
+  DigestAlgorithmIdentifier get sha3_384 => .sha3_384;
+
+  /// SHA3-512 digest
+  DigestAlgorithmIdentifier get sha3_512 => .sha3_512;
 }

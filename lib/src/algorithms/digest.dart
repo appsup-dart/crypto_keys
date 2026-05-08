@@ -4,6 +4,8 @@ part of '../algorithms.dart';
 class DigestAlgorithmIdentifier extends AlgorithmIdentifier {
   DigestAlgorithmIdentifier._(super.name, super.factory) : super._();
 
+  // --- SHA-2 ---
+
   /// SHA-1
   static final DigestAlgorithmIdentifier sha1 = ._(
     'digest/SHA-1',
@@ -40,4 +42,30 @@ class DigestAlgorithmIdentifier extends AlgorithmIdentifier {
         'digest/SHA-512/${digestSizeBytes * 8}',
         () => pc.SHA512tDigest(digestSizeBytes),
       );
+
+  // --- SHA-3 (FIPS 202) ---
+
+  /// SHA3-224
+  static final DigestAlgorithmIdentifier sha3_224 = ._(
+    'digest/SHA3-224',
+    () => pc.SHA3Digest(224),
+  );
+
+  /// SHA3-256
+  static final DigestAlgorithmIdentifier sha3_256 = ._(
+    'digest/SHA3-256',
+    () => pc.SHA3Digest(256),
+  );
+
+  /// SHA3-384
+  static final DigestAlgorithmIdentifier sha3_384 = ._(
+    'digest/SHA3-384',
+    () => pc.SHA3Digest(384),
+  );
+
+  /// SHA3-512
+  static final DigestAlgorithmIdentifier sha3_512 = ._(
+    'digest/SHA3-512',
+    () => pc.SHA3Digest(512),
+  );
 }
