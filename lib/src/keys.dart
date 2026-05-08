@@ -20,6 +20,9 @@ class Password with KeyMaterial {
     if (params case Pbkdf2KeyDeriverParams()) {
       return _derivePbkdf2Bits(password: this, params: params);
     }
+    if (params case Argon2idKeyDeriverParams()) {
+      return _deriveArgon2idBits(password: this, params: params);
+    }
     throw UnsupportedError(
       'Unsupported password key derivation params: ${params.runtimeType}',
     );

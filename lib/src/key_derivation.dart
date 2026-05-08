@@ -121,6 +121,56 @@ SecretBytes _deriveEcdhSharedSecret({
   );
 }
 
+Uint8List _deriveArgon2idBits({
+  required Password password,
+  required Argon2idKeyDeriverParams params,
+}) {
+  if (params.salt.length < 8) {
+    throw ArgumentError.value(
+      params.salt,
+      'salt',
+      'Argon2 requires a salt of at least 8 bytes',
+    );
+  }
+  if (params.iterations < 1) {
+    throw ArgumentError.value(
+      params.iterations,
+      'iterations',
+      'Must be at least 1',
+    );
+  }
+  if (params.keyBitLength <= 0) {
+    throw ArgumentError.value(
+      params.keyBitLength,
+      'keyBitLength',
+      'Must be greater than 0',
+    );
+  }
+  if (params.memoryKiB < 2 * params.lanes) {
+    throw ArgumentError.value(
+      params.memoryKiB,
+      'memoryKiB',
+      'Argon2 memory must be at least 2 * lanes (${2 * params.lanes} KiB)',
+    );
+  }
+  final keyLength = (params.keyBitLength + 7) ~/ 8;
+  final gen = pc.Argon2BytesGenerator()
+    ..init(
+      pc.Argon2Parameters(
+        pc.Argon2Parameters.ARGON2_id,
+        params.salt,
+        desiredKeyLength: keyLength,
+        iterations: params.iterations,
+        memory: params.memoryKiB,
+        lanes: params.lanes,
+        version: pc.Argon2Parameters.ARGON2_VERSION_13,
+        secret: params.secret,
+        additional: params.additionalData,
+      ),
+    );
+  return gen.process(password.value);
+}
+
 Uint8List _derivePbkdf2Bits({
   required Password password,
   required Pbkdf2KeyDeriverParams params,

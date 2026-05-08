@@ -35,6 +35,25 @@ sealed class PasswordKeyDeriverParams extends KeyDeriverParams {
     iterations: iterations,
     keyBitLength: keyBitLength,
   );
+
+  /// Argon2id (RFC 9106) with PointyCastle defaults for version (0x13) and lanes.
+  static Argon2idKeyDeriverParams argon2id({
+    required Uint8List salt,
+    required int iterations,
+    required int keyBitLength,
+    required int memoryKiB,
+    int lanes = 1,
+    Uint8List? secret,
+    Uint8List? additionalData,
+  }) => Argon2idKeyDeriverParams(
+    salt: salt,
+    iterations: iterations,
+    keyBitLength: keyBitLength,
+    memoryKiB: memoryKiB,
+    lanes: lanes,
+    secret: secret,
+    additionalData: additionalData,
+  );
 }
 
 /// Marker base class for SecretBytes derivation params (e.g. HKDF/ConcatKDF).
@@ -71,6 +90,31 @@ class EcdhKeyDeriverParams extends EcKeyAgreementParams {
   final EcPublicKey peerPublicKey;
 
   const EcdhKeyDeriverParams({required this.peerPublicKey});
+}
+
+/// Parameters for Argon2id password-based key derivation (RFC 9106).
+///
+/// [memoryKiB] is the total Argon2 memory size in kibibytes (1024-byte units),
+/// matching PointyCastle [Argon2Parameters.memory]. It must be at least
+/// `2 * lanes` (Argon2 block constraint).
+class Argon2idKeyDeriverParams extends PasswordKeyDeriverParams {
+  final Uint8List salt;
+  final int iterations;
+  final int memoryKiB;
+  final int lanes;
+  final int keyBitLength;
+  final Uint8List? secret;
+  final Uint8List? additionalData;
+
+  const Argon2idKeyDeriverParams({
+    required this.salt,
+    required this.iterations,
+    required this.keyBitLength,
+    required this.memoryKiB,
+    this.lanes = 1,
+    this.secret,
+    this.additionalData,
+  });
 }
 
 /// Parameters for PBKDF2 key derivation.
