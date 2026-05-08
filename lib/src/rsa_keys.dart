@@ -7,29 +7,85 @@ abstract class RsaKey extends Key {
 }
 
 /// A RSA public key
-abstract class RsaPublicKey extends RsaKey implements PublicKey {
-  /// The exponent value for the RSA public key
-  BigInt get exponent;
+class RsaPublicKey with Key implements RsaKey, PublicKey {
+  @override
+  final BigInt modulus;
 
-  factory RsaPublicKey({required BigInt modulus, required BigInt exponent}) =
-      RsaPublicKeyImpl;
+  /// The exponent value for the RSA public key
+  final BigInt exponent;
+
+  RsaPublicKey({required this.modulus, required this.exponent});
+
+  @override
+  Verifier createVerifier(covariant RsaSigningAlgorithmIdentifier algorithm) {
+    return _AsymmetricVerifier(algorithm, this);
+  }
+
+  @override
+  Encrypter createEncrypter(
+    covariant RsaEncryptionAlgorithmIdentifier algorithm,
+  ) {
+    return _AsymmetricEncrypter(algorithm, this);
+  }
+
+  @override
+  int get hashCode => Object.hash(exponent, modulus);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RsaPublicKey &&
+          other.exponent == exponent &&
+          other.modulus == modulus);
 }
 
 /// A RSA private key
-abstract class RsaPrivateKey extends RsaKey implements PrivateKey {
+class RsaPrivateKey with Key implements RsaKey, PrivateKey {
+  @override
+  final BigInt modulus;
+
   /// The private exponent value for the RSA private key
-  BigInt get privateExponent;
+  final BigInt privateExponent;
 
   /// The first prime factor
-  BigInt get firstPrimeFactor;
+  final BigInt firstPrimeFactor;
 
   /// The second prime factor
-  BigInt get secondPrimeFactor;
+  final BigInt secondPrimeFactor;
 
-  factory RsaPrivateKey({
-    required BigInt privateExponent,
-    required BigInt firstPrimeFactor,
-    required BigInt secondPrimeFactor,
-    required BigInt modulus,
-  }) = RsaPrivateKeyImpl;
+  RsaPrivateKey({
+    required this.privateExponent,
+    required this.firstPrimeFactor,
+    required this.secondPrimeFactor,
+    required this.modulus,
+  });
+
+  @override
+  Signer createSigner(covariant RsaSigningAlgorithmIdentifier algorithm) {
+    return _AsymmetricSigner(algorithm, this);
+  }
+
+  @override
+  Decrypter createDecrypter(
+    covariant RsaEncryptionAlgorithmIdentifier algorithm,
+  ) {
+    return _AsymmetricDecrypter(algorithm, this);
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    privateExponent,
+    firstPrimeFactor,
+    secondPrimeFactor,
+    modulus,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RsaPrivateKey &&
+          other.privateExponent == privateExponent &&
+          other.firstPrimeFactor == firstPrimeFactor &&
+          other.secondPrimeFactor == secondPrimeFactor &&
+          other.modulus == modulus);
 }

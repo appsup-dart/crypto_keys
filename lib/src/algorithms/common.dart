@@ -1,46 +1,10 @@
 part of '../algorithms.dart';
 
-class Algorithms {
-  /// Contains the identifiers for supported signing algorithms
-  final signing = _SigAlgorithms();
-
-  /// Contains the identifiers for supported encryption algorithms
-  final encryption = EncAlgorithms();
-
-  /// Contains the identifiers for supported digest algorithms
-  final digest = DigestAlgorithms();
-
-  /// Contains the identifiers for supported key derivation algorithms
-  final derivation = DerivationAlgorithms();
-
-  @Deprecated('Use encryption.aes.cbc instead.')
-  // ignore: non_constant_identifier_names
-  EncryptionAlgorithmIdentifier get encrypting_aes_cbc => encryption.aes.cbc;
-
-  Algorithms();
-}
-
-/// Contains the identifiers for supported cryptographic curves
-final curves = _Curves();
-
-class _Curves {
-  /// P-256
-  final p256 = const Identifier._('curve/P-256');
-
-  /// P-384
-  final p384 = const Identifier._('curve/P-384');
-
-  /// P-521
-  final p521 = const Identifier._('curve/P-521');
-
-  /// P-256K
-  final p256k = const Identifier._('curve/P-256K');
-}
-
 /// An identifier for uniquely identify algorithms and other objects
 class Identifier {
   final String name;
 
+  const Identifier(this.name);
   const Identifier._(this.name);
 
   @override
@@ -50,48 +14,34 @@ class Identifier {
   bool operator ==(other) => other is Identifier && other.name == name;
 }
 
+/// Identifier for an elliptic-curve domain.
+class CurveIdentifier extends Identifier {
+  const CurveIdentifier._(super.name) : super._();
+
+  /// NIST P-256 (`secp256r1`).
+  static const CurveIdentifier p256 = ._('curve/P-256');
+
+  /// NIST P-384 (`secp384r1`).
+  static const CurveIdentifier p384 = ._('curve/P-384');
+
+  /// NIST P-521 (`secp521r1`).
+  static const CurveIdentifier p521 = ._('curve/P-521');
+
+  /// SEC P-256K (`secp256k1`).
+  static const CurveIdentifier p256k = ._('curve/P-256K');
+}
+
+/// Identifier for a concrete cryptographic algorithm instance.
+///
+/// This type is used across signing, encryption, digest, and derivation APIs
+/// and provides the stable public identifier name for an algorithm.
 class AlgorithmIdentifier extends Identifier {
   final pc.Algorithm Function() _factory;
 
-  AlgorithmIdentifier._(super.name, this._factory) : super._();
+  const AlgorithmIdentifier._(super.name, this._factory) : super._();
 }
 
+/// Internal helpers to instantiate algorithm implementations.
 extension AlgorithmIdentifierInternal on AlgorithmIdentifier {
   pc.Algorithm createAlgorithm() => _factory();
-}
-
-class DefaultSecureRandom implements pc.SecureRandom {
-  final Random random = Random.secure();
-
-  @override
-  String get algorithmName => 'dart.math.Random.secure()';
-
-  @override
-  BigInt nextBigInteger(int bitLength) {
-    return BigInt.parse(
-      Iterable.generate(
-        bitLength,
-        (_) => random.nextBool() ? '1' : '0',
-      ).join(''),
-      radix: 2,
-    );
-  }
-
-  @override
-  Uint8List nextBytes(int count) =>
-      Uint8List.fromList(List.generate(count, (_) => nextUint8()));
-
-  @override
-  int nextUint16() => random.nextInt(256 * 256);
-
-  @override
-  int nextUint32() => random.nextInt(256 * 256 * 256 * 256);
-
-  @override
-  int nextUint8() => random.nextInt(256);
-
-  @override
-  void seed(pc.CipherParameters params) {
-    throw UnsupportedError('Seed not supported for this SecureRandom');
-  }
 }

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:meta/meta.dart';
 import 'package:test/test.dart';
@@ -20,9 +21,9 @@ void main() {
         test(name, () {
           var key = SymmetricKey(keyValue: bytesFromHexString(keyValue));
 
-          var encrypter = key.createEncrypter(algorithms.encryption.aes.gcm);
+          var decrypter = key.createDecrypter(algorithms.encryption.aes.gcm);
 
-          var v = encrypter.decrypt(
+          var v = decrypter.decrypt(
             EncryptionResult(
               bytesFromHexString(ciphertext),
               initializationVector: bytesFromHexString(iv),
@@ -219,9 +220,9 @@ void main() {
         test(name, () {
           var key = SymmetricKey(keyValue: bytesFromHexString(keyValue));
 
-          var encrypter = key.createEncrypter(algorithms.encryption.aes.eax);
+          var decrypter = key.createDecrypter(algorithms.encryption.aes.eax);
 
-          var v = encrypter.decrypt(
+          var v = decrypter.decrypt(
             EncryptionResult(
               bytesFromHexString(ciphertext),
               initializationVector: bytesFromHexString(iv),
@@ -336,8 +337,8 @@ void main() {
         String xCoordinate,
         String yCoordinate,
         String signature,
-        SigningAlgorithmIdentifier algorithm,
-        Identifier curve,
+        EcSigningAlgorithmIdentifier algorithm,
+        CurveIdentifier curve,
       ) {
         test(name, () {
           var key = EcPublicKey(
@@ -403,7 +404,7 @@ void main() {
         String exponent,
         String message,
         String signature,
-        SigningAlgorithmIdentifier algorithm,
+        RsaSigningAlgorithmIdentifier algorithm,
       ) {
         test(name, () {
           var key = RsaPublicKey(
@@ -425,7 +426,7 @@ void main() {
         '49d2a1',
         '95123c8d1b236540b86976a11cea31f8bd4e6c54c235147d20ce722b03a6ad756fbd918c27df8ea9ce3104444c0bbe877305bc02e35535a02a58dcda306e632ad30b3dc3ce0ba97fdf46ec192965dd9cd7f4a71b02b8cba3d442646eeec4af590824ca98d74fbca934d0b6867aa1991f3040b707e806de6e66b5934f05509bea',
         '51265d96f11ab338762891cb29bf3f1d2b3305107063f5f3245af376dfcc7027d39365de70a31db05e9e10eb6148cb7f6425f0c93c4fb0e2291adbd22c77656afc196858a11e1c670d9eeb592613e69eb4f3aa501730743ac4464486c7ae68fd509e896f63884e9424f69c1c5397959f1e52a368667a598a1fc90125273d9341295d2f8e1cc4969bf228c860e07a3546be2eeda1cde48ee94d062801fe666e4a7ae8cb9cd79262c017b081af874ff00453ca43e34efdb43fffb0bb42a4e2d32a5e5cc9e8546a221fe930250e5f5333e0efe58ffebf19369a3b8ae5a67f6a048bc9ef915bda25160729b508667ada84a0c27e7e26cf2abca413e5e4693f4a9405',
-        algorithms.signing.rsa.sha256,
+        algorithms.signing.rsa.pkcs1.sha256,
       );
       doTest(
         'Test case 2',
@@ -433,7 +434,7 @@ void main() {
         'fa3751',
         '6459ea1d443df706907ffdd3ca2f193f93f5a349b50357d26748b767cde6ab5cbfe76b1acb2b9eb97da5c4d2ddc8d18e3a3b1a0326d475c1c2c49ca73c0fd3fc9540cbbba85ac52d6811fabd693a3b09a281d535715ab784df3ad7292606d15a70ccd1a7e2b1b48ad92a6a3f736f9fd5522d9a869c7b654446102e9493b3ed9f',
         '2b72942573b825cd1f0172119c23440a2b384b7f2a3c5582bb02f764e2b159ea9ad880ca61b3df7ca249134f4bec285083c7ebf984b192808e916af687ef6c6a9a6722a4fa9189fac1521d03853f3dd5a95ff4b9dbdbf3c7077f720650ead01945ab5bfee582ac1643526fbf68efe1bb3b6f7d2b4b01f2155aaea38a2c7ed29add23ee791a703d11e3b1b7c500d9a6b647c1337bf537c071e5bada6faa025bcaf5e5d1196998909c3d64758826939ae7fe1466dc6efc10a2b25e21186c2d135ceace33cdf490b13a0d10c2527e04200aa70bc1d4f3cfb04b5d2bc17aee881d3a788401f45443470bc639232088a9553c8d792aa5707654f075476a66b86368d5a92b4c84a3b4baba1b0b98bdebb85b48b82b8409f2e9c1aa500670329ff3b6e83e25c561110d47b2fe93ea2946a74f9730da9b7d126f8d7c3fa4a51fc30144a827831c186390998d552a1b677afe5afee46e9d4a5774a56355a4d1967677e75d176aef71c3fa061644d7a9582385877de67f87724b0a6e868f3a2eeafb68c53b',
-        algorithms.signing.rsa.sha512,
+        algorithms.signing.rsa.pkcs1.sha512,
       );
     });
 
@@ -445,7 +446,7 @@ void main() {
         String exponent,
         String message,
         String signature,
-        SigningAlgorithmIdentifier algorithm,
+        RsaSigningAlgorithmIdentifier algorithm,
       ) {
         test(name, () {
           var key = RsaPublicKey(

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:test/test.dart';
 
@@ -15,11 +16,11 @@ void main() {
         keyBitLength: 256,
       );
 
-      final aZ = (a.privateKey! as EcPrivateKey)
-          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey! as EcPublicKey))
+      final aZ = a.privateKey!
+          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey!))
           .value;
-      final bZ = (b.privateKey! as EcPrivateKey)
-          .deriveSharedSecret(.ecdh(peerPublicKey: a.publicKey! as EcPublicKey))
+      final bZ = b.privateKey!
+          .deriveSharedSecret(.ecdh(peerPublicKey: a.publicKey!))
           .value;
 
       final aKey = SecretBytes(aZ).deriveBits(
@@ -36,8 +37,8 @@ void main() {
       final a = KeyPair.generateEc(curves.p256);
       final b = KeyPair.generateEc(curves.p384);
       expect(
-        () => (a.privateKey! as EcPrivateKey).deriveSharedSecret(
-          .ecdh(peerPublicKey: b.publicKey! as EcPublicKey),
+        () => a.privateKey!.deriveSharedSecret(
+          .ecdh(peerPublicKey: b.publicKey!),
         ),
         throwsArgumentError,
       );
@@ -46,8 +47,8 @@ void main() {
     test('derived key length equals requested bit length', () {
       final a = KeyPair.generateEc(curves.p521);
       final b = KeyPair.generateEc(curves.p521);
-      final z = (a.privateKey! as EcPrivateKey)
-          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey! as EcPublicKey))
+      final z = a.privateKey!
+          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey!))
           .value;
       final key = SecretBytes(
         z,

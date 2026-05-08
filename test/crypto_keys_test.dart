@@ -1,4 +1,5 @@
 import 'package:test/test.dart';
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 import 'dart:convert';
@@ -10,8 +11,11 @@ void _testSigning(
   Uint8List? signature,
   bool? isRandom,
 ]) {
-  var signer = keyPair.createSigner(algorithm);
-  var verifier = keyPair.createVerifier(algorithm);
+  if (keyPair.privateKey == null || keyPair.publicKey == null) {
+    throw StateError('Need both private and public keys for signing tests.');
+  }
+  var signer = keyPair.privateKey!.createSigner(algorithm);
+  var verifier = keyPair.publicKey!.createVerifier(algorithm);
 
   if (signature != null) {
     expect(verifier.verify(data, Signature(signature)), isTrue);
@@ -33,10 +37,9 @@ void _testEncryption(
   Uint8List data, [
   EncryptionResult? encryptedData,
   bool? isRandom,
-  bool biDirectional = true,
 ]) {
   var encrypter = keyPair.publicKey!.createEncrypter(algorithm);
-  var decrypter = keyPair.privateKey!.createEncrypter(algorithm);
+  var decrypter = keyPair.privateKey!.createDecrypter(algorithm);
 
   if (encryptedData != null) {
     expect(decrypter.decrypt(encryptedData), data);
@@ -65,19 +68,8 @@ void _testEncryption(
     data,
   );
 
-  if (biDirectional == true) {
-    expect(
-      encrypter.decrypt(
-        decrypter.encrypt(
-          data,
-          initializationVector: encryptedData?.initializationVector,
-          additionalAuthenticatedData:
-              encryptedData?.additionalAuthenticatedData,
-        ),
-      ),
-      data,
-    );
-  }
+  // Asymmetric encryption uses public-key encryption and private-key decryption.
+  // We no longer test private-key encryption / public-key decryption here.
 }
 
 void main() {
@@ -704,17 +696,17 @@ void main() {
 
         _testSigning(
           keyPair,
-          algorithms.signing.rsa.sha256,
+          algorithms.signing.rsa.pkcs1.sha256,
           data,
           signature,
           false,
         );
       });
       test('Example Signing Using RSASSA-PKCS1-v1_5 SHA-384', () {
-        _testSigning(keyPair, algorithms.signing.rsa.sha384, data);
+        _testSigning(keyPair, algorithms.signing.rsa.pkcs1.sha384, data);
       });
       test('Example Signing Using RSASSA-PKCS1-v1_5 SHA-512', () {
-        _testSigning(keyPair, algorithms.signing.rsa.sha512, data);
+        _testSigning(keyPair, algorithms.signing.rsa.pkcs1.sha512, data);
       });
 
       test('Example Signing Using generated RSA keys', () {
@@ -722,7 +714,7 @@ void main() {
         var data = utf8.encode(text);
 
         var keyPair = KeyPair.generateRsa();
-        var alg = algorithms.signing.rsa.sha384;
+        var alg = algorithms.signing.rsa.pkcs1.sha384;
 
         _testSigning(keyPair, alg, data);
       });
@@ -1469,7 +1461,7 @@ void main() {
         final keyPair = KeyPair.generateSymmetric(256);
         final algorithm = algorithms.encryption.aes.cbcWithHmac.sha256;
         final encrypter = keyPair.publicKey!.createEncrypter(algorithm);
-        final decrypter = keyPair.privateKey!.createEncrypter(algorithm);
+        final decrypter = keyPair.privateKey!.createDecrypter(algorithm);
 
         final encrypted = encrypter.encrypt(
           data,
@@ -1875,7 +1867,10 @@ void main() {
             'kty': 'oct',
             'k': 'GawgguFyGrWKav7AX4VKUg',
           });
-          final encrypter = keyPair.privateKey!.createEncrypter(
+          final encrypter = keyPair.publicKey!.createEncrypter(
+            algorithms.encryption.aes.keyWrap,
+          );
+          final decrypter = keyPair.privateKey!.createDecrypter(
             algorithms.encryption.aes.keyWrap,
           );
 
@@ -1883,7 +1878,7 @@ void main() {
           final tampered = Uint8List.fromList(encrypted.data)..[0] ^= 0x01;
 
           expect(
-            () => encrypter.decrypt(EncryptionResult(tampered)),
+            () => decrypter.decrypt(EncryptionResult(tampered)),
             throwsA(isA<KeyUnwrapIntegrityException>()),
           );
         },
@@ -2582,7 +2577,6 @@ void main() {
           data,
           encryptedData,
           true,
-          false,
         );
       });
 
@@ -2905,7 +2899,6 @@ void main() {
           data,
           encryptedData,
           true,
-          false,
         );
       });
     });

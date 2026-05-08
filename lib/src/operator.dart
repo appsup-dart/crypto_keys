@@ -16,8 +16,7 @@ abstract class Operator<T extends KeyMaterial> {
 
 /// Operator for signing
 abstract class Signer<T extends PrivateKey> extends Operator<T> {
-  Signer._(SigningAlgorithmIdentifier algorithm, T key)
-    : super._(algorithm, key);
+  Signer._(SigningAlgorithmIdentifier super.algorithm, super.key) : super._();
 
   /// Signs the input [data] using the [key] and [algorithm]
   Signature sign(List<int> data);
@@ -25,8 +24,7 @@ abstract class Signer<T extends PrivateKey> extends Operator<T> {
 
 /// Operator for verifying a signature
 abstract class Verifier<T extends PublicKey> extends Operator<T> {
-  Verifier._(SigningAlgorithmIdentifier algorithm, T key)
-    : super._(algorithm, key);
+  Verifier._(SigningAlgorithmIdentifier super.algorithm, super.key) : super._();
 
   /// Verifies that [signature] is a valid signature for the input [data] using
   /// the [key] and [algorithm]
@@ -34,17 +32,24 @@ abstract class Verifier<T extends PublicKey> extends Operator<T> {
 }
 
 /// Represents the result of signing some data
-abstract class Signature {
+class Signature {
   /// Byte representation of the signature
-  Uint8List get data;
+  final Uint8List data;
 
-  factory Signature(Uint8List data) = SignatureImpl;
+  Signature(Uint8List data) : data = Uint8List.fromList(data);
+
+  @override
+  int get hashCode => const ListEquality().hash(data);
+
+  @override
+  bool operator ==(other) =>
+      other is Signature && const ListEquality().equals(other.data, data);
 }
 
-/// Operator for encrypting and decrypting data
-abstract class Encrypter<T extends Key> extends Operator<T> {
-  Encrypter._(EncryptionAlgorithmIdentifier algorithm, T key)
-    : super._(algorithm, key);
+/// Operator for encrypting data.
+abstract class Encrypter<T extends PublicKey> extends Operator<T> {
+  Encrypter._(EncryptionAlgorithmIdentifier super.algorithm, super.key)
+    : super._();
 
   /// Encrypts the input data using the [key] and [algorithm]
   ///
@@ -55,28 +60,65 @@ abstract class Encrypter<T extends Key> extends Operator<T> {
     Uint8List? initializationVector,
     Uint8List? additionalAuthenticatedData,
   });
+}
 
-  /// Decrypts the input data using the [key] and [algorithm]
+/// Operator for decrypting data.
+abstract class Decrypter<T extends PrivateKey> extends Operator<T> {
+  Decrypter._(EncryptionAlgorithmIdentifier super.algorithm, super.key)
+    : super._();
+
+  /// Decrypts the input data using the [key] and [algorithm].
   Uint8List decrypt(EncryptionResult input);
 }
 
 /// Represents the result of encrypting some data
-abstract class EncryptionResult {
+class EncryptionResult {
   /// Byte representation of the ciphertext
-  Uint8List get data;
+  final Uint8List data;
 
   /// The initialization vector used for encrypting when required by the
   /// algorithm
-  Uint8List? get initializationVector;
+  final Uint8List? initializationVector;
 
-  Uint8List? get authenticationTag;
+  final Uint8List? authenticationTag;
 
-  Uint8List? get additionalAuthenticatedData;
+  final Uint8List? additionalAuthenticatedData;
 
-  factory EncryptionResult(
+  EncryptionResult(
     Uint8List data, {
     Uint8List? initializationVector,
     Uint8List? authenticationTag,
     Uint8List? additionalAuthenticatedData,
-  }) = EncryptionResultImpl;
+  }) : data = Uint8List.fromList(data),
+       initializationVector = initializationVector == null
+           ? null
+           : Uint8List.fromList(initializationVector),
+       authenticationTag = authenticationTag == null
+           ? null
+           : Uint8List.fromList(authenticationTag),
+       additionalAuthenticatedData = additionalAuthenticatedData == null
+           ? null
+           : Uint8List.fromList(additionalAuthenticatedData);
+
+  @override
+  int get hashCode => Object.hash(
+    const ListEquality().hash(data),
+    const ListEquality().hash(initializationVector),
+    const ListEquality().hash(authenticationTag),
+    const ListEquality().hash(additionalAuthenticatedData),
+  );
+
+  @override
+  bool operator ==(other) =>
+      other is EncryptionResult &&
+      const ListEquality().equals(other.data, data) &&
+      const ListEquality().equals(
+        other.initializationVector,
+        initializationVector,
+      ) &&
+      const ListEquality().equals(other.authenticationTag, authenticationTag) &&
+      const ListEquality().equals(
+        other.additionalAuthenticatedData,
+        additionalAuthenticatedData,
+      );
 }

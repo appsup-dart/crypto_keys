@@ -82,8 +82,7 @@ class _ConcatKdf {
     }
 
     final selectedDigest =
-        digest ??
-        (hash ?? algorithms.digest.sha256).createAlgorithm() as pc.Digest;
+        digest ?? (hash ?? .sha256).createAlgorithm() as pc.Digest;
     final hashLen = selectedDigest.digestSize;
     final reps = (keyBitLength + hashLen * 8 - 1) ~/ (hashLen * 8);
     final output = BytesBuilder(copy: false);
@@ -150,7 +149,7 @@ Uint8List _derivePbkdf2Bits({
   final algorithm = pc.PBKDF2KeyDerivator(
     pc.HMac(
       params.hash.createAlgorithm() as pc.Digest,
-      _hmacBlockLength(params.hash),
+      params.hash.blockLength,
     ),
   );
   algorithm.init(pc.Pbkdf2Parameters(salt, iterations, keyLength));
@@ -210,11 +209,6 @@ Uint8List _deriveConcatKdfBits({
     digest: params.hash.createAlgorithm() as pc.Digest,
   );
 }
-
-int _hmacBlockLength(DigestAlgorithmIdentifier hash) => switch (hash.name) {
-  'digest/SHA-384' || 'digest/SHA-512' => 128,
-  _ => 64,
-};
 
 void _ensureSupportsHkdf(DigestAlgorithmIdentifier hash) {
   if (hash == DigestAlgorithmIdentifier.sha1) {

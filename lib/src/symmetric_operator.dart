@@ -18,7 +18,8 @@ class _SymmetricSignerAndVerifier extends Signer<SymmetricKey>
   bool verify(Uint8List data, Signature signature) => sign(data) == signature;
 }
 
-class _SymmetricEncrypter extends Encrypter<SymmetricKey> {
+class _SymmetricEncrypter extends Encrypter<SymmetricKey>
+    implements Decrypter<SymmetricKey> {
   _SymmetricEncrypter(super.algorithm, super.key) : super._();
 
   @override

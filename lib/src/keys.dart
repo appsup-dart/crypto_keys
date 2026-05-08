@@ -4,16 +4,7 @@ part of '../crypto_keys.dart';
 abstract mixin class KeyMaterial {}
 
 /// A cryptographic key
-abstract mixin class Key implements KeyMaterial {
-  /// Creates an [Encrypter] using this key and the specified algorithm
-  Encrypter createEncrypter(EncryptionAlgorithmIdentifier algorithm) {
-    if (this is SymmetricKey) {
-      return _SymmetricEncrypter(algorithm, this as SymmetricKey);
-    }
-
-    return _AsymmetricEncrypter(algorithm, this);
-  }
-}
+abstract mixin class Key implements KeyMaterial {}
 
 /// A password input for password-based key derivation.
 class Password with KeyMaterial {
@@ -56,103 +47,65 @@ class SecretBytes with KeyMaterial {
 /// A cryptographic public key
 abstract mixin class PublicKey implements Key {
   /// Creates a signature [Verifier] using this key and the specified algorithm
-  Verifier createVerifier(SigningAlgorithmIdentifier algorithm) {
-    if (this is SymmetricKey) {
-      return _SymmetricSignerAndVerifier(algorithm, this as SymmetricKey);
-    }
+  Verifier createVerifier(covariant SigningAlgorithmIdentifier algorithm);
 
-    return _AsymmetricVerifier(algorithm, this);
-  }
+  /// Creates an [Encrypter] using this key and the specified algorithm.
+  Encrypter createEncrypter(covariant EncryptionAlgorithmIdentifier algorithm);
 }
 
 /// A cryptographic private key
 abstract mixin class PrivateKey implements Key {
   /// Creates a [Signer] using this key and the specified algorithm.
-  Signer createSigner(SigningAlgorithmIdentifier algorithm) {
-    if (this is SymmetricKey) {
-      return _SymmetricSignerAndVerifier(algorithm, this as SymmetricKey);
-    }
+  Signer createSigner(covariant SigningAlgorithmIdentifier algorithm);
 
-    return _AsymmetricSigner(algorithm, this);
-  }
+  /// Creates a [Decrypter] using this key and the specified algorithm.
+  Decrypter createDecrypter(covariant EncryptionAlgorithmIdentifier algorithm);
 }
 
 /// Holds a key pair (private and public key)
-class KeyPair {
+abstract class KeyPair<Pub extends PublicKey, Priv extends PrivateKey> {
   /// The public key
-  final PublicKey? publicKey;
+  final Pub? publicKey;
 
   /// The private key
-  final PrivateKey? privateKey;
+  final Priv? privateKey;
 
   /// Creates a [KeyPair] from a public and private key
-  KeyPair({required this.publicKey, required this.privateKey});
-
-  /// Creates a [KeyPair] from a symmetric key
-  KeyPair.symmetric(SymmetricKey key) : this(privateKey: key, publicKey: key);
-
-  /// Generates a random symmetric [KeyPair] with specified bit length
-  factory KeyPair.generateSymmetric(int bitLength) =>
-      KeyPair.symmetric(SymmetricKey.generate(bitLength));
-
-  factory KeyPair.generateRsa({BigInt? exponent, int bitStrength = 2048}) {
-    exponent ??= BigInt.from(65537);
-
-    var generator = pc.RSAKeyGenerator()
-      ..init(
-        pc.ParametersWithRandom(
-          pc.RSAKeyGeneratorParameters(exponent, bitStrength, 5),
-          DefaultSecureRandom(),
-        ),
+  KeyPair({required this.publicKey, required this.privateKey})
+    : assert(
+        publicKey != null || privateKey != null,
+        'Either public or private key must be provided',
       );
 
-    var pair = generator.generateKeyPair();
+  /// Creates a [KeyPair] from a symmetric key.
+  @factory
+  static SymmetricKeyPair symmetric(SymmetricKey key) =>
+      SymmetricKeyPair(publicKey: key, privateKey: key);
 
-    return KeyPair(
-      publicKey: RsaPublicKey(
-        exponent: pair.publicKey.publicExponent!,
-        modulus: pair.publicKey.n!,
-      ),
-      privateKey: RsaPrivateKey(
-        modulus: (pair.privateKey).n!,
-        privateExponent: pair.privateKey.privateExponent!,
-        firstPrimeFactor: pair.privateKey.p!,
-        secondPrimeFactor: pair.privateKey.q!,
-      ),
-    );
-  }
+  /// Generates a random symmetric [KeyPair] with specified bit length.
+  @factory
+  static SymmetricKeyPair generateSymmetric(int bitLength) =>
+      SymmetricKeyPair.generate(bitLength);
 
-  factory KeyPair.generateEc(Identifier curve) {
-    var generator = pc.ECKeyGenerator()
-      ..init(
-        pc.ParametersWithRandom(
-          pc.ECKeyGeneratorParameters(
-            _AsymmetricOperator.createCurveParameters(curve),
-          ),
-          DefaultSecureRandom(),
-        ),
-      );
+  /// Generates a random RSA [KeyPair] with specified exponent and bit strength.
+  @factory
+  static RsaKeyPair generateRsa({BigInt? exponent, int bitStrength = 2048}) =>
+      RsaKeyPair.generate(exponent: exponent, bitStrength: bitStrength);
 
-    var pair = generator.generateKeyPair();
-
-    return KeyPair(
-      publicKey: EcPublicKey(
-        xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
-        yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
-        curve: curve,
-      ),
-      privateKey: EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve),
-    );
-  }
+  /// Generates a random elliptic curve [KeyPair] with specified curve.
+  @factory
+  static EcKeyPair generateEc(CurveIdentifier curve) =>
+      EcKeyPair.generate(curve);
 
   /// Create a key pair from a JsonWebKey
-  factory KeyPair.fromJwk(Map<String, dynamic> jwk) {
+
+  static KeyPair<PublicKey, PrivateKey> fromJwk(Map<String, dynamic> jwk) {
     switch (jwk['kty']) {
       case 'oct':
         var key = SymmetricKey(keyValue: _base64ToBytes(jwk['k']) as Uint8List);
-        return KeyPair(publicKey: key, privateKey: key);
+        return SymmetricKeyPair(publicKey: key, privateKey: key);
       case 'RSA':
-        return KeyPair(
+        return RsaKeyPair(
           publicKey: jwk.containsKey('n') && jwk.containsKey('e')
               ? RsaPublicKey(
                   modulus: _base64ToInt(jwk['n']),
@@ -173,7 +126,7 @@ class KeyPair {
               : null,
         );
       case 'EC':
-        return KeyPair(
+        return EcKeyPair(
           privateKey: jwk.containsKey('d') && jwk.containsKey('crv')
               ? EcPrivateKey(
                   eccPrivateKey: _base64ToInt(jwk['d']),
@@ -194,22 +147,70 @@ class KeyPair {
     }
     throw ArgumentError('Unknown key type ${jwk['kty']}');
   }
+}
 
-  /// Creates a [Signer] using the private key and the specified algorithm.
-  Signer createSigner(SigningAlgorithmIdentifier algorithm) {
-    if (privateKey == null) {
-      throw StateError('Need a private key to create a signer.');
-    }
-    return privateKey!.createSigner(algorithm);
+class SymmetricKeyPair extends KeyPair<SymmetricKey, SymmetricKey> {
+  SymmetricKeyPair({
+    required SymmetricKey publicKey,
+    required SymmetricKey privateKey,
+  }) : super(publicKey: publicKey, privateKey: privateKey);
+
+  factory SymmetricKeyPair.generate(int bitLength) {
+    final key = SymmetricKey.generate(bitLength);
+    return SymmetricKeyPair(publicKey: key, privateKey: key);
   }
+}
 
-  /// Creates a signature [Verifier] using the public key and the specified
-  /// algorithm
-  Verifier createVerifier(SigningAlgorithmIdentifier algorithm) {
-    if (publicKey == null) {
-      throw StateError('Need a public key to create a verifier.');
-    }
-    return publicKey!.createVerifier(algorithm);
+class RsaKeyPair extends KeyPair<RsaPublicKey, RsaPrivateKey> {
+  RsaKeyPair({required super.publicKey, required super.privateKey});
+
+  factory RsaKeyPair.generate({BigInt? exponent, int bitStrength = 2048}) {
+    exponent ??= BigInt.from(65537);
+    final generator = pc.RSAKeyGenerator()
+      ..init(
+        pc.ParametersWithRandom(
+          pc.RSAKeyGeneratorParameters(exponent, bitStrength, 5),
+          DefaultSecureRandom(),
+        ),
+      );
+    final pair = generator.generateKeyPair();
+    return RsaKeyPair(
+      publicKey: RsaPublicKey(
+        exponent: pair.publicKey.publicExponent!,
+        modulus: pair.publicKey.n!,
+      ),
+      privateKey: RsaPrivateKey(
+        modulus: (pair.privateKey).n!,
+        privateExponent: pair.privateKey.privateExponent!,
+        firstPrimeFactor: pair.privateKey.p!,
+        secondPrimeFactor: pair.privateKey.q!,
+      ),
+    );
+  }
+}
+
+class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
+  EcKeyPair({required super.publicKey, required super.privateKey});
+
+  factory EcKeyPair.generate(CurveIdentifier curve) {
+    final generator = pc.ECKeyGenerator()
+      ..init(
+        pc.ParametersWithRandom(
+          pc.ECKeyGeneratorParameters(
+            _AsymmetricOperator.createCurveParameters(curve),
+          ),
+          DefaultSecureRandom(),
+        ),
+      );
+    final pair = generator.generateKeyPair();
+    return EcKeyPair(
+      publicKey: EcPublicKey(
+        xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
+        yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
+        curve: curve,
+      ),
+      privateKey: EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve),
+    );
   }
 }
 
@@ -225,12 +226,12 @@ BigInt _base64ToInt(String encoded) {
   ).fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
 }
 
-Identifier _parseCurve(String name) {
+CurveIdentifier _parseCurve(String name) {
   var v = {
-    'P-256': curves.p256,
-    'P-256K': curves.p256k,
-    'P-384': curves.p384,
-    'P-521': curves.p521,
+    'P-256': CurveIdentifier.p256,
+    'P-256K': CurveIdentifier.p256k,
+    'P-384': CurveIdentifier.p384,
+    'P-521': CurveIdentifier.p521,
   }[name];
   if (v == null) {
     throw UnsupportedError('Unknown curve $name');

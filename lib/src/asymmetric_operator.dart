@@ -1,7 +1,7 @@
 part of '../crypto_keys.dart';
 
 mixin _AsymmetricOperator<T extends Key> on Operator<T> {
-  static pc.ECDomainParameters createCurveParameters(Identifier curve) {
+  static pc.ECDomainParameters createCurveParameters(CurveIdentifier curve) {
     var name = curve.name.split('/').last;
     switch (name) {
       case 'P-256':
@@ -87,10 +87,10 @@ class _AsymmetricSigner extends Signer<PrivateKey>
       var sig = _algorithm.generateSignature(data) as pc.ECSignature;
 
       var length = {
-        curves.p256: 32,
-        curves.p256k: 32,
-        curves.p384: 48,
-        curves.p521: 66,
+        CurveIdentifier.p256: 32,
+        CurveIdentifier.p256k: 32,
+        CurveIdentifier.p384: 48,
+        CurveIdentifier.p521: 66,
       }[(key as EcKey).curve]!;
       var bytes = Uint8List(length * 2);
       bytes.setRange(
@@ -150,26 +150,13 @@ class _AsymmetricVerifier extends Verifier<PublicKey>
   }
 }
 
-class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
+class _AsymmetricEncrypter extends Encrypter<PublicKey>
+    with _AsymmetricOperator<PublicKey> {
   _AsymmetricEncrypter(super.algorithm, super.key) : super._();
 
   @override
   pc.AsymmetricBlockCipher get _algorithm =>
       super._algorithm as pc.AsymmetricBlockCipher;
-
-  @override
-  Uint8List decrypt(EncryptionResult input) {
-    _algorithm.init(
-      false,
-      pc.ParametersWithRandom(
-        keyParameter,
-        pc.SecureRandom('Fortuna'),
-        // ..seed(pc.KeyParameter(Uint8List(32)))
-      ),
-    );
-
-    return _algorithm.process(input.data);
-  }
 
   @override
   EncryptionResult encrypt(
@@ -183,6 +170,25 @@ class _AsymmetricEncrypter extends Encrypter<Key> with _AsymmetricOperator {
     );
 
     return EncryptionResult(_algorithm.process(input as Uint8List));
+  }
+}
+
+class _AsymmetricDecrypter extends Decrypter<PrivateKey>
+    with _AsymmetricOperator<PrivateKey> {
+  _AsymmetricDecrypter(super.algorithm, super.key) : super._();
+
+  @override
+  pc.AsymmetricBlockCipher get _algorithm =>
+      super._algorithm as pc.AsymmetricBlockCipher;
+
+  @override
+  Uint8List decrypt(EncryptionResult input) {
+    _algorithm.init(
+      false,
+      pc.ParametersWithRandom(keyParameter, pc.SecureRandom('Fortuna')),
+    );
+
+    return _algorithm.process(input.data);
   }
 }
 

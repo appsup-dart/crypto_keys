@@ -11,11 +11,38 @@ api.
 
 ## Usage
 
+### Choosing algorithms
+
+You can choose algorithms in two ergonomic ways:
+
+1. **Browsable catalog** (`package:crypto_keys/catalog.dart`) for discoverability
+2. **Named constructors** on `*AlgorithmIdentifier` classes
+
+```dart
+import 'package:crypto_keys/catalog.dart';
+import 'package:crypto_keys/crypto_keys.dart';
+
+final hmacA = algorithms.signing.hmac.sha256;
+final hmacB = SymmetricSigningAlgorithmIdentifier.hmac(.sha256);
+
+// Both identifiers represent the same algorithm.
+assert(hmacA.name == hmacB.name);
+```
+
+When a method expects a specific algorithm identifier type, you can often use an
+even shorter dot-shorthand expression:
+
+```dart
+final symmetricKey = SymmetricKey.generate(256);
+final signer = symmetricKey.createSigner(.hmac(.sha256));
+```
+
 ### Signing 
 
 A simple usage example:
 
 ```dart
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 
@@ -62,7 +89,7 @@ main() {
 A simple usage example:
 
 ```dart
-
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 
@@ -87,7 +114,7 @@ main() {
 
   // Use the private key to create the decrypter
   var decrypter =
-      keyPair.privateKey.createEncrypter(algorithms.encryption.aes.gcm);
+      keyPair.privateKey.createDecrypter(algorithms.encryption.aes.gcm);
 
   // Decrypt and verify authentication tag
   var decrypted = decrypter.decrypt(v);
