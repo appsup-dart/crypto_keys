@@ -34,9 +34,9 @@ class SymmetricEncryptionAlgorithmIdentifier
   factory SymmetricEncryptionAlgorithmIdentifier.gcm() =>
       ._('enc/AES/GCM', () => pc.GCMBlockCipher(pc.AESEngine()));
 
-  /// AES-EAX (currently unimplemented).
+  /// AES-EAX.
   factory SymmetricEncryptionAlgorithmIdentifier.eax() =>
-      ._('enc/AES/EAX', () => throw UnimplementedError());
+      ._('enc/AES/EAX', () => pc.AEADCipher('AES/EAX'));
 
   /// AES Key Wrap (RFC 3394 default IV variant).
   factory SymmetricEncryptionAlgorithmIdentifier.keyWrap() =>

@@ -325,7 +325,7 @@ void main() {
         'cb8920f87a6c75cff39627b56e3ed197c552d295a7',
         'cfc46afc253b4652b1af3795b124ab6e',
       );
-    }, skip: 'AES-EAX not implemented');
+    });
   });
 
   group('Digital Signatures', () {
