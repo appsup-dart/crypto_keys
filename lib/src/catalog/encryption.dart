@@ -8,7 +8,18 @@ class EncryptionAlgorithms extends Identifier {
   /// Contains the identifiers for supported RSA encryption algorithms
   final rsa = const RsaEncryptionAlgorithms._();
 
+  /// ChaCha20-Poly1305 (RFC 8439)
+  final chacha20 = const ChaCha20Poly1305Algorithms._();
+
   const EncryptionAlgorithms._() : super('enc');
+}
+
+/// ChaCha20-Poly1305 AEAD (RFC 8439).
+class ChaCha20Poly1305Algorithms extends Identifier {
+  const ChaCha20Poly1305Algorithms._() : super('enc/ChaCha20');
+
+  SymmetricEncryptionAlgorithmIdentifier get poly1305 =>
+      .chacha20Poly1305();
 }
 
 /// Browsable catalog of AES encryption algorithms.

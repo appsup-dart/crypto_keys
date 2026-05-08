@@ -41,6 +41,14 @@ class SymmetricEncryptionAlgorithmIdentifier
   /// AES Key Wrap (RFC 3394 default IV variant).
   factory SymmetricEncryptionAlgorithmIdentifier.keyWrap() =>
       ._('enc/AES/KW', () => pce.AESKeyWrap());
+
+  /// ChaCha20-Poly1305 AEAD (RFC 8439).
+  ///
+  /// Uses a 256-bit key and a 96-bit nonce ([initializationVector]).
+  factory SymmetricEncryptionAlgorithmIdentifier.chacha20Poly1305() => ._(
+    'enc/ChaCha20/Poly1305',
+    () => pc.ChaCha20Poly1305(pc.ChaCha7539Engine(), pc.Poly1305()),
+  );
 }
 
 /// Base class for asymmetric encryption algorithm identifiers.

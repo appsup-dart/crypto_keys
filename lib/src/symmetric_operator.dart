@@ -109,7 +109,9 @@ class _SymmetricEncrypter extends Encrypter<SymmetricKey>
     Uint8List? additionalAuthenticatedData,
   }) {
     initializationVector ??= DefaultSecureRandom().nextBytes(
-      super._algorithm is pc.BlockCipher
+      super._algorithm is pc.ChaCha20Poly1305
+          ? 12
+          : super._algorithm is pc.BlockCipher
           ? (super._algorithm as pc.BlockCipher).blockSize
           : 16,
     );
