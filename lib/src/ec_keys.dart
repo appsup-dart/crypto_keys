@@ -27,7 +27,7 @@ class EcPublicKey
 
   @override
   Verifier createVerifier(covariant EcSigningAlgorithmIdentifier algorithm) {
-    return _AsymmetricVerifier(algorithm, this);
+    return EcVerifier(algorithm, this);
   }
 
   @override
@@ -63,7 +63,7 @@ class EcPrivateKey
 
   @override
   Signer createSigner(covariant EcSigningAlgorithmIdentifier algorithm) {
-    return _AsymmetricSigner(algorithm, this);
+    return EcSigner(algorithm, this);
   }
 
   @override

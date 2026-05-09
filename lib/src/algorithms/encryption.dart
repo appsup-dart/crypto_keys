@@ -1,87 +1,63 @@
 part of '../algorithms.dart';
 
 /// Identifier for encryption and decryption algorithms.
-abstract class EncryptionAlgorithmIdentifier extends AlgorithmIdentifier {
-  EncryptionAlgorithmIdentifier._(super.name, super.factory) : super._();
+sealed class EncryptionAlgorithmIdentifier extends AlgorithmIdentifier {
+  const EncryptionAlgorithmIdentifier._(super.name) : super._();
 }
 
 /// Symmetric encryption algorithm identifiers (AES families).
-class SymmetricEncryptionAlgorithmIdentifier
+sealed class SymmetricEncryptionAlgorithmIdentifier
     extends EncryptionAlgorithmIdentifier {
-  SymmetricEncryptionAlgorithmIdentifier._(super.name, super.factory)
-    : super._();
+  const SymmetricEncryptionAlgorithmIdentifier._(super.name) : super._();
 
   /// AES-CBC with HMAC authentication using the provided digest.
   factory SymmetricEncryptionAlgorithmIdentifier.cbcWithHmac(
     DigestAlgorithmIdentifier hash,
-  ) => ._(
-    'enc/AES/CBC/PKCS7+HMAC/${hash.nameSuffix}',
-    () => pce.AesCbcAuthenticatedCipherWithHash(
-      SigningAlgorithmIdentifier.hmac(hash).createAlgorithm() as pc.Mac,
-    ),
-  );
+  ) = AesCbcPkcs7HmacEncryptionAlgorithmIdentifier;
 
   /// AES-CBC with PKCS#7 padding.
-  factory SymmetricEncryptionAlgorithmIdentifier.cbcWithPkcs7() => ._(
-    'enc/AES/CBC/PKCS7',
-    () => pc.PaddedBlockCipherImpl(
-      pc.PKCS7Padding(),
-      pc.CBCBlockCipher(pc.AESEngine()),
-    ),
-  );
+  const factory SymmetricEncryptionAlgorithmIdentifier.cbcWithPkcs7() =
+      AesCbcPkcs7EncryptionAlgorithmIdentifier;
 
   /// AES-GCM.
-  factory SymmetricEncryptionAlgorithmIdentifier.gcm() =>
-      ._('enc/AES/GCM', () => pc.GCMBlockCipher(pc.AESEngine()));
+  const factory SymmetricEncryptionAlgorithmIdentifier.gcm() =
+      AesGcmEncryptionAlgorithmIdentifier;
 
   /// AES-EAX.
-  factory SymmetricEncryptionAlgorithmIdentifier.eax() =>
-      ._('enc/AES/EAX', () => pc.AEADCipher('AES/EAX'));
+  const factory SymmetricEncryptionAlgorithmIdentifier.eax() =
+      AesEaxEncryptionAlgorithmIdentifier;
 
   /// AES Key Wrap (RFC 3394 default IV variant).
-  factory SymmetricEncryptionAlgorithmIdentifier.keyWrap() =>
-      ._('enc/AES/KW', () => pce.AESKeyWrap());
+  const factory SymmetricEncryptionAlgorithmIdentifier.keyWrap() =
+      AesKeyWrapEncryptionAlgorithmIdentifier;
 
   /// ChaCha20-Poly1305 AEAD (RFC 8439).
   ///
   /// Uses a 256-bit key and a 96-bit nonce ([initializationVector]).
-  factory SymmetricEncryptionAlgorithmIdentifier.chacha20Poly1305() => ._(
-    'enc/ChaCha20/Poly1305',
-    () => pc.ChaCha20Poly1305(pc.ChaCha7539Engine(), pc.Poly1305()),
-  );
+  const factory SymmetricEncryptionAlgorithmIdentifier.chacha20Poly1305() =
+      ChaCha20Poly1305EncryptionAlgorithmIdentifier;
 }
 
 /// Base class for asymmetric encryption algorithm identifiers.
-class AsymmetricEncryptionAlgorithmIdentifier
+sealed class AsymmetricEncryptionAlgorithmIdentifier
     extends EncryptionAlgorithmIdentifier {
-  AsymmetricEncryptionAlgorithmIdentifier._(super.name, super.factory)
-    : super._();
+  const AsymmetricEncryptionAlgorithmIdentifier._(super.name) : super._();
 }
 
 /// RSA encryption identifiers.
-class RsaEncryptionAlgorithmIdentifier
+sealed class RsaEncryptionAlgorithmIdentifier
     extends AsymmetricEncryptionAlgorithmIdentifier {
-  RsaEncryptionAlgorithmIdentifier._(super.name, super.factory) : super._();
-
   /// RSAES-PKCS1-v1_5.
-  factory RsaEncryptionAlgorithmIdentifier.pkcs1() =>
-      ._('enc/RSA/PKCS1', () => pc.PKCS1Encoding(pc.RSAEngine()));
+  const factory RsaEncryptionAlgorithmIdentifier.pkcs1() =
+      RsaPkcs1EncryptionAlgorithmIdentifier;
 
   /// RSAES-OAEP with SHA-1.
-  factory RsaEncryptionAlgorithmIdentifier.oaepWithSha1() => ._(
-    'enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding',
-    () => pc.OAEPEncoding.withSHA1(pc.RSAEngine()),
-  );
+  const factory RsaEncryptionAlgorithmIdentifier.oaepWithSha1() =
+      RsaOaepSha1EncryptionAlgorithmIdentifier;
 
   /// RSAES-OAEP with SHA-256.
-  factory RsaEncryptionAlgorithmIdentifier.oaepWithSha256() => ._(
-    'enc/RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
-    () => pc.OAEPEncoding.withSHA256(pc.RSAEngine()),
-  );
-}
+  const factory RsaEncryptionAlgorithmIdentifier.oaepWithSha256() =
+      RsaOaepSha256EncryptionAlgorithmIdentifier;
 
-/// Placeholder type for EC-based encryption identifiers.
-class EcEncryptionAlgorithmIdentifier
-    extends AsymmetricEncryptionAlgorithmIdentifier {
-  EcEncryptionAlgorithmIdentifier._(super.name, super.factory) : super._();
+  const RsaEncryptionAlgorithmIdentifier._(super.name) : super._();
 }

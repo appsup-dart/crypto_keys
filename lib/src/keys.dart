@@ -131,7 +131,10 @@ class RsaKeyPair extends KeyPair<RsaPublicKey, RsaPrivateKey> {
     RsaPrivateKey privateKey, {
     required BigInt exponent,
   }) : super(
-         publicKey: RsaPublicKey(modulus: privateKey.modulus, exponent: exponent),
+         publicKey: RsaPublicKey(
+           modulus: privateKey.modulus,
+           exponent: exponent,
+         ),
          privateKey: privateKey,
        );
 
@@ -173,9 +176,7 @@ class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
   EcKeyPair.fromPrivateKey(EcPrivateKey privateKey)
     : super(
         publicKey: (() {
-          final domain = _AsymmetricOperator.createCurveParameters(
-            privateKey.curve,
-          );
+          final domain = ecDomainParametersForCurve(privateKey.curve);
           final q = domain.G * privateKey.eccPrivateKey;
           return EcPublicKey(
             xCoordinate: q!.x!.toBigInteger()!,
@@ -190,9 +191,7 @@ class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
     final generator = pc.ECKeyGenerator()
       ..init(
         pc.ParametersWithRandom(
-          pc.ECKeyGeneratorParameters(
-            _AsymmetricOperator.createCurveParameters(curve),
-          ),
+          pc.ECKeyGeneratorParameters(ecDomainParametersForCurve(curve)),
           DefaultSecureRandom(),
         ),
       );

@@ -25,7 +25,7 @@ class _Ecdh {
       );
     }
 
-    final domain = _AsymmetricOperator.createCurveParameters(privateKey.curve);
+    final domain = ecDomainParametersForCurve(privateKey.curve);
     final pcPrivate = pc.ECPrivateKey(privateKey.eccPrivateKey, domain);
     final pcPublic = pc.ECPublicKey(
       domain.curve.createPoint(publicKey.xCoordinate, publicKey.yCoordinate),
@@ -81,8 +81,7 @@ class _ConcatKdf {
       );
     }
 
-    final selectedDigest =
-        digest ?? (hash ?? .sha256).createAlgorithm() as pc.Digest;
+    final selectedDigest = digest ?? (hash ?? .sha256).algorithmImplementation;
     final hashLen = selectedDigest.digestSize;
     final reps = (keyBitLength + hashLen * 8 - 1) ~/ (hashLen * 8);
     final output = BytesBuilder(copy: false);
@@ -198,7 +197,7 @@ Uint8List _derivePbkdf2Bits({
   final keyLength = (keyBitLength + 7) ~/ 8;
   final algorithm = pc.PBKDF2KeyDerivator(
     pc.HMac(
-      params.hash.createAlgorithm() as pc.Digest,
+      params.hash.algorithmImplementation,
       params.hash.blockLength,
     ),
   );
@@ -227,7 +226,7 @@ Uint8List _deriveHkdfBits({
   _ensureSupportsHkdf(params.hash);
   final keyLength = (params.keyBitLength + 7) ~/ 8;
   final algorithm = pc.HKDFKeyDerivator(
-    params.hash.createAlgorithm() as pc.Digest,
+    params.hash.algorithmImplementation,
   );
   algorithm.init(
     pc.HkdfParameters(
@@ -256,7 +255,7 @@ Uint8List _deriveConcatKdfBits({
     sharedSecret: secret.value,
     otherInfo: params.otherInfo ?? Uint8List(0),
     keyBitLength: params.keyBitLength,
-    digest: params.hash.createAlgorithm() as pc.Digest,
+    digest: params.hash.algorithmImplementation,
   );
 }
 

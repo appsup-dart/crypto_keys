@@ -1,68 +1,8 @@
 part of '../algorithms.dart';
 
-class _PssSignerFactory implements pc.Signer {
-  final pc.Digest sigDigest;
-  final pc.Digest mgf1Digest;
-  final int saltLength;
-  late final pc.PSSSigner _delegate;
-
-  _PssSignerFactory({
-    required this.sigDigest,
-    required this.mgf1Digest,
-    required this.saltLength,
-  }) {
-    _delegate = pc.PSSSigner(pc.RSAEngine(), sigDigest, mgf1Digest);
-  }
-
-  @override
-  String get algorithmName => _delegate.algorithmName;
-
-  @override
-  pc.Signature generateSignature(Uint8List message) =>
-      _delegate.generateSignature(message);
-
-  @override
-  void init(bool forSigning, pc.CipherParameters params) {
-    final keyParameters = switch (params) {
-      pc.ParametersWithRandom(:final parameters) => parameters,
-      pc.AsymmetricKeyParameter() => params,
-      _ => throw ArgumentError(
-        'Unsupported parameter type for RSA-PSS: ${params.runtimeType}',
-      ),
-    };
-    final random = switch (params) {
-      pc.ParametersWithRandom(:final random) => random,
-      _ => DefaultSecureRandom(),
-    };
-    _delegate.init(
-      forSigning,
-      pc.ParametersWithSaltConfiguration(keyParameters, random, saltLength),
-    );
-  }
-
-  @override
-  void reset() => _delegate.reset();
-
-  @override
-  bool verifySignature(Uint8List message, pc.Signature signature) {
-    if (signature is pc.PSSSignature) {
-      return _delegate.verifySignature(message, signature);
-    }
-    if (signature is pc.RSASignature) {
-      return _delegate.verifySignature(
-        message,
-        pc.PSSSignature(signature.bytes),
-      );
-    }
-    throw ArgumentError(
-      'Expected RSA or PSS signature, got ${signature.runtimeType}',
-    );
-  }
-}
-
 /// Identifier for signing and signature-verification algorithms.
-abstract class SigningAlgorithmIdentifier extends AlgorithmIdentifier {
-  SigningAlgorithmIdentifier._(super.name, super.factory) : super._();
+sealed class SigningAlgorithmIdentifier extends AlgorithmIdentifier {
+  const SigningAlgorithmIdentifier._(super.name) : super._();
 
   /// HMAC with the given [hash].
   static SymmetricSigningAlgorithmIdentifier hmac(
@@ -77,8 +17,8 @@ abstract class SigningAlgorithmIdentifier extends AlgorithmIdentifier {
   /// RSA-PSS with caller-provided parameters.
   static RsaSigningAlgorithmIdentifier rsaPss({
     required DigestAlgorithmIdentifier sigHash,
-    required DigestAlgorithmIdentifier mgf1Hash,
-    required int saltLength,
+    DigestAlgorithmIdentifier? mgf1Hash,
+    int? saltLength,
   }) => .pss(sigHash, mgf1Hash: mgf1Hash, saltLength: saltLength);
 
   /// ECDSA with the given [hash].
@@ -86,42 +26,35 @@ abstract class SigningAlgorithmIdentifier extends AlgorithmIdentifier {
       .ecdsa(hash);
 
   /// Ed25519 pure signatures (RFC 8032).
-  static final Ed25519SigningAlgorithmIdentifier ed25519 =
-      Ed25519SigningAlgorithmIdentifier();
+  static const Ed25519SigningAlgorithmIdentifier ed25519 =
+      Ed25519SigningAlgorithmIdentifierImpl();
 }
 
 /// Symmetric signing algorithm identifiers (HMAC family).
-class SymmetricSigningAlgorithmIdentifier extends SigningAlgorithmIdentifier {
-  SymmetricSigningAlgorithmIdentifier._(super.name, super.factory) : super._();
+sealed class SymmetricSigningAlgorithmIdentifier
+    extends SigningAlgorithmIdentifier {
+  const SymmetricSigningAlgorithmIdentifier._(super.name) : super._();
 
   /// HMAC with the given [hash].
   factory SymmetricSigningAlgorithmIdentifier.hmac(
     DigestAlgorithmIdentifier hash,
-  ) => SymmetricSigningAlgorithmIdentifier._(
-    'sig/HMAC/${hash.nameSuffix}',
-    () => pc.HMac(hash.createAlgorithm() as pc.Digest, hash.blockLength),
-  );
+  ) = HmacSigningAlgorithmIdentifier;
 }
 
 /// Base class for asymmetric signing algorithm identifiers.
-class AsymmetricSigningAlgorithmIdentifier extends SigningAlgorithmIdentifier {
-  AsymmetricSigningAlgorithmIdentifier._(super.name, super.factory) : super._();
+sealed class AsymmetricSigningAlgorithmIdentifier
+    extends SigningAlgorithmIdentifier {
+  const AsymmetricSigningAlgorithmIdentifier._(super.name) : super._();
 }
 
 /// RSA signing algorithm identifiers.
-class RsaSigningAlgorithmIdentifier
+sealed class RsaSigningAlgorithmIdentifier
     extends AsymmetricSigningAlgorithmIdentifier {
-  RsaSigningAlgorithmIdentifier._(super.name, super.factory) : super._();
+  const RsaSigningAlgorithmIdentifier._(super.name) : super._();
 
   /// RSASSA-PKCS1-v1_5 with the given digest.
-  factory RsaSigningAlgorithmIdentifier.pkcs1(DigestAlgorithmIdentifier hash) =>
-      RsaSigningAlgorithmIdentifier._(
-        'sig/RSA/${hash.nameSuffix}',
-        () => pc.RSASigner(
-          hash.createAlgorithm() as pc.Digest,
-          hash.rsaPkcs1DigestIdentifierHex,
-        ),
-      );
+  factory RsaSigningAlgorithmIdentifier.pkcs1(DigestAlgorithmIdentifier hash) =
+      RsaPkcs1SigningAlgorithmIdentifier;
 
   /// RSASSA-PSS with caller-provided or defaulted parameters.
   ///
@@ -132,49 +65,22 @@ class RsaSigningAlgorithmIdentifier
     DigestAlgorithmIdentifier sigHash, {
     DigestAlgorithmIdentifier? mgf1Hash,
     int? saltLength,
-  }) {
-    final resolvedMgf1Hash = mgf1Hash ?? sigHash;
-    final resolvedSaltLength =
-        saltLength ?? (sigHash.createAlgorithm() as pc.Digest).digestSize;
-    return RsaSigningAlgorithmIdentifier._(
-      'sig/RSA/PSS/${sigHash.name}/mgf1${resolvedMgf1Hash.name}/$resolvedSaltLength',
-      () => _PssSignerFactory(
-        sigDigest: sigHash.createAlgorithm() as pc.Digest,
-        mgf1Digest: resolvedMgf1Hash.createAlgorithm() as pc.Digest,
-        saltLength: resolvedSaltLength,
-      ),
-    );
-  }
+  }) = RsaPssSigningAlgorithmIdentifier;
 }
 
 /// ECDSA signing algorithm identifiers.
-class EcSigningAlgorithmIdentifier
+sealed class EcSigningAlgorithmIdentifier
     extends AsymmetricSigningAlgorithmIdentifier {
-  EcSigningAlgorithmIdentifier._(super.name, super.factory) : super._();
+  const EcSigningAlgorithmIdentifier._(super.name) : super._();
 
-  factory EcSigningAlgorithmIdentifier.ecdsa(DigestAlgorithmIdentifier hash) =>
-      EcSigningAlgorithmIdentifier._(
-        'sig/ECDSA/${hash.nameSuffix}',
-        () => pc.ECDSASigner(hash.createAlgorithm() as pc.Digest, null),
-      );
+  factory EcSigningAlgorithmIdentifier.ecdsa(DigestAlgorithmIdentifier hash) =
+      EcdsaSigningAlgorithmIdentifier;
 }
 
 /// Ed25519 signing (RFC 8032).
 ///
 /// Signs and verifies the **raw** message bytes (no separate digest step).
-class Ed25519SigningAlgorithmIdentifier
+sealed class Ed25519SigningAlgorithmIdentifier
     extends AsymmetricSigningAlgorithmIdentifier {
-  Ed25519SigningAlgorithmIdentifier._(super.name, super.factory) : super._();
-
-  Ed25519SigningAlgorithmIdentifier()
-    : this._('sig/Ed25519', () => _Ed25519PcPlaceholder.instance);
-}
-
-/// Satisfies [Operator] without delegating to PointyCastle signing.
-class _Ed25519PcPlaceholder implements pc.Algorithm {
-  _Ed25519PcPlaceholder._();
-  static final _Ed25519PcPlaceholder instance = _Ed25519PcPlaceholder._();
-
-  @override
-  String get algorithmName => 'Ed25519';
+  const Ed25519SigningAlgorithmIdentifier._(super.name) : super._();
 }

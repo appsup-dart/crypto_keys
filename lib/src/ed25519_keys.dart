@@ -17,8 +17,10 @@ class Ed25519PublicKey with Key implements PublicKey, VerifyingPublicKey {
   }
 
   @override
-  Verifier createVerifier(covariant Ed25519SigningAlgorithmIdentifier algorithm) {
-    return _Ed25519Verifier(algorithm, this);
+  Verifier createVerifier(
+    covariant Ed25519SigningAlgorithmIdentifier algorithm,
+  ) {
+    return Ed25519Verifier(algorithm, this);
   }
 
   @override
@@ -28,7 +30,10 @@ class Ed25519PublicKey with Key implements PublicKey, VerifyingPublicKey {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Ed25519PublicKey &&
-          const ListEquality<int>().equals(other.publicKeyBytes, publicKeyBytes));
+          const ListEquality<int>().equals(
+            other.publicKeyBytes,
+            publicKeyBytes,
+          ));
 }
 
 /// Ed25519 private key as a 32-byte **seed** (RFC 8032 secret scalar seed).
@@ -52,7 +57,7 @@ class Ed25519PrivateKey with Key implements PrivateKey, SigningPrivateKey {
 
   @override
   Signer createSigner(covariant Ed25519SigningAlgorithmIdentifier algorithm) {
-    return _Ed25519Signer(algorithm, this);
+    return Ed25519Signer(algorithm, this);
   }
 
   @override

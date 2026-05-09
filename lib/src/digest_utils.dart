@@ -1,16 +1,30 @@
 import 'algorithms.dart';
 import 'package:pointycastle/export.dart' as pc;
 
-extension DigestAlgorithmIdentifierHmac on DigestAlgorithmIdentifier {
+extension DigestAlgorithmIdentifierPointyCastle on DigestAlgorithmIdentifier {
+  /// PointyCastle digest implementation for this identifier.
+  pc.Digest get algorithmImplementation => switch (this) {
+    _ when this == .sha1 => pc.SHA1Digest(),
+    _ when this == .sha224 => pc.SHA224Digest(),
+    _ when this == .sha256 => pc.SHA256Digest(),
+    _ when this == .sha384 => pc.SHA384Digest(),
+    _ when this == .sha512 => pc.SHA512Digest(),
+    _ when this == .sha3_224 => pc.SHA3Digest(224),
+    _ when this == .sha3_256 => pc.SHA3Digest(256),
+    _ when this == .sha3_384 => pc.SHA3Digest(384),
+    _ when this == .sha3_512 => pc.SHA3Digest(512),
+    _ when name.startsWith('digest/SHA-512/') => pc.SHA512tDigest(
+      int.parse(name.split('/').last) ~/ 8,
+    ),
+    _ => throw UnsupportedError('Unsupported digest identifier: $name'),
+  };
+
   /// Digest block length (in bytes), as defined by the underlying PointyCastle
   /// [pc.Digest] ([pc.Digest.byteLength], used by RFC 2104 HMAC).
-  int get blockLength {
-    final digest = createAlgorithm() as pc.Digest;
-    return digest.byteLength;
-  }
+  int get blockLength => algorithmImplementation.byteLength;
+}
 
-  String get nameSuffix => name.replaceFirst('digest/', '');
-
+extension DigestAlgorithmIdentifierPkcs1 on DigestAlgorithmIdentifier {
   /// DER-encoded `AlgorithmIdentifier` (tag `0x06` OID only) for RSA PKCS#1
   /// v1.5 `DigestInfo`, in hex, as consumed by PointyCastle [pc.RSASigner].
   ///

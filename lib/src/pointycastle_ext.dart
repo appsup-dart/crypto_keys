@@ -1,7 +1,10 @@
 import 'dart:typed_data';
 
+import 'secure_random.dart';
 import 'package:pointycastle/export.dart';
 import 'errors.dart';
+
+export 'package:pointycastle/export.dart';
 
 class ParametersWithIVAndAad<UnderlyingParameters extends CipherParameters>
     extends ParametersWithIV<UnderlyingParameters> {
@@ -288,5 +291,62 @@ class AESKeyWrap implements BlockCipher {
   @override
   void reset() {
     throw UnsupportedError('Should not be called.');
+  }
+}
+
+class PssSignerAdapter implements Signer {
+  final Digest sigDigest;
+  final Digest mgf1Digest;
+  final int saltLength;
+  late final PSSSigner _delegate;
+
+  PssSignerAdapter({
+    required this.sigDigest,
+    required this.mgf1Digest,
+    required this.saltLength,
+  }) {
+    _delegate = PSSSigner(RSAEngine(), sigDigest, mgf1Digest);
+  }
+
+  @override
+  String get algorithmName => _delegate.algorithmName;
+
+  @override
+  Signature generateSignature(Uint8List message) =>
+      _delegate.generateSignature(message);
+
+  @override
+  void init(bool forSigning, CipherParameters params) {
+    final keyParameters = switch (params) {
+      ParametersWithRandom(:final parameters) => parameters,
+      AsymmetricKeyParameter() => params,
+      _ => throw ArgumentError(
+        'Unsupported parameter type for RSA-PSS: ${params.runtimeType}',
+      ),
+    };
+    final random = switch (params) {
+      ParametersWithRandom(:final random) => random,
+      _ => DefaultSecureRandom(),
+    };
+    _delegate.init(
+      forSigning,
+      ParametersWithSaltConfiguration(keyParameters, random, saltLength),
+    );
+  }
+
+  @override
+  void reset() => _delegate.reset();
+
+  @override
+  bool verifySignature(Uint8List message, Signature signature) {
+    if (signature is PSSSignature) {
+      return _delegate.verifySignature(message, signature);
+    }
+    if (signature is RSASignature) {
+      return _delegate.verifySignature(message, PSSSignature(signature.bytes));
+    }
+    throw ArgumentError(
+      'Expected RSA or PSS signature, got ${signature.runtimeType}',
+    );
   }
 }

@@ -7,7 +7,9 @@ abstract class RsaKey extends Key {
 }
 
 /// A RSA public key
-class RsaPublicKey with Key implements RsaKey, PublicKey, VerifyingPublicKey, EncryptingPublicKey {
+class RsaPublicKey
+    with Key
+    implements RsaKey, PublicKey, VerifyingPublicKey, EncryptingPublicKey {
   @override
   final BigInt modulus;
 
@@ -18,14 +20,14 @@ class RsaPublicKey with Key implements RsaKey, PublicKey, VerifyingPublicKey, En
 
   @override
   Verifier createVerifier(covariant RsaSigningAlgorithmIdentifier algorithm) {
-    return _AsymmetricVerifier(algorithm, this);
+    return RsaVerifier(algorithm, this);
   }
 
   @override
   Encrypter createEncrypter(
     covariant RsaEncryptionAlgorithmIdentifier algorithm,
   ) {
-    return _AsymmetricEncrypter(algorithm, this);
+    return RsaEncrypter(algorithm, this);
   }
 
   @override
@@ -68,14 +70,14 @@ class RsaPrivateKey
 
   @override
   Signer createSigner(covariant RsaSigningAlgorithmIdentifier algorithm) {
-    return _AsymmetricSigner(algorithm, this);
+    return RsaSigner(algorithm, this);
   }
 
   @override
   Decrypter createDecrypter(
     covariant RsaEncryptionAlgorithmIdentifier algorithm,
   ) {
-    return _AsymmetricDecrypter(algorithm, this);
+    return RsaDecrypter(algorithm, this);
   }
 
   @override

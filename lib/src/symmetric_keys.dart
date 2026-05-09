@@ -29,28 +29,28 @@ class SymmetricKey
 
   @override
   Signer createSigner(covariant SymmetricSigningAlgorithmIdentifier algorithm) {
-    return _SymmetricSignerAndVerifier(algorithm, this);
+    return SymmetricSignerAndVerifier(algorithm, this);
   }
 
   @override
   Verifier createVerifier(
     covariant SymmetricSigningAlgorithmIdentifier algorithm,
   ) {
-    return _SymmetricSignerAndVerifier(algorithm, this);
+    return SymmetricSignerAndVerifier(algorithm, this);
   }
 
   @override
   Encrypter createEncrypter(
     covariant SymmetricEncryptionAlgorithmIdentifier algorithm,
   ) {
-    return _SymmetricEncrypter(algorithm, this);
+    return SymmetricCipherOperator(algorithm, this);
   }
 
   @override
   Decrypter createDecrypter(
     covariant SymmetricEncryptionAlgorithmIdentifier algorithm,
   ) {
-    return _SymmetricEncrypter(algorithm, this);
+    return SymmetricCipherOperator(algorithm, this);
   }
 
   @override

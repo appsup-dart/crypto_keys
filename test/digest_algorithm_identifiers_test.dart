@@ -6,7 +6,7 @@ import 'package:pointycastle/export.dart' as pc;
 import 'package:test/test.dart';
 
 pc.Digest _digest(DigestAlgorithmIdentifier id) =>
-    id.createAlgorithm() as pc.Digest;
+    id.algorithmImplementation;
 
 void main() {
   group('DigestAlgorithmIdentifier', () {

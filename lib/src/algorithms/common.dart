@@ -36,12 +36,5 @@ class CurveIdentifier extends Identifier {
 /// This type is used across signing, encryption, digest, and derivation APIs
 /// and provides the stable public identifier name for an algorithm.
 class AlgorithmIdentifier extends Identifier {
-  final pc.Algorithm Function() _factory;
-
-  const AlgorithmIdentifier._(super.name, this._factory) : super._();
-}
-
-/// Internal helpers to instantiate algorithm implementations.
-extension AlgorithmIdentifierInternal on AlgorithmIdentifier {
-  pc.Algorithm createAlgorithm() => _factory();
+  const AlgorithmIdentifier._(super.name) : super._();
 }
