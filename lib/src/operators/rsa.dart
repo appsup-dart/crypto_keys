@@ -17,7 +17,7 @@ class RsaSigner extends Signer<RsaPrivateKey> {
     data = data is Uint8List ? data : Uint8List.fromList(data);
     _algorithm.init(
       true,
-      pc.ParametersWithRandom(key.keyParameter, DefaultSecureRandom()),
+      pc.ParametersWithRandom(keyMaterial.keyParameter, DefaultSecureRandom()),
     );
 
     final signature = _algorithm.generateSignature(data);
@@ -43,7 +43,10 @@ class RsaVerifier extends Verifier<RsaPublicKey> {
   bool verify(Uint8List data, Signature signature) {
     _algorithm.init(
       false,
-      pc.ParametersWithRandom(key.keyParameter, pc.SecureRandom('Fortuna')),
+      pc.ParametersWithRandom(
+        keyMaterial.keyParameter,
+        pc.SecureRandom('Fortuna'),
+      ),
     );
     try {
       final rsaSignature = _algorithm is pc.PSSSigner
@@ -69,7 +72,7 @@ class RsaEncrypter extends Encrypter<RsaPublicKey> {
   }) {
     _algorithm.init(
       true,
-      pc.ParametersWithRandom(key.keyParameter, DefaultSecureRandom()),
+      pc.ParametersWithRandom(keyMaterial.keyParameter, DefaultSecureRandom()),
     );
 
     return EncryptionResult(_algorithm.process(input as Uint8List));
@@ -85,7 +88,10 @@ class RsaDecrypter extends Decrypter<RsaPrivateKey> {
   Uint8List decrypt(EncryptionResult input) {
     _algorithm.init(
       false,
-      pc.ParametersWithRandom(key.keyParameter, pc.SecureRandom('Fortuna')),
+      pc.ParametersWithRandom(
+        keyMaterial.keyParameter,
+        pc.SecureRandom('Fortuna'),
+      ),
     );
 
     return _algorithm.process(input.data);

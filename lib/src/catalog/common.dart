@@ -11,8 +11,11 @@ class Algorithms {
   /// Digest / hash algorithms
   final digest = const DigestAlgorithms();
 
-  /// Key derivation / agreement algorithms
-  final derivation = const DerivationAlgorithms._();
+  /// Key-derivation algorithms ([Password]/[SecretBytes].deriveBits).
+  final kdf = const KdfAlgorithms._();
+
+  /// Key agreement ([AgreementPrivateKey.deriveSharedSecret]).
+  final keyAgreement = const KeyAgreementAlgorithms._();
 
   const Algorithms._();
 }

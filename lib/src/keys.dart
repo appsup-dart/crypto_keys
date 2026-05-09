@@ -16,16 +16,11 @@ class Password with KeyMaterial {
       Password(Uint8List.fromList(utf8.encode(value)));
 
   /// Derives bytes using password-based KDF parameters.
-  Uint8List deriveBits(PasswordKeyDeriverParams params) {
-    if (params case Pbkdf2KeyDeriverParams()) {
-      return _derivePbkdf2Bits(password: this, params: params);
-    }
-    if (params case Argon2idKeyDeriverParams()) {
-      return _deriveArgon2idBits(password: this, params: params);
-    }
-    throw UnsupportedError(
-      'Unsupported password key derivation params: ${params.runtimeType}',
-    );
+  Uint8List deriveBits(PasswordKdfParams params) {
+    return switch (params) {
+      Pbkdf2KdfParams() => Pbkdf2(params.hash, this).deriveKey(params),
+      Argon2idKdfParams() => Argon2id(this).deriveKey(params),
+    };
   }
 }
 
@@ -36,13 +31,13 @@ class SecretBytes with KeyMaterial {
   SecretBytes(List<int> value) : value = Uint8List.fromList(value);
 
   /// Derives bytes from this secret using shared-secret KDF parameters.
-  Uint8List deriveBits(SecretBytesKeyDeriverParams params) {
+  Uint8List deriveBits(SecretBytesKdfParams params) {
     return switch (params) {
-      HkdfKeyDeriverParams() => _deriveHkdfBits(secret: this, params: params),
-      ConcatKdfKeyDeriverParams() => _deriveConcatKdfBits(
-        secret: this,
-        params: params,
-      ),
+      HkdfKdfParams() => Hkdf(params.hash, this).deriveKey(params),
+      ConcatKdfKdfParams() => ConcatKdf(
+        params.hash,
+        this,
+      ).deriveKey(params),
     };
   }
 }
@@ -81,7 +76,7 @@ abstract mixin class DecryptingPrivateKey implements PrivateKey {
 abstract mixin class AgreementPublicKey implements PublicKey {}
 
 /// Capability: derive a shared secret using key agreement.
-abstract mixin class AgreementPrivateKey<Params extends PrivateKeyDeriverParams>
+abstract mixin class AgreementPrivateKey<Params extends KeyAgreementParams>
     implements PrivateKey {
   SecretBytes deriveSharedSecret(covariant Params params);
 }

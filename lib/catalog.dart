@@ -10,7 +10,7 @@
 ///
 /// final sigAlg = algorithms.signing.rsa.pkcs1.sha256;
 /// final encAlg = algorithms.encryption.aes.gcm;
-/// final kdfAlg = algorithms.derivation.hkdf.withHash(.sha256);
+/// final kdfAlg = algorithms.kdf.secret.hkdf.withHash(.sha256);
 /// ```
 ///
 /// This entrypoint is focused on ergonomics and documentation discoverability.

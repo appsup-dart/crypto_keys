@@ -50,10 +50,9 @@ class X25519PrivateKey
   @override
   SecretBytes deriveSharedSecret(OkpKeyAgreementParams params) {
     return switch (params) {
-      X25519KeyDeriverParams() => _deriveX25519SharedSecret(
-        privateKey: this,
-        params: params,
-      ),
+      X25519KeyAgreementParams() => X25519KeyAgreement(
+        this,
+      ).deriveSharedSecret(params),
     };
   }
 

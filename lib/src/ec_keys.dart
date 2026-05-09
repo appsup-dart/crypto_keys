@@ -69,10 +69,9 @@ class EcPrivateKey
   @override
   SecretBytes deriveSharedSecret(EcKeyAgreementParams params) {
     return switch (params) {
-      EcdhKeyDeriverParams() => _deriveEcdhSharedSecret(
-        privateKey: this,
-        params: params,
-      ),
+      EcdhKeyAgreementParams() => EcdhKeyAgreement(
+        this,
+      ).deriveSharedSecret(params),
     };
   }
 

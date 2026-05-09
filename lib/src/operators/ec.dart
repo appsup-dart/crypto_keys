@@ -17,11 +17,11 @@ class EcSigner extends Signer<EcPrivateKey> {
     data = data is Uint8List ? data : Uint8List.fromList(data);
     _algorithm.init(
       true,
-      pc.ParametersWithRandom(key.keyParameter, DefaultSecureRandom()),
+      pc.ParametersWithRandom(keyMaterial.keyParameter, DefaultSecureRandom()),
     );
 
     final sig = _algorithm.generateSignature(data) as pc.ECSignature;
-    final length = switch (key.curve) {
+    final length = switch (keyMaterial.curve) {
       Curve.p256 || Curve.p256k => 32,
       Curve.p384 => 48,
       Curve.p521 => 66,
@@ -45,7 +45,7 @@ class EcVerifier extends Verifier<EcPublicKey> {
 
   @override
   bool verify(Uint8List data, Signature signature) {
-    _algorithm.init(false, key.keyParameter);
+    _algorithm.init(false, keyMaterial.keyParameter);
 
     final l = signature.data.length ~/ 2;
 

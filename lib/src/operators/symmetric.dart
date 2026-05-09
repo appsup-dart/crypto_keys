@@ -18,7 +18,7 @@ class SymmetricSignerAndVerifier extends Signer<SymmetricKey>
   @override
   Signature sign(List<int> data) {
     data = data is Uint8List ? data : Uint8List.fromList(data);
-    _algorithm.init(pc.KeyParameter(key.keyValue));
+    _algorithm.init(pc.KeyParameter(keyMaterial.keyValue));
     return Signature(_algorithm.process(data));
   }
 
@@ -41,27 +41,28 @@ abstract class SymmetricCipherOperator extends Encrypter<SymmetricKey>
     SymmetricEncryptionAlgorithm algorithm,
     SymmetricKey key,
   ) => switch (algorithm) {
-    AesKeyWrapEncryptionAlgorithm() =>
-      _KeyWrapSymmetricCipherOperator(algorithm, key),
-    AesGcmEncryptionAlgorithm() => _GcmSymmetricCipherOperator(
+    AesKeyWrapEncryptionAlgorithm() => _KeyWrapSymmetricCipherOperator(
       algorithm,
       key,
     ),
+    AesGcmEncryptionAlgorithm() => _GcmSymmetricCipherOperator(algorithm, key),
     AesEaxEncryptionAlgorithm() => _AeadSymmetricCipherOperator._eax(
       algorithm,
       key,
     ),
     ChaCha20Poly1305EncryptionAlgorithm() =>
       _AeadSymmetricCipherOperator._chacha(algorithm, key),
-    AesCbcPkcs7EncryptionAlgorithm() =>
-      _PaddedOrBlockSymmetricCipherOperator(algorithm, key),
+    AesCbcPkcs7EncryptionAlgorithm() => _PaddedOrBlockSymmetricCipherOperator(
+      algorithm,
+      key,
+    ),
     AesCbcPkcs7HmacEncryptionAlgorithm() =>
       _TaggingBlockSymmetricCipherOperator(algorithm, key),
   };
 
   SymmetricCipherOperator._base(super.algorithm, super.key);
 
-  pc.KeyParameter get _keyParam => pc.KeyParameter(key.keyValue);
+  pc.KeyParameter get _keyParam => pc.KeyParameter(keyMaterial.keyValue);
 }
 
 class _AeadSymmetricCipherOperator extends SymmetricCipherOperator {

@@ -3,19 +3,20 @@ part of '../crypto_keys.dart';
 /// Base class for cryptographic operations
 abstract class Operator<T extends KeyMaterial> {
   /// The key material used for this operation
-  final T key;
+  final T keyMaterial;
 
   /// The algorithm used for this operation
   final Algorithm algorithm;
 
-  Operator._(this.algorithm, this.key);
+  Operator._(this.algorithm, this.keyMaterial);
+  Operator(this.algorithm, this.keyMaterial);
 }
 
 /// Operator for signing
 abstract class Signer<T extends PrivateKey> extends Operator<T> {
   Signer(SigningAlgorithm super.algorithm, super.key) : super._();
 
-  /// Signs the input [data] using the [key] and [algorithm]
+  /// Signs the input [data] using the [keyMaterial] and [algorithm]
   Signature sign(List<int> data);
 }
 
@@ -24,7 +25,7 @@ abstract class Verifier<T extends PublicKey> extends Operator<T> {
   Verifier(SigningAlgorithm super.algorithm, super.key) : super._();
 
   /// Verifies that [signature] is a valid signature for the input [data] using
-  /// the [key] and [algorithm]
+  /// the [keyMaterial] and [algorithm]
   bool verify(Uint8List data, Signature signature);
 }
 
@@ -45,10 +46,9 @@ class Signature {
 
 /// Operator for encrypting data.
 abstract class Encrypter<T extends PublicKey> extends Operator<T> {
-  Encrypter(EncryptionAlgorithm super.algorithm, super.key)
-    : super._();
+  Encrypter(EncryptionAlgorithm super.algorithm, super.key) : super._();
 
-  /// Encrypts the input data using the [key] and [algorithm]
+  /// Encrypts the input data using the [keyMaterial] and [algorithm]
   ///
   /// When the algorithm requires an initialization vector and none is provided,
   /// a random initialization vector is generated.
@@ -61,10 +61,9 @@ abstract class Encrypter<T extends PublicKey> extends Operator<T> {
 
 /// Operator for decrypting data.
 abstract class Decrypter<T extends PrivateKey> extends Operator<T> {
-  Decrypter(EncryptionAlgorithm super.algorithm, super.key)
-    : super._();
+  Decrypter(EncryptionAlgorithm super.algorithm, super.key) : super._();
 
-  /// Decrypts the input data using the [key] and [algorithm].
+  /// Decrypts the input data using the [keyMaterial] and [algorithm].
   Uint8List decrypt(EncryptionResult input);
 }
 

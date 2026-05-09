@@ -47,7 +47,7 @@ void main() {
       expect(kAlice.value, expectedShared);
       expect(kBob.value, expectedShared);
 
-      expect(algorithms.derivation.x25519, DerivationAlgorithm.x25519());
+      expect(algorithms.keyAgreement.x25519, KeyAgreementAlgorithm.x25519());
     });
 
     test('random pair agrees', () {
