@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 void main() {
   // Generate a random symmetric key pair
-  var keyPair = KeyPair.generateSymmetric(128);
+  var keyPair = SymmetricKeyPair.generate(128);
 
   // Use the public key to create an encrypter with the AES/GCM algorithm
-  var encrypter = keyPair.publicKey!.createEncrypter(.gcm());
+  var encrypter = keyPair.publicKey.createEncrypter(.gcm());
 
   // Encrypt the content with an additional authentication data for integrity
   // protection
@@ -22,7 +22,7 @@ void main() {
   print('Authentication tag: ${v.authenticationTag}');
 
   // Use the private key to create the decrypter
-  var decrypter = keyPair.privateKey!.createDecrypter(.gcm());
+  var decrypter = keyPair.privateKey.createDecrypter(.gcm());
 
   // Decrypt and verify authentication tag
   var decrypted = decrypter.decrypt(v);

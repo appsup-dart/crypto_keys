@@ -4,6 +4,36 @@ import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
+SymmetricKeyPair _symmetricFromJwk(Map<String, dynamic> jwk) {
+  return SymmetricKeyPair(keyValue: Uint8List.fromList(base64ToBytes(jwk['k'])));
+}
+
+RsaKeyPair _rsaFromJwk(Map<String, dynamic> jwk) {
+  return RsaKeyPair(
+    modulus: base64ToInt(jwk['n']),
+    exponent: base64ToInt(jwk['e']),
+    privateExponent: base64ToInt(jwk['d']),
+    firstPrimeFactor: base64ToInt(jwk['p']),
+    secondPrimeFactor: base64ToInt(jwk['q']),
+  );
+}
+
+EcKeyPair _ecFromJwk(Map<String, dynamic> jwk) {
+  final curve = switch (jwk['crv']) {
+    'P-256' => curves.p256,
+    'P-256K' => curves.p256k,
+    'P-384' => curves.p384,
+    'P-521' => curves.p521,
+    _ => throw UnsupportedError('Unsupported curve ${jwk['crv']}'),
+  };
+  return EcKeyPair(
+    curve: curve,
+    xCoordinate: base64ToInt(jwk['x']),
+    yCoordinate: base64ToInt(jwk['y']),
+    eccPrivateKey: base64ToInt(jwk['d']),
+  );
+}
+
 void _testSigning(
   KeyPair<VerifyingPublicKey, SigningPrivateKey> keyPair,
   SigningAlgorithmIdentifier algorithm,
@@ -11,11 +41,8 @@ void _testSigning(
   Uint8List? signature,
   bool? isRandom,
 ]) {
-  if (keyPair.privateKey == null || keyPair.publicKey == null) {
-    throw StateError('Need both private and public keys for signing tests.');
-  }
-  var signer = keyPair.privateKey!.createSigner(algorithm);
-  var verifier = keyPair.publicKey!.createVerifier(algorithm);
+  var signer = keyPair.privateKey.createSigner(algorithm);
+  var verifier = keyPair.publicKey.createVerifier(algorithm);
 
   if (signature != null) {
     expect(verifier.verify(data, Signature(signature)), isTrue);
@@ -38,8 +65,8 @@ void _testEncryption(
   EncryptionResult? encryptedData,
   bool? isRandom,
 ]) {
-  var encrypter = keyPair.publicKey!.createEncrypter(algorithm);
-  var decrypter = keyPair.privateKey!.createDecrypter(algorithm);
+  var encrypter = keyPair.publicKey.createEncrypter(algorithm);
+  var decrypter = keyPair.privateKey.createDecrypter(algorithm);
 
   if (encryptedData != null) {
     expect(decrypter.decrypt(encryptedData), data);
@@ -82,7 +109,7 @@ void main() {
             'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow',
       };
 
-      var keyPair = KeyPair.fromJwk(jwk) as SymmetricKeyPair;
+      var keyPair = _symmetricFromJwk(jwk);
 
       var data = Uint8List.fromList([
         101,
@@ -314,7 +341,7 @@ void main() {
             'W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U',
       };
 
-      var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
+      var keyPair = _rsaFromJwk(jwk);
 
       var data = Uint8List.fromList([
         101,
@@ -713,7 +740,7 @@ void main() {
         var text = 'Can we sign and verify this text';
         var data = utf8.encode(text);
 
-        var keyPair = KeyPair.generateRsa();
+        var keyPair = RsaKeyPair.generate();
         var alg = algorithms.signing.rsa.pkcs1.sha384;
 
         _testSigning(keyPair, alg, data);
@@ -730,7 +757,7 @@ void main() {
           'd': 'jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk) as EcKeyPair;
+        var keyPair = _ecFromJwk(jwk);
 
         var data = Uint8List.fromList([
           101,
@@ -926,7 +953,7 @@ void main() {
       });
 
       test('Example Signing Using ECDSA P-256K SHA-256', () {
-        var keyPair = KeyPair.generateEc(curves.p256k);
+        var keyPair = EcKeyPair.generate(curves.p256k);
 
         var data = Uint8List.fromList('hello world'.codeUnits);
 
@@ -948,7 +975,7 @@ void main() {
               'xerEzgdRhajnu0ferB0d53vM9mE15j2C',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk) as EcKeyPair;
+        var keyPair = _ecFromJwk(jwk);
 
         var data = Uint8List.fromList([
           101,
@@ -1131,7 +1158,7 @@ void main() {
         var data = utf8.encode(text);
 
         for (var curve in [curves.p256, curves.p384, curves.p521]) {
-          var keyPair = KeyPair.generateEc(curve);
+          var keyPair = EcKeyPair.generate(curve);
           var alg = {
             curves.p256: algorithms.signing.ecdsa.sha256,
             curves.p384: algorithms.signing.ecdsa.sha384,
@@ -1172,9 +1199,8 @@ void main() {
       ]);
 
       test('Example encryption using AES_128_CBC', () {
-        var keyPair = KeyPair.symmetric(
-          SymmetricKey(
-            keyValue: Uint8List.fromList([
+        var keyPair = SymmetricKeyPair(
+          keyValue: Uint8List.fromList([
               107,
               124,
               212,
@@ -1192,7 +1218,6 @@ void main() {
               44,
               207,
             ]),
-          ),
         );
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1259,18 +1284,17 @@ void main() {
       });
 
       test('Example encryption using AES_192_CBC', () {
-        var keyPair = KeyPair.generateSymmetric(192);
+        var keyPair = SymmetricKeyPair.generate(192);
         _testEncryption(keyPair, algorithms.encryption.aes.cbc, data);
       });
       test('Example encryption using AES_256_CBC', () {
-        var keyPair = KeyPair.generateSymmetric(256);
+        var keyPair = SymmetricKeyPair.generate(256);
         _testEncryption(keyPair, algorithms.encryption.aes.cbc, data);
       });
 
       test('Example encryption using AES_128_CBC_HMAC_SHA_256', () {
-        var keyPair = KeyPair.symmetric(
-          SymmetricKey(
-            keyValue: Uint8List.fromList([
+        var keyPair = SymmetricKeyPair(
+          keyValue: Uint8List.fromList([
               4,
               211,
               31,
@@ -1304,7 +1328,6 @@ void main() {
               44,
               207,
             ]),
-          ),
         );
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1441,7 +1464,7 @@ void main() {
         );
       });
       test('Example encryption using AES_192_CBC_HMAC_SHA_384', () {
-        var keyPair = KeyPair.generateSymmetric(384);
+        var keyPair = SymmetricKeyPair.generate(384);
         _testEncryption(
           keyPair,
           algorithms.encryption.aes.cbcWithHmac.sha384,
@@ -1449,7 +1472,7 @@ void main() {
         );
       });
       test('Example encryption using AES_256_CBC_HMAC_SHA_512', () {
-        var keyPair = KeyPair.generateSymmetric(512);
+        var keyPair = SymmetricKeyPair.generate(512);
         _testEncryption(
           keyPair,
           algorithms.encryption.aes.cbcWithHmac.sha512,
@@ -1458,10 +1481,10 @@ void main() {
       });
 
       test('AES_CBC_HMAC throws typed exception on tag mismatch', () {
-        final keyPair = KeyPair.generateSymmetric(256);
+        final keyPair = SymmetricKeyPair.generate(256);
         final algorithm = algorithms.encryption.aes.cbcWithHmac.sha256;
-        final encrypter = keyPair.publicKey!.createEncrypter(algorithm);
-        final decrypter = keyPair.privateKey!.createDecrypter(algorithm);
+        final encrypter = keyPair.publicKey.createEncrypter(algorithm);
+        final decrypter = keyPair.privateKey.createDecrypter(algorithm);
 
         final encrypted = encrypter.encrypt(
           data,
@@ -1486,11 +1509,11 @@ void main() {
       });
 
       test('Example encryption using AES_128_GCM', () {
-        var keyPair = KeyPair.generateSymmetric(128);
+        var keyPair = SymmetricKeyPair.generate(128);
         _testEncryption(keyPair, algorithms.encryption.aes.gcm, data);
       });
       test('Example encryption using AES_192_GCM', () {
-        var keyPair = KeyPair.generateSymmetric(192);
+        var keyPair = SymmetricKeyPair.generate(192);
         _testEncryption(keyPair, algorithms.encryption.aes.gcm, data);
       });
       test('Example encryption using AES_256_GCM', () {
@@ -1559,9 +1582,8 @@ void main() {
           110,
           46,
         ]);
-        var keyPair = KeyPair.symmetric(
-          SymmetricKey(
-            keyValue: Uint8List.fromList([
+        var keyPair = SymmetricKeyPair(
+          keyValue: Uint8List.fromList([
               177,
               161,
               244,
@@ -1595,7 +1617,6 @@ void main() {
               64,
               252,
             ]),
-          ),
         );
 
         var encryptedData = EncryptionResult(
@@ -1793,9 +1814,7 @@ void main() {
       ]);
 
       test('Example encryption using AES Key Wrap 128', () {
-        var keyPair =
-            KeyPair.fromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'})
-                as SymmetricKeyPair;
+        var keyPair = _symmetricFromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
 
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1851,24 +1870,22 @@ void main() {
         );
       });
       test('Example encryption using AES Key Wrap 192', () {
-        var keyPair = KeyPair.generateSymmetric(192);
+        var keyPair = SymmetricKeyPair.generate(192);
         _testEncryption(keyPair, algorithms.encryption.aes.keyWrap, data);
       });
       test('Example encryption using AES Key Wrap 256', () {
-        var keyPair = KeyPair.generateSymmetric(256);
+        var keyPair = SymmetricKeyPair.generate(256);
         _testEncryption(keyPair, algorithms.encryption.aes.keyWrap, data);
       });
 
       test(
         'AES Key Wrap throws typed exception on integrity check failure',
         () {
-          final keyPair =
-              KeyPair.fromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'})
-                  as SymmetricKeyPair;
-          final encrypter = keyPair.publicKey!.createEncrypter(
+          final keyPair = _symmetricFromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
+          final encrypter = keyPair.publicKey.createEncrypter(
             algorithms.encryption.aes.keyWrap,
           );
-          final decrypter = keyPair.privateKey!.createDecrypter(
+          final decrypter = keyPair.privateKey.createDecrypter(
             algorithms.encryption.aes.keyWrap,
           );
 
@@ -1923,7 +1940,7 @@ void main() {
               'tUkTRclIfuEPmNsNDPbLoLqqCVznFbvdB7x-Tl-m0l_eFTj2KiqwGqE9PZ'
               'B9nNTwMVvH3VRRSLWACvPnSiwP8N5Usy-WRXS-V7TbpxIhvepTfE0NNo',
         };
-        var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
+        var keyPair = _rsaFromJwk(jwk);
 
         var data = Uint8List.fromList([
           4,
@@ -2270,7 +2287,7 @@ void main() {
               'eL4HrtZkUuKvnPrMnsUUFlfUdybVzxyjz9JF_XyaY14ardLSjf4L_FNY',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
+        var keyPair = _rsaFromJwk(jwk);
 
         var data = Uint8List.fromList([
           177,
@@ -2624,7 +2641,7 @@ void main() {
               'mE3nwxg',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
+        var keyPair = _rsaFromJwk(jwk);
 
         var encryptedData = EncryptionResult(
           Uint8List.fromList([

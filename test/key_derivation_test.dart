@@ -1,14 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Key derivation', () {
     test('both parties derive identical key material', () {
-      final a = KeyPair.generateEc(curves.p256);
-      final b = KeyPair.generateEc(curves.p256);
+      final a = EcKeyPair.generate(.p256);
+      final b = EcKeyPair.generate(.p256);
       final otherInfo = _buildOtherInfo(
         algorithmId: Uint8List.fromList('key-agreement'.codeUnits),
         partyUInfo: Uint8List.fromList([1, 2, 3]),
@@ -16,11 +15,11 @@ void main() {
         keyBitLength: 256,
       );
 
-      final aZ = a.privateKey!
-          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey!))
+      final aZ = a.privateKey
+          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey))
           .value;
-      final bZ = b.privateKey!
-          .deriveSharedSecret(.ecdh(peerPublicKey: a.publicKey!))
+      final bZ = b.privateKey
+          .deriveSharedSecret(.ecdh(peerPublicKey: a.publicKey))
           .value;
 
       final aKey = SecretBytes(aZ).deriveBits(
@@ -34,21 +33,20 @@ void main() {
     });
 
     test('curve mismatch throws', () {
-      final a = KeyPair.generateEc(curves.p256);
-      final b = KeyPair.generateEc(curves.p384);
+      final a = EcKeyPair.generate(.p256);
+      final b = EcKeyPair.generate(.p384);
       expect(
-        () => a.privateKey!.deriveSharedSecret(
-          .ecdh(peerPublicKey: b.publicKey!),
-        ),
+        () =>
+            a.privateKey.deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey)),
         throwsArgumentError,
       );
     });
 
     test('derived key length equals requested bit length', () {
-      final a = KeyPair.generateEc(curves.p521);
-      final b = KeyPair.generateEc(curves.p521);
-      final z = a.privateKey!
-          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey!))
+      final a = EcKeyPair.generate(.p521);
+      final b = EcKeyPair.generate(.p521);
+      final z = a.privateKey
+          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey))
           .value;
       final key = SecretBytes(
         z,

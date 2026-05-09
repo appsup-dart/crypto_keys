@@ -5,7 +5,6 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:crypto_keys/src/secure_random.dart';
-import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart' as pc;
 import 'src/algorithms.dart';
 import 'src/digest_utils.dart';

@@ -47,12 +47,8 @@ import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:typed_data';
 
 main() {
-  // Create a key pair from a JWK representation
-  var keyPair = new KeyPair.fromJwk({
-    "kty": "oct",
-    "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75"
-        "aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
-  });
+  // Generate a random symmetric key pair
+  var keyPair = SymmetricKeyPair.generate(256);
 
   // A key pair has a private and public key, possibly one of them is null, if
   // required info was not available when construction
@@ -95,7 +91,7 @@ import 'dart:typed_data';
 
 main() {
   // Generate a new random symmetric key pair
-  var keyPair = new KeyPair.generateSymmetric(128);
+  var keyPair = SymmetricKeyPair.generate(128);
 
   // Use the public key to create an encrypter with the AES/GCM algorithm
   var encrypter =

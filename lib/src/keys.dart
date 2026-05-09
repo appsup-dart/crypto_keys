@@ -89,103 +89,51 @@ abstract mixin class AgreementPrivateKey<Params extends PrivateKeyDeriverParams>
 /// Holds a key pair (private and public key)
 abstract class KeyPair<Pub extends PublicKey, Priv extends PrivateKey> {
   /// The public key
-  final Pub? publicKey;
+  final Pub publicKey;
 
   /// The private key
-  final Priv? privateKey;
+  final Priv privateKey;
 
   /// Creates a [KeyPair] from a public and private key
-  KeyPair({required this.publicKey, required this.privateKey})
-    : assert(
-        publicKey != null || privateKey != null,
-        'Either public or private key must be provided',
-      );
-
-  /// Creates a [KeyPair] from a symmetric key.
-  @factory
-  static SymmetricKeyPair symmetric(SymmetricKey key) =>
-      SymmetricKeyPair(publicKey: key, privateKey: key);
-
-  /// Generates a random symmetric [KeyPair] with specified bit length.
-  @factory
-  static SymmetricKeyPair generateSymmetric(int bitLength) =>
-      SymmetricKeyPair.generate(bitLength);
-
-  /// Generates a random RSA [KeyPair] with specified exponent and bit strength.
-  @factory
-  static RsaKeyPair generateRsa({BigInt? exponent, int bitStrength = 2048}) =>
-      RsaKeyPair.generate(exponent: exponent, bitStrength: bitStrength);
-
-  /// Generates a random elliptic curve [KeyPair] with specified curve.
-  @factory
-  static EcKeyPair generateEc(CurveIdentifier curve) =>
-      EcKeyPair.generate(curve);
-
-  /// Create a key pair from a JsonWebKey
-  static KeyPair<PublicKey, PrivateKey> fromJwk(Map<String, dynamic> jwk) {
-    switch (jwk['kty']) {
-      case 'oct':
-        var key = SymmetricKey(keyValue: _base64ToBytes(jwk['k']) as Uint8List);
-        return SymmetricKeyPair(publicKey: key, privateKey: key);
-      case 'RSA':
-        return RsaKeyPair(
-          publicKey: jwk.containsKey('n') && jwk.containsKey('e')
-              ? RsaPublicKey(
-                  modulus: _base64ToInt(jwk['n']),
-                  exponent: _base64ToInt(jwk['e']),
-                )
-              : null,
-          privateKey:
-              jwk.containsKey('n') &&
-                  jwk.containsKey('d') &&
-                  jwk.containsKey('p') &&
-                  jwk.containsKey('q')
-              ? RsaPrivateKey(
-                  modulus: _base64ToInt(jwk['n']),
-                  privateExponent: _base64ToInt(jwk['d']),
-                  firstPrimeFactor: _base64ToInt(jwk['p']),
-                  secondPrimeFactor: _base64ToInt(jwk['q']),
-                )
-              : null,
-        );
-      case 'EC':
-        return EcKeyPair(
-          privateKey: jwk.containsKey('d') && jwk.containsKey('crv')
-              ? EcPrivateKey(
-                  eccPrivateKey: _base64ToInt(jwk['d']),
-                  curve: _parseCurve(jwk['crv']),
-                )
-              : null,
-          publicKey:
-              jwk.containsKey('x') &&
-                  jwk.containsKey('y') &&
-                  jwk.containsKey('crv')
-              ? EcPublicKey(
-                  xCoordinate: _base64ToInt(jwk['x']),
-                  yCoordinate: _base64ToInt(jwk['y']),
-                  curve: _parseCurve(jwk['crv']),
-                )
-              : null,
-        );
-    }
-    throw ArgumentError('Unknown key type ${jwk['kty']}');
-  }
+  KeyPair({required this.publicKey, required this.privateKey});
 }
 
 class SymmetricKeyPair extends KeyPair<SymmetricKey, SymmetricKey> {
-  SymmetricKeyPair({
-    required SymmetricKey publicKey,
-    required SymmetricKey privateKey,
-  }) : super(publicKey: publicKey, privateKey: privateKey);
+  SymmetricKeyPair({required Uint8List keyValue})
+    : this.fromKey(SymmetricKey(keyValue: keyValue));
+
+  SymmetricKeyPair.fromKey(SymmetricKey key)
+    : super(publicKey: key, privateKey: key);
 
   factory SymmetricKeyPair.generate(int bitLength) {
-    final key = SymmetricKey.generate(bitLength);
-    return SymmetricKeyPair(publicKey: key, privateKey: key);
+    return SymmetricKeyPair.fromKey(SymmetricKey.generate(bitLength));
   }
 }
 
 class RsaKeyPair extends KeyPair<RsaPublicKey, RsaPrivateKey> {
-  RsaKeyPair({required super.publicKey, required super.privateKey});
+  RsaKeyPair({
+    required BigInt modulus,
+    required BigInt exponent,
+    required BigInt privateExponent,
+    required BigInt firstPrimeFactor,
+    required BigInt secondPrimeFactor,
+  }) : super(
+         publicKey: RsaPublicKey(modulus: modulus, exponent: exponent),
+         privateKey: RsaPrivateKey(
+           modulus: modulus,
+           privateExponent: privateExponent,
+           firstPrimeFactor: firstPrimeFactor,
+           secondPrimeFactor: secondPrimeFactor,
+         ),
+       );
+
+  RsaKeyPair.fromPrivateKey(
+    RsaPrivateKey privateKey, {
+    required BigInt exponent,
+  }) : super(
+         publicKey: RsaPublicKey(modulus: privateKey.modulus, exponent: exponent),
+         privateKey: privateKey,
+       );
 
   factory RsaKeyPair.generate({BigInt? exponent, int bitStrength = 2048}) {
     exponent ??= BigInt.from(65537);
@@ -198,22 +146,45 @@ class RsaKeyPair extends KeyPair<RsaPublicKey, RsaPrivateKey> {
       );
     final pair = generator.generateKeyPair();
     return RsaKeyPair(
-      publicKey: RsaPublicKey(
-        exponent: pair.publicKey.publicExponent!,
-        modulus: pair.publicKey.n!,
-      ),
-      privateKey: RsaPrivateKey(
-        modulus: (pair.privateKey).n!,
-        privateExponent: pair.privateKey.privateExponent!,
-        firstPrimeFactor: pair.privateKey.p!,
-        secondPrimeFactor: pair.privateKey.q!,
-      ),
+      modulus: pair.publicKey.n!,
+      exponent: pair.publicKey.publicExponent!,
+      privateExponent: pair.privateKey.privateExponent!,
+      firstPrimeFactor: pair.privateKey.p!,
+      secondPrimeFactor: pair.privateKey.q!,
     );
   }
 }
 
 class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
-  EcKeyPair({required super.publicKey, required super.privateKey});
+  EcKeyPair({
+    required CurveIdentifier curve,
+    required BigInt xCoordinate,
+    required BigInt yCoordinate,
+    required BigInt eccPrivateKey,
+  }) : super(
+         publicKey: EcPublicKey(
+           xCoordinate: xCoordinate,
+           yCoordinate: yCoordinate,
+           curve: curve,
+         ),
+         privateKey: EcPrivateKey(eccPrivateKey: eccPrivateKey, curve: curve),
+       );
+
+  EcKeyPair.fromPrivateKey(EcPrivateKey privateKey)
+    : super(
+        publicKey: (() {
+          final domain = _AsymmetricOperator.createCurveParameters(
+            privateKey.curve,
+          );
+          final q = domain.G * privateKey.eccPrivateKey;
+          return EcPublicKey(
+            xCoordinate: q!.x!.toBigInteger()!,
+            yCoordinate: q.y!.toBigInteger()!,
+            curve: privateKey.curve,
+          );
+        })(),
+        privateKey: privateKey,
+      );
 
   factory EcKeyPair.generate(CurveIdentifier curve) {
     final generator = pc.ECKeyGenerator()
@@ -227,37 +198,10 @@ class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
       );
     final pair = generator.generateKeyPair();
     return EcKeyPair(
-      publicKey: EcPublicKey(
-        xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
-        yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
-        curve: curve,
-      ),
-      privateKey: EcPrivateKey(eccPrivateKey: pair.privateKey.d!, curve: curve),
+      curve: curve,
+      xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
+      yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
+      eccPrivateKey: pair.privateKey.d!,
     );
   }
-}
-
-List<int> _base64ToBytes(String encoded) {
-  encoded += List.filled((4 - encoded.length % 4) % 4, '=').join();
-  return base64Url.decode(encoded);
-}
-
-BigInt _base64ToInt(String encoded) {
-  final b256 = BigInt.from(256);
-  return _base64ToBytes(
-    encoded,
-  ).fold(BigInt.zero, (a, b) => a * b256 + BigInt.from(b));
-}
-
-CurveIdentifier _parseCurve(String name) {
-  var v = {
-    'P-256': CurveIdentifier.p256,
-    'P-256K': CurveIdentifier.p256k,
-    'P-384': CurveIdentifier.p384,
-    'P-521': CurveIdentifier.p521,
-  }[name];
-  if (v == null) {
-    throw UnsupportedError('Unknown curve $name');
-  }
-  return v;
 }
