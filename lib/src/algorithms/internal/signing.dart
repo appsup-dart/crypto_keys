@@ -1,59 +1,70 @@
 part of '../../algorithms.dart';
 
-class HmacSigningAlgorithmIdentifier extends SymmetricSigningAlgorithmIdentifier {
-  final DigestAlgorithmIdentifier hash;
+final class HmacSigningAlgorithm extends SymmetricSigningAlgorithm {
+  final DigestAlgorithm hash;
 
-  HmacSigningAlgorithmIdentifier(this.hash) : super._('sig/HMAC/${hash.nameSuffix}');
+  const HmacSigningAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HmacSigningAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(10, hash);
 }
 
-class RsaPkcs1SigningAlgorithmIdentifier extends RsaSigningAlgorithmIdentifier {
-  final DigestAlgorithmIdentifier hash;
+final class RsaPkcs1SigningAlgorithm extends RsaSigningAlgorithm {
+  final DigestAlgorithm hash;
 
-  RsaPkcs1SigningAlgorithmIdentifier(this.hash)
-    : super._('sig/RSA/${hash.nameSuffix}');
+  const RsaPkcs1SigningAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RsaPkcs1SigningAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(11, hash);
 }
 
-class RsaPssSigningAlgorithmIdentifier extends RsaSigningAlgorithmIdentifier {
-  final DigestAlgorithmIdentifier sigHash;
-  final DigestAlgorithmIdentifier mgf1Hash;
+final class RsaPssSigningAlgorithm extends RsaSigningAlgorithm {
+  final DigestAlgorithm sigHash;
+  final DigestAlgorithm mgf1Hash;
   final int saltLength;
 
-  RsaPssSigningAlgorithmIdentifier(
-    this.sigHash, {
-    DigestAlgorithmIdentifier? mgf1Hash,
-    int? saltLength,
-  }) : mgf1Hash = _resolveMgf1(sigHash, mgf1Hash),
-       saltLength = _resolveSaltLength(sigHash, saltLength),
-       super._(_buildName(sigHash, mgf1Hash, saltLength));
+  const RsaPssSigningAlgorithm({
+    required this.sigHash,
+    required this.mgf1Hash,
+    required this.saltLength,
+  });
 
-  static DigestAlgorithmIdentifier _resolveMgf1(
-    DigestAlgorithmIdentifier sigHash,
-    DigestAlgorithmIdentifier? mgf1Hash,
-  ) => mgf1Hash ?? sigHash;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RsaPssSigningAlgorithm &&
+          sigHash == other.sigHash &&
+          mgf1Hash == other.mgf1Hash &&
+          saltLength == other.saltLength;
 
-  static int _resolveSaltLength(
-    DigestAlgorithmIdentifier sigHash,
-    int? saltLength,
-  ) => saltLength ?? sigHash.algorithmImplementation.digestSize;
-
-  static String _buildName(
-    DigestAlgorithmIdentifier sigHash,
-    DigestAlgorithmIdentifier? mgf1Hash,
-    int? saltLength,
-  ) {
-    final resolvedMgf1 = _resolveMgf1(sigHash, mgf1Hash);
-    final resolvedSaltLength = _resolveSaltLength(sigHash, saltLength);
-    return 'sig/RSA/PSS/${sigHash.name}/mgf1${resolvedMgf1.name}/$resolvedSaltLength';
-  }
+  @override
+  int get hashCode => Object.hash(sigHash, mgf1Hash, saltLength);
 }
 
-class EcdsaSigningAlgorithmIdentifier extends EcSigningAlgorithmIdentifier {
-  final DigestAlgorithmIdentifier hash;
+final class EcdsaSigningAlgorithm extends EcSigningAlgorithm {
+  final DigestAlgorithm hash;
 
-  EcdsaSigningAlgorithmIdentifier(this.hash)
-    : super._('sig/ECDSA/${hash.nameSuffix}');
+  const EcdsaSigningAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EcdsaSigningAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(12, hash);
 }
 
-class Ed25519SigningAlgorithmIdentifierImpl extends Ed25519SigningAlgorithmIdentifier {
-  const Ed25519SigningAlgorithmIdentifierImpl() : super._('sig/Ed25519');
+final class Ed25519SigningAlgorithmImpl extends Ed25519SigningAlgorithm {
+  const Ed25519SigningAlgorithmImpl() : super();
 }

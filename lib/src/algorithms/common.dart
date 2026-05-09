@@ -1,40 +1,24 @@
 part of '../algorithms.dart';
 
-/// An identifier for uniquely identify algorithms and other objects
-class Identifier {
-  final String name;
-
-  const Identifier(this.name);
-  const Identifier._(this.name);
-
-  @override
-  int get hashCode => name.hashCode;
-
-  @override
-  bool operator ==(other) => other is Identifier && other.name == name;
-}
-
-/// Identifier for an elliptic-curve domain.
-class CurveIdentifier extends Identifier {
-  const CurveIdentifier._(super.name) : super._();
-
+/// Supported elliptic curves for EC keys (JWK `crv`, Web Crypto naming).
+enum Curve {
   /// NIST P-256 (`secp256r1`).
-  static const CurveIdentifier p256 = ._('curve/P-256');
+  p256,
 
   /// NIST P-384 (`secp384r1`).
-  static const CurveIdentifier p384 = ._('curve/P-384');
+  p384,
 
   /// NIST P-521 (`secp521r1`).
-  static const CurveIdentifier p521 = ._('curve/P-521');
+  p521,
 
-  /// SEC P-256K (`secp256k1`).
-  static const CurveIdentifier p256k = ._('curve/P-256K');
+  /// SEC G `secp256k1` (`P-256K` / `SEC1`/`JWK`).
+  p256k,
 }
 
-/// Identifier for a concrete cryptographic algorithm instance.
+/// Marker type for a concrete cryptographic algorithm instance.
 ///
-/// This type is used across signing, encryption, digest, and derivation APIs
-/// and provides the stable public identifier name for an algorithm.
-class AlgorithmIdentifier extends Identifier {
-  const AlgorithmIdentifier._(super.name) : super._();
+/// Subtypes carry the algorithm family and parameters; identity is defined by
+/// type and fields (`==` / `hashCode`), not a path string.
+sealed class Algorithm {
+  const Algorithm();
 }

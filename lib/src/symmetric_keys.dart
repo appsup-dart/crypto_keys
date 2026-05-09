@@ -28,27 +28,27 @@ class SymmetricKey
   SymmetricKeyPair asKeyPair() => SymmetricKeyPair.fromKey(this);
 
   @override
-  Signer createSigner(covariant SymmetricSigningAlgorithmIdentifier algorithm) {
+  Signer createSigner(covariant SymmetricSigningAlgorithm algorithm) {
     return SymmetricSignerAndVerifier(algorithm, this);
   }
 
   @override
   Verifier createVerifier(
-    covariant SymmetricSigningAlgorithmIdentifier algorithm,
+    covariant SymmetricSigningAlgorithm algorithm,
   ) {
     return SymmetricSignerAndVerifier(algorithm, this);
   }
 
   @override
   Encrypter createEncrypter(
-    covariant SymmetricEncryptionAlgorithmIdentifier algorithm,
+    covariant SymmetricEncryptionAlgorithm algorithm,
   ) {
     return SymmetricCipherOperator(algorithm, this);
   }
 
   @override
   Decrypter createDecrypter(
-    covariant SymmetricEncryptionAlgorithmIdentifier algorithm,
+    covariant SymmetricEncryptionAlgorithm algorithm,
   ) {
     return SymmetricCipherOperator(algorithm, this);
   }

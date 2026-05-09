@@ -1,53 +1,50 @@
 part of '../../algorithms.dart';
 
-class AesCbcPkcs7HmacEncryptionAlgorithmIdentifier
-    extends SymmetricEncryptionAlgorithmIdentifier {
-  final DigestAlgorithmIdentifier hash;
+final class AesCbcPkcs7HmacEncryptionAlgorithm
+    extends SymmetricEncryptionAlgorithm {
+  final DigestAlgorithm hash;
 
-  AesCbcPkcs7HmacEncryptionAlgorithmIdentifier(this.hash)
-    : super._('enc/AES/CBC/PKCS7+HMAC/${hash.nameSuffix}');
+  const AesCbcPkcs7HmacEncryptionAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AesCbcPkcs7HmacEncryptionAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(40, hash);
 }
 
-class AesCbcPkcs7EncryptionAlgorithmIdentifier
-    extends SymmetricEncryptionAlgorithmIdentifier {
-  const AesCbcPkcs7EncryptionAlgorithmIdentifier()
-    : super._('enc/AES/CBC/PKCS7');
+final class AesCbcPkcs7EncryptionAlgorithm
+    extends SymmetricEncryptionAlgorithm {
+  const AesCbcPkcs7EncryptionAlgorithm() : super();
 }
 
-class AesGcmEncryptionAlgorithmIdentifier
-    extends SymmetricEncryptionAlgorithmIdentifier {
-  const AesGcmEncryptionAlgorithmIdentifier() : super._('enc/AES/GCM');
+final class AesGcmEncryptionAlgorithm extends SymmetricEncryptionAlgorithm {
+  const AesGcmEncryptionAlgorithm() : super();
 }
 
-class AesEaxEncryptionAlgorithmIdentifier
-    extends SymmetricEncryptionAlgorithmIdentifier {
-  const AesEaxEncryptionAlgorithmIdentifier() : super._('enc/AES/EAX');
+final class AesEaxEncryptionAlgorithm extends SymmetricEncryptionAlgorithm {
+  const AesEaxEncryptionAlgorithm() : super();
 }
 
-class AesKeyWrapEncryptionAlgorithmIdentifier
-    extends SymmetricEncryptionAlgorithmIdentifier {
-  const AesKeyWrapEncryptionAlgorithmIdentifier() : super._('enc/AES/KW');
+final class AesKeyWrapEncryptionAlgorithm extends SymmetricEncryptionAlgorithm {
+  const AesKeyWrapEncryptionAlgorithm() : super();
 }
 
-class ChaCha20Poly1305EncryptionAlgorithmIdentifier
-    extends SymmetricEncryptionAlgorithmIdentifier {
-  const ChaCha20Poly1305EncryptionAlgorithmIdentifier()
-    : super._('enc/ChaCha20/Poly1305');
+final class ChaCha20Poly1305EncryptionAlgorithm
+    extends SymmetricEncryptionAlgorithm {
+  const ChaCha20Poly1305EncryptionAlgorithm() : super();
 }
 
-class RsaPkcs1EncryptionAlgorithmIdentifier
-    extends RsaEncryptionAlgorithmIdentifier {
-  const RsaPkcs1EncryptionAlgorithmIdentifier() : super._('enc/RSA/PKCS1');
+final class RsaPkcs1EncryptionAlgorithm extends RsaEncryptionAlgorithm {
+  const RsaPkcs1EncryptionAlgorithm() : super();
 }
 
-class RsaOaepSha1EncryptionAlgorithmIdentifier
-    extends RsaEncryptionAlgorithmIdentifier {
-  const RsaOaepSha1EncryptionAlgorithmIdentifier()
-    : super._('enc/RSA/ECB/OAEPWithSHA-1AndMGF1Padding');
+final class RsaOaepSha1EncryptionAlgorithm extends RsaEncryptionAlgorithm {
+  const RsaOaepSha1EncryptionAlgorithm() : super();
 }
 
-class RsaOaepSha256EncryptionAlgorithmIdentifier
-    extends RsaEncryptionAlgorithmIdentifier {
-  const RsaOaepSha256EncryptionAlgorithmIdentifier()
-    : super._('enc/RSA/ECB/OAEPWithSHA-256AndMGF1Padding');
+final class RsaOaepSha256EncryptionAlgorithm extends RsaEncryptionAlgorithm {
+  const RsaOaepSha256EncryptionAlgorithm() : super();
 }

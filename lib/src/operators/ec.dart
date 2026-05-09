@@ -9,7 +9,7 @@ import '../secure_random.dart';
 
 class EcSigner extends Signer<EcPrivateKey> {
   final pc.Signer _algorithm;
-  EcSigner(EcSigningAlgorithmIdentifier super.algorithm, super.key)
+  EcSigner(EcSigningAlgorithm super.algorithm, super.key)
     : _algorithm = algorithm.algorithmImplementation;
 
   @override
@@ -21,12 +21,11 @@ class EcSigner extends Signer<EcPrivateKey> {
     );
 
     final sig = _algorithm.generateSignature(data) as pc.ECSignature;
-    final length = {
-      CurveIdentifier.p256: 32,
-      CurveIdentifier.p256k: 32,
-      CurveIdentifier.p384: 48,
-      CurveIdentifier.p521: 66,
-    }[key.curve]!;
+    final length = switch (key.curve) {
+      Curve.p256 || Curve.p256k => 32,
+      Curve.p384 => 48,
+      Curve.p521 => 66,
+    };
     final bytes = Uint8List(length * 2);
     bytes.setRange(0, length, _bigIntToBytes(sig.r, length).toList().reversed);
     bytes.setRange(
@@ -41,7 +40,7 @@ class EcSigner extends Signer<EcPrivateKey> {
 
 class EcVerifier extends Verifier<EcPublicKey> {
   final pc.Signer _algorithm;
-  EcVerifier(EcSigningAlgorithmIdentifier super.algorithm, super.key)
+  EcVerifier(EcSigningAlgorithm super.algorithm, super.key)
     : _algorithm = algorithm.algorithmImplementation;
 
   @override
@@ -73,29 +72,22 @@ BigInt _bigIntFromBytes(Iterable<int> bytes) {
   return bytes.fold(BigInt.zero, (a, b) => a * _b256 + BigInt.from(b));
 }
 
-extension on EcSigningAlgorithmIdentifier {
+extension on EcSigningAlgorithm {
   pc.Signer get algorithmImplementation => switch (this) {
-    EcdsaSigningAlgorithmIdentifier(:final hash) => pc.ECDSASigner(
+    EcdsaSigningAlgorithm(:final hash) => pc.ECDSASigner(
       hash.algorithmImplementation,
       null,
     ),
   };
 }
 
-pc.ECDomainParameters ecDomainParametersForCurve(CurveIdentifier curve) {
-  final name = curve.name.split('/').last;
-  switch (name) {
-    case 'P-256':
-      return pc.ECCurve_secp256r1();
-    case 'P-256K':
-      return pc.ECCurve_secp256k1();
-    case 'P-384':
-      return pc.ECCurve_secp384r1();
-    case 'P-521':
-      return pc.ECCurve_secp521r1();
-  }
-  throw ArgumentError('Unknwon curve type $name');
-}
+pc.ECDomainParameters ecDomainParametersForCurve(Curve curve) =>
+    switch (curve) {
+      Curve.p256 => pc.ECCurve_secp256r1(),
+      Curve.p256k => pc.ECCurve_secp256k1(),
+      Curve.p384 => pc.ECCurve_secp384r1(),
+      Curve.p521 => pc.ECCurve_secp521r1(),
+    };
 
 extension on EcKey {
   pc.ECDomainParameters get ecDomainParameters =>

@@ -19,13 +19,13 @@ class RsaPublicKey
   RsaPublicKey({required this.modulus, required this.exponent});
 
   @override
-  Verifier createVerifier(covariant RsaSigningAlgorithmIdentifier algorithm) {
+  Verifier createVerifier(covariant RsaSigningAlgorithm algorithm) {
     return RsaVerifier(algorithm, this);
   }
 
   @override
   Encrypter createEncrypter(
-    covariant RsaEncryptionAlgorithmIdentifier algorithm,
+    covariant RsaEncryptionAlgorithm algorithm,
   ) {
     return RsaEncrypter(algorithm, this);
   }
@@ -69,13 +69,13 @@ class RsaPrivateKey
       RsaKeyPair.fromPrivateKey(this, exponent: exponent);
 
   @override
-  Signer createSigner(covariant RsaSigningAlgorithmIdentifier algorithm) {
+  Signer createSigner(covariant RsaSigningAlgorithm algorithm) {
     return RsaSigner(algorithm, this);
   }
 
   @override
   Decrypter createDecrypter(
-    covariant RsaEncryptionAlgorithmIdentifier algorithm,
+    covariant RsaEncryptionAlgorithm algorithm,
   ) {
     return RsaDecrypter(algorithm, this);
   }

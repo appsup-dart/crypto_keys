@@ -36,7 +36,7 @@ EcKeyPair _ecFromJwk(Map<String, dynamic> jwk) {
 
 void _testSigning(
   KeyPair<VerifyingPublicKey, SigningPrivateKey> keyPair,
-  SigningAlgorithmIdentifier algorithm,
+  SigningAlgorithm algorithm,
   Uint8List data, [
   Uint8List? signature,
   bool? isRandom,
@@ -60,7 +60,7 @@ void _testSigning(
 
 void _testEncryption(
   KeyPair<EncryptingPublicKey, DecryptingPrivateKey> keyPair,
-  EncryptionAlgorithmIdentifier algorithm,
+  EncryptionAlgorithm algorithm,
   Uint8List data, [
   EncryptionResult? encryptedData,
   bool? isRandom,

@@ -6,14 +6,14 @@ abstract class Operator<T extends KeyMaterial> {
   final T key;
 
   /// The algorithm used for this operation
-  final AlgorithmIdentifier algorithm;
+  final Algorithm algorithm;
 
   Operator._(this.algorithm, this.key);
 }
 
 /// Operator for signing
 abstract class Signer<T extends PrivateKey> extends Operator<T> {
-  Signer(SigningAlgorithmIdentifier super.algorithm, super.key) : super._();
+  Signer(SigningAlgorithm super.algorithm, super.key) : super._();
 
   /// Signs the input [data] using the [key] and [algorithm]
   Signature sign(List<int> data);
@@ -21,7 +21,7 @@ abstract class Signer<T extends PrivateKey> extends Operator<T> {
 
 /// Operator for verifying a signature
 abstract class Verifier<T extends PublicKey> extends Operator<T> {
-  Verifier(SigningAlgorithmIdentifier super.algorithm, super.key) : super._();
+  Verifier(SigningAlgorithm super.algorithm, super.key) : super._();
 
   /// Verifies that [signature] is a valid signature for the input [data] using
   /// the [key] and [algorithm]
@@ -45,7 +45,7 @@ class Signature {
 
 /// Operator for encrypting data.
 abstract class Encrypter<T extends PublicKey> extends Operator<T> {
-  Encrypter(EncryptionAlgorithmIdentifier super.algorithm, super.key)
+  Encrypter(EncryptionAlgorithm super.algorithm, super.key)
     : super._();
 
   /// Encrypts the input data using the [key] and [algorithm]
@@ -61,7 +61,7 @@ abstract class Encrypter<T extends PublicKey> extends Operator<T> {
 
 /// Operator for decrypting data.
 abstract class Decrypter<T extends PrivateKey> extends Operator<T> {
-  Decrypter(EncryptionAlgorithmIdentifier super.algorithm, super.key)
+  Decrypter(EncryptionAlgorithm super.algorithm, super.key)
     : super._();
 
   /// Decrypts the input data using the [key] and [algorithm].

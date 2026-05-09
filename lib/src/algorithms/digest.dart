@@ -1,46 +1,42 @@
 part of '../algorithms.dart';
 
-/// Identifier for cryptographic digest/hash algorithms.
-class DigestAlgorithmIdentifier extends AlgorithmIdentifier {
-  final String nameSuffix;
+/// Digest (hash) algorithms.
+///
+/// Construct via static members such as [DigestAlgorithm.sha256].
+sealed class DigestAlgorithm extends Algorithm {
+  const DigestAlgorithm();
 
-  const DigestAlgorithmIdentifier._(super.name, this.nameSuffix) : super._();
-
-  // --- SHA-2 ---
+  /// Short label for compound paths (HMAC, KDF, ECDSA/RSA-PKCS1 digest names).
+  String get name;
 
   /// SHA-1
-  static const DigestAlgorithmIdentifier sha1 = ._('digest/SHA-1', 'SHA-1');
+  static const DigestAlgorithm sha1 = DigestSha1._();
 
   /// SHA-224
-  static const DigestAlgorithmIdentifier sha224 = ._('digest/SHA-224', 'SHA-224');
+  static const DigestAlgorithm sha224 = DigestSha2._(.bits224);
 
   /// SHA-256
-  static const DigestAlgorithmIdentifier sha256 = ._('digest/SHA-256', 'SHA-256');
+  static const DigestAlgorithm sha256 = DigestSha2._(.bits256);
 
   /// SHA-384
-  static const DigestAlgorithmIdentifier sha384 = ._('digest/SHA-384', 'SHA-384');
+  static const DigestAlgorithm sha384 = DigestSha2._(.bits384);
 
   /// SHA-512
-  static const DigestAlgorithmIdentifier sha512 = ._('digest/SHA-512', 'SHA-512');
+  static const DigestAlgorithm sha512 = DigestSha2._(.bits512);
 
   /// SHA-512/t with caller-provided digest output size (in bytes).
-  static DigestAlgorithmIdentifier sha512t(int digestSizeBytes) =>
-      DigestAlgorithmIdentifier._(
-        'digest/SHA-512/${digestSizeBytes * 8}',
-        'SHA-512/${digestSizeBytes * 8}',
-      );
-
-  // --- SHA-3 (FIPS 202) ---
+  static DigestAlgorithm sha512t(int digestSizeBytes) =>
+      DigestSha2._(.bits512, digestSizeBytes);
 
   /// SHA3-224
-  static const DigestAlgorithmIdentifier sha3_224 = ._('digest/SHA3-224', 'SHA3-224');
+  static const DigestAlgorithm sha3_224 = DigestSha3._(.bits224);
 
   /// SHA3-256
-  static const DigestAlgorithmIdentifier sha3_256 = ._('digest/SHA3-256', 'SHA3-256');
+  static const DigestAlgorithm sha3_256 = DigestSha3._(.bits256);
 
   /// SHA3-384
-  static const DigestAlgorithmIdentifier sha3_384 = ._('digest/SHA3-384', 'SHA3-384');
+  static const DigestAlgorithm sha3_384 = DigestSha3._(.bits384);
 
   /// SHA3-512
-  static const DigestAlgorithmIdentifier sha3_512 = ._('digest/SHA3-512', 'SHA3-512');
+  static const DigestAlgorithm sha3_512 = DigestSha3._(.bits512);
 }

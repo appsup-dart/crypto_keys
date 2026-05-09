@@ -16,20 +16,20 @@ api.
 You can choose algorithms in two ergonomic ways:
 
 1. **Browsable catalog** (`package:crypto_keys/catalog.dart`) for discoverability
-2. **Named constructors** on `*AlgorithmIdentifier` classes
+2. **Named constructors** on `*Algorithm` classes
 
 ```dart
 import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 
 final hmacA = algorithms.signing.hmac.sha256;
-final hmacB = SymmetricSigningAlgorithmIdentifier.hmac(.sha256);
+final hmacB = SymmetricSigningAlgorithm.hmac(.sha256);
 
-// Both identifiers represent the same algorithm.
-assert(hmacA.name == hmacB.name);
+// Both values represent the same algorithm.
+assert(hmacA == hmacB);
 ```
 
-When a method expects a specific algorithm identifier type, you can often use an
+When a method expects a specific algorithm type, you can often use an
 even shorter dot-shorthand expression:
 
 ```dart

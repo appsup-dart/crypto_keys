@@ -1,21 +1,47 @@
 part of '../../algorithms.dart';
 
-class _ConcatKdfDerivationAlgorithmIdentifier
-    extends DerivationAlgorithmIdentifier {
-  _ConcatKdfDerivationAlgorithmIdentifier(DigestAlgorithmIdentifier hash)
-    : super._('derive/ConcatKDF/${hash.nameSuffix}');
+final class _ConcatKdfDerivationAlgorithm extends DerivationAlgorithm {
+  final DigestAlgorithm hash;
+
+  const _ConcatKdfDerivationAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _ConcatKdfDerivationAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(1, hash);
 }
 
-class _Pbkdf2DerivationAlgorithmIdentifier extends DerivationAlgorithmIdentifier {
-  _Pbkdf2DerivationAlgorithmIdentifier(DigestAlgorithmIdentifier hash)
-    : super._('derive/PBKDF2/${hash.nameSuffix}');
+final class _Pbkdf2DerivationAlgorithm extends DerivationAlgorithm {
+  final DigestAlgorithm hash;
+
+  const _Pbkdf2DerivationAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _Pbkdf2DerivationAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(2, hash);
 }
 
-class _HkdfDerivationAlgorithmIdentifier extends DerivationAlgorithmIdentifier {
-  _HkdfDerivationAlgorithmIdentifier(DigestAlgorithmIdentifier hash)
-    : super._('derive/HKDF/${hash.nameSuffix}');
+final class _HkdfDerivationAlgorithm extends DerivationAlgorithm {
+  final DigestAlgorithm hash;
+
+  const _HkdfDerivationAlgorithm(this.hash) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HkdfDerivationAlgorithm && hash == other.hash;
+
+  @override
+  int get hashCode => Object.hash(3, hash);
 }
 
-class _EcdhDerivationAlgorithmIdentifier extends DerivationAlgorithmIdentifier {
-  const _EcdhDerivationAlgorithmIdentifier() : super._('derive/ECDH');
+final class _EcdhDerivationAlgorithm extends DerivationAlgorithm {
+  const _EcdhDerivationAlgorithm() : super();
 }

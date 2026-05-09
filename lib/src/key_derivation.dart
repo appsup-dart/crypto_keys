@@ -63,7 +63,7 @@ class _ConcatKdf {
     required Uint8List sharedSecret,
     required Uint8List otherInfo,
     required int keyBitLength,
-    DigestAlgorithmIdentifier? hash,
+    DigestAlgorithm? hash,
     pc.Digest? digest,
   }) {
     if (keyBitLength <= 0) {
@@ -196,10 +196,7 @@ Uint8List _derivePbkdf2Bits({
   }
   final keyLength = (keyBitLength + 7) ~/ 8;
   final algorithm = pc.PBKDF2KeyDerivator(
-    pc.HMac(
-      params.hash.algorithmImplementation,
-      params.hash.blockLength,
-    ),
+    pc.HMac(params.hash.algorithmImplementation, params.hash.blockLength),
   );
   algorithm.init(pc.Pbkdf2Parameters(salt, iterations, keyLength));
   return algorithm.process(password.value);
@@ -225,9 +222,7 @@ Uint8List _deriveHkdfBits({
   }
   _ensureSupportsHkdf(params.hash);
   final keyLength = (params.keyBitLength + 7) ~/ 8;
-  final algorithm = pc.HKDFKeyDerivator(
-    params.hash.algorithmImplementation,
-  );
+  final algorithm = pc.HKDFKeyDerivator(params.hash.algorithmImplementation);
   algorithm.init(
     pc.HkdfParameters(
       secret.value,
@@ -259,14 +254,14 @@ Uint8List _deriveConcatKdfBits({
   );
 }
 
-void _ensureSupportsHkdf(DigestAlgorithmIdentifier hash) {
-  if (hash == DigestAlgorithmIdentifier.sha1) {
+void _ensureSupportsHkdf(DigestAlgorithm hash) {
+  if (hash == DigestAlgorithm.sha1) {
     throw UnsupportedError('HKDF supports SHA-256, SHA-384 and SHA-512 only');
   }
 }
 
-void _ensureSupportsConcatKdf(DigestAlgorithmIdentifier hash) {
-  if (hash == DigestAlgorithmIdentifier.sha1) {
+void _ensureSupportsConcatKdf(DigestAlgorithm hash) {
+  if (hash == DigestAlgorithm.sha1) {
     throw UnsupportedError(
       'ConcatKDF supports SHA-256, SHA-384 and SHA-512 only',
     );

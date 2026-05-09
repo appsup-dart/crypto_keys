@@ -25,7 +25,7 @@ sealed class PasswordKeyDeriverParams extends KeyDeriverParams {
 
   /// Shorthand factory for [Pbkdf2KeyDeriverParams].
   static Pbkdf2KeyDeriverParams pbkdf2({
-    required DigestAlgorithmIdentifier hash,
+    required DigestAlgorithm hash,
     required Uint8List salt,
     required int iterations,
     required int keyBitLength,
@@ -62,7 +62,7 @@ sealed class SecretBytesKeyDeriverParams extends KeyDeriverParams {
 
   /// Shorthand factory for [HkdfKeyDeriverParams].
   static HkdfKeyDeriverParams hkdf({
-    required DigestAlgorithmIdentifier hash,
+    required DigestAlgorithm hash,
     required Uint8List salt,
     required int keyBitLength,
     Uint8List? info,
@@ -75,7 +75,7 @@ sealed class SecretBytesKeyDeriverParams extends KeyDeriverParams {
 
   /// Shorthand factory for [ConcatKdfKeyDeriverParams].
   static ConcatKdfKeyDeriverParams concatKdf({
-    required DigestAlgorithmIdentifier hash,
+    required DigestAlgorithm hash,
     required int keyBitLength,
     Uint8List? otherInfo,
   }) => ConcatKdfKeyDeriverParams(
@@ -119,7 +119,7 @@ class Argon2idKeyDeriverParams extends PasswordKeyDeriverParams {
 
 /// Parameters for PBKDF2 key derivation.
 class Pbkdf2KeyDeriverParams extends PasswordKeyDeriverParams {
-  final DigestAlgorithmIdentifier hash;
+  final DigestAlgorithm hash;
   final Uint8List salt;
   final int iterations;
   final int keyBitLength;
@@ -134,7 +134,7 @@ class Pbkdf2KeyDeriverParams extends PasswordKeyDeriverParams {
 
 /// Parameters for HKDF key derivation.
 class HkdfKeyDeriverParams extends SecretBytesKeyDeriverParams {
-  final DigestAlgorithmIdentifier hash;
+  final DigestAlgorithm hash;
   final Uint8List salt;
   final Uint8List? info;
   final int keyBitLength;
@@ -149,7 +149,7 @@ class HkdfKeyDeriverParams extends SecretBytesKeyDeriverParams {
 
 /// Parameters for Concat KDF key derivation.
 class ConcatKdfKeyDeriverParams extends SecretBytesKeyDeriverParams {
-  final DigestAlgorithmIdentifier hash;
+  final DigestAlgorithm hash;
   final int keyBitLength;
   final Uint8List? otherInfo;
 

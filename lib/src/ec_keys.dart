@@ -3,7 +3,7 @@ part of '../crypto_keys.dart';
 /// Base class for elliptic curve (EC) keys
 abstract class EcKey extends Key {
   /// The cryptographic curve used with the key
-  CurveIdentifier get curve;
+  Curve get curve;
 }
 
 /// An elliptic curve (EC) public key
@@ -11,7 +11,7 @@ class EcPublicKey
     with Key
     implements EcKey, PublicKey, VerifyingPublicKey, AgreementPublicKey {
   @override
-  final CurveIdentifier curve;
+  final Curve curve;
 
   /// The x coordinate for the Elliptic Curve point
   final BigInt xCoordinate;
@@ -26,7 +26,7 @@ class EcPublicKey
   });
 
   @override
-  Verifier createVerifier(covariant EcSigningAlgorithmIdentifier algorithm) {
+  Verifier createVerifier(covariant EcSigningAlgorithm algorithm) {
     return EcVerifier(algorithm, this);
   }
 
@@ -51,7 +51,7 @@ class EcPrivateKey
         SigningPrivateKey,
         AgreementPrivateKey<EcKeyAgreementParams> {
   @override
-  final CurveIdentifier curve;
+  final Curve curve;
 
   /// The Elliptic Curve private key value
   final BigInt eccPrivateKey;
@@ -62,7 +62,7 @@ class EcPrivateKey
   EcKeyPair asKeyPair() => EcKeyPair.fromPrivateKey(this);
 
   @override
-  Signer createSigner(covariant EcSigningAlgorithmIdentifier algorithm) {
+  Signer createSigner(covariant EcSigningAlgorithm algorithm) {
     return EcSigner(algorithm, this);
   }
 

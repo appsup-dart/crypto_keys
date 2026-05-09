@@ -9,7 +9,7 @@ import '../secure_random.dart';
 class RsaSigner extends Signer<RsaPrivateKey> {
   final pc.Signer _algorithm;
 
-  RsaSigner(RsaSigningAlgorithmIdentifier super.algorithm, super.key)
+  RsaSigner(RsaSigningAlgorithm super.algorithm, super.key)
     : _algorithm = algorithm.algorithmImplementation;
 
   @override
@@ -35,7 +35,7 @@ class RsaSigner extends Signer<RsaPrivateKey> {
 
 class RsaVerifier extends Verifier<RsaPublicKey> {
   final pc.Signer _algorithm;
-  RsaVerifier(RsaSigningAlgorithmIdentifier super.algorithm, super.key)
+  RsaVerifier(RsaSigningAlgorithm super.algorithm, super.key)
     : _algorithm = algorithm.algorithmImplementation,
       super();
 
@@ -58,7 +58,7 @@ class RsaVerifier extends Verifier<RsaPublicKey> {
 
 class RsaEncrypter extends Encrypter<RsaPublicKey> {
   final pc.AsymmetricBlockCipher _algorithm;
-  RsaEncrypter(RsaEncryptionAlgorithmIdentifier super.algorithm, super.key)
+  RsaEncrypter(RsaEncryptionAlgorithm super.algorithm, super.key)
     : _algorithm = algorithm.algorithmImplementation;
 
   @override
@@ -78,7 +78,7 @@ class RsaEncrypter extends Encrypter<RsaPublicKey> {
 
 class RsaDecrypter extends Decrypter<RsaPrivateKey> {
   final pc.AsymmetricBlockCipher _algorithm;
-  RsaDecrypter(RsaEncryptionAlgorithmIdentifier super.algorithm, super.key)
+  RsaDecrypter(RsaEncryptionAlgorithm super.algorithm, super.key)
     : _algorithm = algorithm.algorithmImplementation;
 
   @override
@@ -92,25 +92,25 @@ class RsaDecrypter extends Decrypter<RsaPrivateKey> {
   }
 }
 
-extension on RsaEncryptionAlgorithmIdentifier {
+extension on RsaEncryptionAlgorithm {
   pc.AsymmetricBlockCipher get algorithmImplementation => switch (this) {
-    RsaPkcs1EncryptionAlgorithmIdentifier() => pc.PKCS1Encoding(pc.RSAEngine()),
-    RsaOaepSha1EncryptionAlgorithmIdentifier() => pc.OAEPEncoding.withSHA1(
+    RsaPkcs1EncryptionAlgorithm() => pc.PKCS1Encoding(pc.RSAEngine()),
+    RsaOaepSha1EncryptionAlgorithm() => pc.OAEPEncoding.withSHA1(
       pc.RSAEngine(),
     ),
-    RsaOaepSha256EncryptionAlgorithmIdentifier() => pc.OAEPEncoding.withSHA256(
+    RsaOaepSha256EncryptionAlgorithm() => pc.OAEPEncoding.withSHA256(
       pc.RSAEngine(),
     ),
   };
 }
 
-extension on RsaSigningAlgorithmIdentifier {
+extension on RsaSigningAlgorithm {
   pc.Signer get algorithmImplementation => switch (this) {
-    RsaPkcs1SigningAlgorithmIdentifier(:final hash) => pc.RSASigner(
+    RsaPkcs1SigningAlgorithm(:final hash) => pc.RSASigner(
       hash.algorithmImplementation,
       hash.rsaPkcs1DigestIdentifierHex,
     ),
-    RsaPssSigningAlgorithmIdentifier(
+    RsaPssSigningAlgorithm(
       :final sigHash,
       :final mgf1Hash,
       :final saltLength,

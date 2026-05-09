@@ -56,25 +56,25 @@ abstract mixin class PrivateKey implements Key {}
 /// Capability: create signatures with a private key.
 abstract mixin class SigningPrivateKey implements PrivateKey {
   /// Creates a [Signer] using this key and the specified algorithm.
-  Signer createSigner(covariant SigningAlgorithmIdentifier algorithm);
+  Signer createSigner(covariant SigningAlgorithm algorithm);
 }
 
 /// Capability: verify signatures with a public key.
 abstract mixin class VerifyingPublicKey implements PublicKey {
   /// Creates a signature [Verifier] using this key and the specified algorithm.
-  Verifier createVerifier(covariant SigningAlgorithmIdentifier algorithm);
+  Verifier createVerifier(covariant SigningAlgorithm algorithm);
 }
 
 /// Capability: encrypt with a public key.
 abstract mixin class EncryptingPublicKey implements PublicKey {
   /// Creates an [Encrypter] using this key and the specified algorithm.
-  Encrypter createEncrypter(covariant EncryptionAlgorithmIdentifier algorithm);
+  Encrypter createEncrypter(covariant EncryptionAlgorithm algorithm);
 }
 
 /// Capability: decrypt with a private key.
 abstract mixin class DecryptingPrivateKey implements PrivateKey {
   /// Creates a [Decrypter] using this key and the specified algorithm.
-  Decrypter createDecrypter(covariant EncryptionAlgorithmIdentifier algorithm);
+  Decrypter createDecrypter(covariant EncryptionAlgorithm algorithm);
 }
 
 /// Capability marker for key-agreement public keys.
@@ -160,7 +160,7 @@ class RsaKeyPair extends KeyPair<RsaPublicKey, RsaPrivateKey> {
 
 class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
   EcKeyPair({
-    required CurveIdentifier curve,
+    required Curve curve,
     required BigInt xCoordinate,
     required BigInt yCoordinate,
     required BigInt eccPrivateKey,
@@ -187,7 +187,7 @@ class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
         privateKey: privateKey,
       );
 
-  factory EcKeyPair.generate(CurveIdentifier curve) {
+  factory EcKeyPair.generate(Curve curve) {
     final generator = pc.ECKeyGenerator()
       ..init(
         pc.ParametersWithRandom(

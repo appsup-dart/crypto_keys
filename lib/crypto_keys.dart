@@ -17,21 +17,20 @@ import 'src/secure_random.dart';
 
 export 'src/algorithms.dart'
     show
-        AlgorithmIdentifier,
-        AsymmetricEncryptionAlgorithmIdentifier,
-        AsymmetricSigningAlgorithmIdentifier,
-        CurveIdentifier,
-        DerivationAlgorithmIdentifier,
-        DigestAlgorithmIdentifier,
-        EcSigningAlgorithmIdentifier,
-        Ed25519SigningAlgorithmIdentifier,
-        EncryptionAlgorithmIdentifier,
-        Identifier,
-        RsaEncryptionAlgorithmIdentifier,
-        RsaSigningAlgorithmIdentifier,
-        SigningAlgorithmIdentifier,
-        SymmetricEncryptionAlgorithmIdentifier,
-        SymmetricSigningAlgorithmIdentifier;
+        Algorithm,
+        AsymmetricEncryptionAlgorithm,
+        AsymmetricSigningAlgorithm,
+        Curve,
+        DerivationAlgorithm,
+        DigestAlgorithm,
+        EcSigningAlgorithm,
+        Ed25519SigningAlgorithm,
+        EncryptionAlgorithm,
+        RsaEncryptionAlgorithm,
+        RsaSigningAlgorithm,
+        SigningAlgorithm,
+        SymmetricEncryptionAlgorithm,
+        SymmetricSigningAlgorithm;
 export 'src/errors.dart';
 
 part 'src/ed25519_keys.dart';

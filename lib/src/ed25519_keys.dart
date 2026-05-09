@@ -18,7 +18,7 @@ class Ed25519PublicKey with Key implements PublicKey, VerifyingPublicKey {
 
   @override
   Verifier createVerifier(
-    covariant Ed25519SigningAlgorithmIdentifier algorithm,
+    covariant Ed25519SigningAlgorithm algorithm,
   ) {
     return Ed25519Verifier(algorithm, this);
   }
@@ -56,7 +56,7 @@ class Ed25519PrivateKey with Key implements PrivateKey, SigningPrivateKey {
   Ed25519KeyPair asKeyPair() => Ed25519KeyPair.fromPrivateKey(this);
 
   @override
-  Signer createSigner(covariant Ed25519SigningAlgorithmIdentifier algorithm) {
+  Signer createSigner(covariant Ed25519SigningAlgorithm algorithm) {
     return Ed25519Signer(algorithm, this);
   }
 

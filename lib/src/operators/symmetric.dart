@@ -11,7 +11,7 @@ class SymmetricSignerAndVerifier extends Signer<SymmetricKey>
     implements Verifier<SymmetricKey> {
   final pc.Mac _algorithm;
   SymmetricSignerAndVerifier(
-    SymmetricSigningAlgorithmIdentifier super.algorithm,
+    SymmetricSigningAlgorithm super.algorithm,
     super.key,
   ) : _algorithm = algorithm.algorithmImplementation;
 
@@ -26,9 +26,9 @@ class SymmetricSignerAndVerifier extends Signer<SymmetricKey>
   bool verify(Uint8List data, Signature signature) => sign(data) == signature;
 }
 
-extension on SymmetricSigningAlgorithmIdentifier {
+extension on SymmetricSigningAlgorithm {
   pc.Mac get algorithmImplementation => switch (this) {
-    HmacSigningAlgorithmIdentifier(:final hash) => pc.HMac(
+    HmacSigningAlgorithm(:final hash) => pc.HMac(
       hash.algorithmImplementation,
       hash.blockLength,
     ),
@@ -38,24 +38,24 @@ extension on SymmetricSigningAlgorithmIdentifier {
 abstract class SymmetricCipherOperator extends Encrypter<SymmetricKey>
     implements Decrypter<SymmetricKey> {
   factory SymmetricCipherOperator(
-    SymmetricEncryptionAlgorithmIdentifier algorithm,
+    SymmetricEncryptionAlgorithm algorithm,
     SymmetricKey key,
   ) => switch (algorithm) {
-    AesKeyWrapEncryptionAlgorithmIdentifier() =>
+    AesKeyWrapEncryptionAlgorithm() =>
       _KeyWrapSymmetricCipherOperator(algorithm, key),
-    AesGcmEncryptionAlgorithmIdentifier() => _GcmSymmetricCipherOperator(
+    AesGcmEncryptionAlgorithm() => _GcmSymmetricCipherOperator(
       algorithm,
       key,
     ),
-    AesEaxEncryptionAlgorithmIdentifier() => _AeadSymmetricCipherOperator._eax(
+    AesEaxEncryptionAlgorithm() => _AeadSymmetricCipherOperator._eax(
       algorithm,
       key,
     ),
-    ChaCha20Poly1305EncryptionAlgorithmIdentifier() =>
+    ChaCha20Poly1305EncryptionAlgorithm() =>
       _AeadSymmetricCipherOperator._chacha(algorithm, key),
-    AesCbcPkcs7EncryptionAlgorithmIdentifier() =>
+    AesCbcPkcs7EncryptionAlgorithm() =>
       _PaddedOrBlockSymmetricCipherOperator(algorithm, key),
-    AesCbcPkcs7HmacEncryptionAlgorithmIdentifier() =>
+    AesCbcPkcs7HmacEncryptionAlgorithm() =>
       _TaggingBlockSymmetricCipherOperator(algorithm, key),
   };
 
@@ -69,14 +69,14 @@ class _AeadSymmetricCipherOperator extends SymmetricCipherOperator {
   final int _ivLength;
 
   _AeadSymmetricCipherOperator._eax(
-    AesEaxEncryptionAlgorithmIdentifier super.algorithm,
+    AesEaxEncryptionAlgorithm super.algorithm,
     super.key,
   ) : _cipher = pc.AEADCipher('AES/EAX'),
       _ivLength = 16,
       super._base();
 
   _AeadSymmetricCipherOperator._chacha(
-    ChaCha20Poly1305EncryptionAlgorithmIdentifier super.algorithm,
+    ChaCha20Poly1305EncryptionAlgorithm super.algorithm,
     super.key,
   ) : _cipher = pc.ChaCha20Poly1305(pc.ChaCha7539Engine(), pc.Poly1305()),
       _ivLength = 12,
@@ -146,7 +146,7 @@ class _GcmSymmetricCipherOperator extends SymmetricCipherOperator {
   final pc.GCMBlockCipher _cipher;
 
   _GcmSymmetricCipherOperator(
-    AesGcmEncryptionAlgorithmIdentifier super.algorithm,
+    AesGcmEncryptionAlgorithm super.algorithm,
     super.key,
   ) : _cipher = pc.GCMBlockCipher(pc.AESEngine()),
       super._base();
@@ -214,7 +214,7 @@ class _KeyWrapSymmetricCipherOperator extends SymmetricCipherOperator {
   final pc.AESKeyWrap _cipher;
 
   _KeyWrapSymmetricCipherOperator(
-    AesKeyWrapEncryptionAlgorithmIdentifier super.algorithm,
+    AesKeyWrapEncryptionAlgorithm super.algorithm,
     super.key,
   ) : _cipher = pc.AESKeyWrap(),
       super._base();
@@ -244,7 +244,7 @@ class _PaddedOrBlockSymmetricCipherOperator extends SymmetricCipherOperator {
   final pc.PaddedBlockCipher _cipher;
 
   _PaddedOrBlockSymmetricCipherOperator(
-    AesCbcPkcs7EncryptionAlgorithmIdentifier super.algorithm,
+    AesCbcPkcs7EncryptionAlgorithm super.algorithm,
     super.key,
   ) : _cipher = pc.PaddedBlockCipherImpl(
         pc.PKCS7Padding(),
@@ -299,7 +299,7 @@ class _TaggingBlockSymmetricCipherOperator extends SymmetricCipherOperator {
   final pc.BlockCipherWithAuthenticationTag _cipher;
 
   _TaggingBlockSymmetricCipherOperator(
-    AesCbcPkcs7HmacEncryptionAlgorithmIdentifier super.algorithm,
+    AesCbcPkcs7HmacEncryptionAlgorithm super.algorithm,
     super.key,
   ) : _cipher = pc.AesCbcAuthenticatedCipherWithHash(
         pc.HMac(

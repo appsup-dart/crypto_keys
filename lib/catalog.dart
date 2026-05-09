@@ -1,7 +1,7 @@
 /// Browsable catalog for algorithm discovery.
 ///
 /// Import this library when you want a structured, discoverable path to
-/// identifiers, for example:
+/// algorithms, for example:
 /// `algorithms.signing.hmac.sha256` or `algorithms.encryption.aes.gcm`.
 ///
 /// Example:

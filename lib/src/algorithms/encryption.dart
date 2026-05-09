@@ -1,63 +1,56 @@
 part of '../algorithms.dart';
 
-/// Identifier for encryption and decryption algorithms.
-sealed class EncryptionAlgorithmIdentifier extends AlgorithmIdentifier {
-  const EncryptionAlgorithmIdentifier._(super.name) : super._();
+/// Encryption and decryption algorithms.
+sealed class EncryptionAlgorithm extends Algorithm {
+  const EncryptionAlgorithm();
 }
 
 /// Symmetric encryption algorithm identifiers (AES families).
-sealed class SymmetricEncryptionAlgorithmIdentifier
-    extends EncryptionAlgorithmIdentifier {
-  const SymmetricEncryptionAlgorithmIdentifier._(super.name) : super._();
+sealed class SymmetricEncryptionAlgorithm extends EncryptionAlgorithm {
+  const SymmetricEncryptionAlgorithm();
 
   /// AES-CBC with HMAC authentication using the provided digest.
-  factory SymmetricEncryptionAlgorithmIdentifier.cbcWithHmac(
-    DigestAlgorithmIdentifier hash,
-  ) = AesCbcPkcs7HmacEncryptionAlgorithmIdentifier;
+  const factory SymmetricEncryptionAlgorithm.cbcWithHmac(DigestAlgorithm hash) =
+      AesCbcPkcs7HmacEncryptionAlgorithm;
 
   /// AES-CBC with PKCS#7 padding.
-  const factory SymmetricEncryptionAlgorithmIdentifier.cbcWithPkcs7() =
-      AesCbcPkcs7EncryptionAlgorithmIdentifier;
+  const factory SymmetricEncryptionAlgorithm.cbcWithPkcs7() =
+      AesCbcPkcs7EncryptionAlgorithm;
 
   /// AES-GCM.
-  const factory SymmetricEncryptionAlgorithmIdentifier.gcm() =
-      AesGcmEncryptionAlgorithmIdentifier;
+  const factory SymmetricEncryptionAlgorithm.gcm() = AesGcmEncryptionAlgorithm;
 
   /// AES-EAX.
-  const factory SymmetricEncryptionAlgorithmIdentifier.eax() =
-      AesEaxEncryptionAlgorithmIdentifier;
+  const factory SymmetricEncryptionAlgorithm.eax() = AesEaxEncryptionAlgorithm;
 
   /// AES Key Wrap (RFC 3394 default IV variant).
-  const factory SymmetricEncryptionAlgorithmIdentifier.keyWrap() =
-      AesKeyWrapEncryptionAlgorithmIdentifier;
+  const factory SymmetricEncryptionAlgorithm.keyWrap() =
+      AesKeyWrapEncryptionAlgorithm;
 
   /// ChaCha20-Poly1305 AEAD (RFC 8439).
   ///
   /// Uses a 256-bit key and a 96-bit nonce ([initializationVector]).
-  const factory SymmetricEncryptionAlgorithmIdentifier.chacha20Poly1305() =
-      ChaCha20Poly1305EncryptionAlgorithmIdentifier;
+  const factory SymmetricEncryptionAlgorithm.chacha20Poly1305() =
+      ChaCha20Poly1305EncryptionAlgorithm;
 }
 
 /// Base class for asymmetric encryption algorithm identifiers.
-sealed class AsymmetricEncryptionAlgorithmIdentifier
-    extends EncryptionAlgorithmIdentifier {
-  const AsymmetricEncryptionAlgorithmIdentifier._(super.name) : super._();
+sealed class AsymmetricEncryptionAlgorithm extends EncryptionAlgorithm {
+  const AsymmetricEncryptionAlgorithm();
 }
 
 /// RSA encryption identifiers.
-sealed class RsaEncryptionAlgorithmIdentifier
-    extends AsymmetricEncryptionAlgorithmIdentifier {
+sealed class RsaEncryptionAlgorithm extends AsymmetricEncryptionAlgorithm {
   /// RSAES-PKCS1-v1_5.
-  const factory RsaEncryptionAlgorithmIdentifier.pkcs1() =
-      RsaPkcs1EncryptionAlgorithmIdentifier;
+  const factory RsaEncryptionAlgorithm.pkcs1() = RsaPkcs1EncryptionAlgorithm;
 
   /// RSAES-OAEP with SHA-1.
-  const factory RsaEncryptionAlgorithmIdentifier.oaepWithSha1() =
-      RsaOaepSha1EncryptionAlgorithmIdentifier;
+  const factory RsaEncryptionAlgorithm.oaepWithSha1() =
+      RsaOaepSha1EncryptionAlgorithm;
 
   /// RSAES-OAEP with SHA-256.
-  const factory RsaEncryptionAlgorithmIdentifier.oaepWithSha256() =
-      RsaOaepSha256EncryptionAlgorithmIdentifier;
+  const factory RsaEncryptionAlgorithm.oaepWithSha256() =
+      RsaOaepSha256EncryptionAlgorithm;
 
-  const RsaEncryptionAlgorithmIdentifier._(super.name) : super._();
+  const RsaEncryptionAlgorithm();
 }

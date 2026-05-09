@@ -337,8 +337,8 @@ void main() {
         String xCoordinate,
         String yCoordinate,
         String signature,
-        EcSigningAlgorithmIdentifier algorithm,
-        CurveIdentifier curve,
+        EcSigningAlgorithm algorithm,
+        Curve curve,
       ) {
         test(name, () {
           var key = EcPublicKey(
@@ -404,7 +404,7 @@ void main() {
         String exponent,
         String message,
         String signature,
-        RsaSigningAlgorithmIdentifier algorithm,
+        RsaSigningAlgorithm algorithm,
       ) {
         test(name, () {
           var key = RsaPublicKey(
@@ -446,7 +446,7 @@ void main() {
         String exponent,
         String message,
         String signature,
-        RsaSigningAlgorithmIdentifier algorithm,
+        RsaSigningAlgorithm algorithm,
       ) {
         test(name, () {
           var key = RsaPublicKey(

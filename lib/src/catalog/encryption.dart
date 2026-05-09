@@ -1,71 +1,71 @@
 part of '../catalog.dart';
 
-/// Browsable catalog of encryption algorithm identifiers.
-class EncryptionAlgorithms extends Identifier {
-  /// Contains the identifiers for supported AES encryption algorithms
+/// Browsable catalog of encryption algorithms.
+class EncryptionAlgorithms {
+  /// AES encryption
   final aes = const AesEncryptionAlgorithms._();
 
-  /// Contains the identifiers for supported RSA encryption algorithms
+  /// RSA encryption
   final rsa = const RsaEncryptionAlgorithms._();
 
   /// ChaCha20-Poly1305 (RFC 8439)
   final chacha20 = const ChaCha20Poly1305Algorithms._();
 
-  const EncryptionAlgorithms._() : super('enc');
+  const EncryptionAlgorithms._();
 }
 
 /// ChaCha20-Poly1305 AEAD (RFC 8439).
-class ChaCha20Poly1305Algorithms extends Identifier {
-  const ChaCha20Poly1305Algorithms._() : super('enc/ChaCha20');
+class ChaCha20Poly1305Algorithms {
+  const ChaCha20Poly1305Algorithms._();
 
-  SymmetricEncryptionAlgorithmIdentifier get poly1305 =>
-      .chacha20Poly1305();
+  final SymmetricEncryptionAlgorithm poly1305 = const .chacha20Poly1305();
 }
 
 /// Browsable catalog of AES encryption algorithms.
-class AesEncryptionAlgorithms extends Identifier {
+class AesEncryptionAlgorithms {
   /// AES CBC
-  SymmetricEncryptionAlgorithmIdentifier get cbc => .cbcWithPkcs7();
+  final SymmetricEncryptionAlgorithm cbc = const .cbcWithPkcs7();
 
   /// AES-CBC + HMAC authenticated encryption variants.
-  final cbcWithHmac = const AesWithHmacEncryptionAlgorithms._();
+  final AesWithHmacEncryptionAlgorithms cbcWithHmac =
+      const AesWithHmacEncryptionAlgorithms._();
 
   /// AES GCM
-  SymmetricEncryptionAlgorithmIdentifier get gcm => .gcm();
+  final SymmetricEncryptionAlgorithm gcm = const .gcm();
 
   /// AES EAX
-  SymmetricEncryptionAlgorithmIdentifier get eax => .eax();
+  final SymmetricEncryptionAlgorithm eax = const .eax();
 
   /// AES Key Wrap with default initial value
-  SymmetricEncryptionAlgorithmIdentifier get keyWrap => .keyWrap();
+  final SymmetricEncryptionAlgorithm keyWrap = const .keyWrap();
 
-  const AesEncryptionAlgorithms._() : super('enc/AES');
+  const AesEncryptionAlgorithms._();
 }
 
 /// Browsable catalog of AES-CBC-HMAC authenticated encryption algorithms.
-class AesWithHmacEncryptionAlgorithms extends Identifier {
+class AesWithHmacEncryptionAlgorithms {
   /// AES_128_CBC_HMAC_SHA_256 authenticated encryption algorithm
-  SymmetricEncryptionAlgorithmIdentifier get sha256 => .cbcWithHmac(.sha256);
+  final SymmetricEncryptionAlgorithm sha256 = const .cbcWithHmac(.sha256);
 
   /// AES_192_CBC_HMAC_SHA_384 authenticated encryption algorithm
-  SymmetricEncryptionAlgorithmIdentifier get sha384 => .cbcWithHmac(.sha384);
+  final SymmetricEncryptionAlgorithm sha384 = const .cbcWithHmac(.sha384);
 
   /// AES_256_CBC_HMAC_SHA_512 authenticated encryption algorithm
-  SymmetricEncryptionAlgorithmIdentifier get sha512 => .cbcWithHmac(.sha512);
+  final SymmetricEncryptionAlgorithm sha512 = const .cbcWithHmac(.sha512);
 
-  const AesWithHmacEncryptionAlgorithms._() : super('enc/AES/CBC/PKCS7+HMAC');
+  const AesWithHmacEncryptionAlgorithms._();
 }
 
 /// Browsable catalog of RSA encryption algorithms.
-class RsaEncryptionAlgorithms extends Identifier {
+class RsaEncryptionAlgorithms {
   /// RSAES-PKCS1-v1_5
-  RsaEncryptionAlgorithmIdentifier get pkcs1 => .pkcs1();
+  final RsaEncryptionAlgorithm pkcs1 = const .pkcs1();
 
   /// RSAES OAEP using default parameters
-  RsaEncryptionAlgorithmIdentifier get oaep => .oaepWithSha1();
+  final RsaEncryptionAlgorithm oaep = const .oaepWithSha1();
 
   /// RSAES OAEP using SHA-256 and MGF1 with SHA-256
-  RsaEncryptionAlgorithmIdentifier get oaep256 => .oaepWithSha256();
+  final RsaEncryptionAlgorithm oaep256 = const .oaepWithSha256();
 
-  const RsaEncryptionAlgorithms._() : super('enc/RSA');
+  const RsaEncryptionAlgorithms._();
 }
