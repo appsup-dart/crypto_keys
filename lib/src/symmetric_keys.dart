@@ -1,7 +1,13 @@
 part of '../crypto_keys.dart';
 
 /// A symmetric key
-class SymmetricKey with Key, PublicKey, PrivateKey {
+class SymmetricKey
+    with Key, PublicKey, PrivateKey
+    implements
+        SigningPrivateKey,
+        VerifyingPublicKey,
+        EncryptingPublicKey,
+        DecryptingPrivateKey {
   /// The value of the symmetric (or other single-valued) key
   final Uint8List keyValue;
 

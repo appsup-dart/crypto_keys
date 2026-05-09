@@ -3,12 +3,14 @@ import 'dart:typed_data';
 
 void main() {
   // Create a key pair from a JWK representation
-  var keyPair = KeyPair.fromJwk({
-    'kty': 'oct',
-    'k':
-        'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75'
-        'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow',
-  });
+  var keyPair =
+      KeyPair.fromJwk({
+            'kty': 'oct',
+            'k':
+                'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75'
+                'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow',
+          })
+          as SymmetricKeyPair;
 
   // A key pair has a private and public key, possibly one of them is null, if
   // required info was not available when construction

@@ -48,21 +48,42 @@ class SecretBytes with KeyMaterial {
 }
 
 /// A cryptographic public key
-abstract mixin class PublicKey implements Key {
-  /// Creates a signature [Verifier] using this key and the specified algorithm
-  Verifier createVerifier(covariant SigningAlgorithmIdentifier algorithm);
+abstract mixin class PublicKey implements Key {}
 
+/// A cryptographic private key
+abstract mixin class PrivateKey implements Key {}
+
+/// Capability: create signatures with a private key.
+abstract mixin class SigningPrivateKey implements PrivateKey {
+  /// Creates a [Signer] using this key and the specified algorithm.
+  Signer createSigner(covariant SigningAlgorithmIdentifier algorithm);
+}
+
+/// Capability: verify signatures with a public key.
+abstract mixin class VerifyingPublicKey implements PublicKey {
+  /// Creates a signature [Verifier] using this key and the specified algorithm.
+  Verifier createVerifier(covariant SigningAlgorithmIdentifier algorithm);
+}
+
+/// Capability: encrypt with a public key.
+abstract mixin class EncryptingPublicKey implements PublicKey {
   /// Creates an [Encrypter] using this key and the specified algorithm.
   Encrypter createEncrypter(covariant EncryptionAlgorithmIdentifier algorithm);
 }
 
-/// A cryptographic private key
-abstract mixin class PrivateKey implements Key {
-  /// Creates a [Signer] using this key and the specified algorithm.
-  Signer createSigner(covariant SigningAlgorithmIdentifier algorithm);
-
+/// Capability: decrypt with a private key.
+abstract mixin class DecryptingPrivateKey implements PrivateKey {
   /// Creates a [Decrypter] using this key and the specified algorithm.
   Decrypter createDecrypter(covariant EncryptionAlgorithmIdentifier algorithm);
+}
+
+/// Capability marker for key-agreement public keys.
+abstract mixin class AgreementPublicKey implements PublicKey {}
+
+/// Capability: derive a shared secret using key agreement.
+abstract mixin class AgreementPrivateKey<Params extends PrivateKeyDeriverParams>
+    implements PrivateKey {
+  SecretBytes deriveSharedSecret(covariant Params params);
 }
 
 /// Holds a key pair (private and public key)
@@ -101,7 +122,6 @@ abstract class KeyPair<Pub extends PublicKey, Priv extends PrivateKey> {
       EcKeyPair.generate(curve);
 
   /// Create a key pair from a JsonWebKey
-
   static KeyPair<PublicKey, PrivateKey> fromJwk(Map<String, dynamic> jwk) {
     switch (jwk['kty']) {
       case 'oct':

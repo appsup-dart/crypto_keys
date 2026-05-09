@@ -7,7 +7,7 @@ abstract class RsaKey extends Key {
 }
 
 /// A RSA public key
-class RsaPublicKey with Key implements RsaKey, PublicKey {
+class RsaPublicKey with Key implements RsaKey, PublicKey, VerifyingPublicKey, EncryptingPublicKey {
   @override
   final BigInt modulus;
 
@@ -40,7 +40,9 @@ class RsaPublicKey with Key implements RsaKey, PublicKey {
 }
 
 /// A RSA private key
-class RsaPrivateKey with Key implements RsaKey, PrivateKey {
+class RsaPrivateKey
+    with Key
+    implements RsaKey, PrivateKey, SigningPrivateKey, DecryptingPrivateKey {
   @override
   final BigInt modulus;
 

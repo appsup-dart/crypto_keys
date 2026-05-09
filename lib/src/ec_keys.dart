@@ -7,7 +7,9 @@ abstract class EcKey extends Key {
 }
 
 /// An elliptic curve (EC) public key
-class EcPublicKey with Key implements EcKey, PublicKey {
+class EcPublicKey
+    with Key
+    implements EcKey, PublicKey, VerifyingPublicKey, AgreementPublicKey {
   @override
   final CurveIdentifier curve;
 
@@ -29,15 +31,6 @@ class EcPublicKey with Key implements EcKey, PublicKey {
   }
 
   @override
-  Encrypter createEncrypter(
-    covariant EcEncryptionAlgorithmIdentifier algorithm,
-  ) {
-    throw UnsupportedError(
-      'EC public keys do not support encryption with ${algorithm.name}.',
-    );
-  }
-
-  @override
   int get hashCode => Object.hash(xCoordinate, yCoordinate, curve);
 
   @override
@@ -50,7 +43,13 @@ class EcPublicKey with Key implements EcKey, PublicKey {
 }
 
 /// An elliptic curve (EC) private key
-class EcPrivateKey with Key implements EcKey, PrivateKey {
+class EcPrivateKey
+    with Key
+    implements
+        EcKey,
+        PrivateKey,
+        SigningPrivateKey,
+        AgreementPrivateKey<EcKeyAgreementParams> {
   @override
   final CurveIdentifier curve;
 
@@ -65,12 +64,13 @@ class EcPrivateKey with Key implements EcKey, PrivateKey {
   }
 
   @override
-  Decrypter createDecrypter(
-    covariant EcEncryptionAlgorithmIdentifier algorithm,
-  ) {
-    throw UnsupportedError(
-      'EC private keys do not support encryption with ${algorithm.name}.',
-    );
+  SecretBytes deriveSharedSecret(EcKeyAgreementParams params) {
+    return switch (params) {
+      EcdhKeyDeriverParams() => _deriveEcdhSharedSecret(
+        privateKey: this,
+        params: params,
+      ),
+    };
   }
 
   @override
@@ -82,16 +82,4 @@ class EcPrivateKey with Key implements EcKey, PrivateKey {
       (other is EcPrivateKey &&
           other.eccPrivateKey == eccPrivateKey &&
           other.curve == curve);
-}
-
-extension EcPrivateKeyDerivation on EcPrivateKey {
-  /// Derives an ECDH shared secret with a peer EC public key.
-  SecretBytes deriveSharedSecret(EcKeyAgreementParams params) {
-    return switch (params) {
-      EcdhKeyDeriverParams() => _deriveEcdhSharedSecret(
-        privateKey: this,
-        params: params,
-      ),
-    };
-  }
 }

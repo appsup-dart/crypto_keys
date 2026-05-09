@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 void _testSigning(
-  KeyPair keyPair,
+  KeyPair<VerifyingPublicKey, SigningPrivateKey> keyPair,
   SigningAlgorithmIdentifier algorithm,
   Uint8List data, [
   Uint8List? signature,
@@ -32,7 +32,7 @@ void _testSigning(
 }
 
 void _testEncryption(
-  KeyPair keyPair,
+  KeyPair<EncryptingPublicKey, DecryptingPrivateKey> keyPair,
   EncryptionAlgorithmIdentifier algorithm,
   Uint8List data, [
   EncryptionResult? encryptedData,
@@ -82,7 +82,7 @@ void main() {
             'aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow',
       };
 
-      var keyPair = KeyPair.fromJwk(jwk);
+      var keyPair = KeyPair.fromJwk(jwk) as SymmetricKeyPair;
 
       var data = Uint8List.fromList([
         101,
@@ -314,7 +314,7 @@ void main() {
             'W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U',
       };
 
-      var keyPair = KeyPair.fromJwk(jwk);
+      var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
 
       var data = Uint8List.fromList([
         101,
@@ -730,7 +730,7 @@ void main() {
           'd': 'jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk) as EcKeyPair;
 
         var data = Uint8List.fromList([
           101,
@@ -948,7 +948,7 @@ void main() {
               'xerEzgdRhajnu0ferB0d53vM9mE15j2C',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk) as EcKeyPair;
 
         var data = Uint8List.fromList([
           101,
@@ -1793,10 +1793,9 @@ void main() {
       ]);
 
       test('Example encryption using AES Key Wrap 128', () {
-        var keyPair = KeyPair.fromJwk({
-          'kty': 'oct',
-          'k': 'GawgguFyGrWKav7AX4VKUg',
-        });
+        var keyPair =
+            KeyPair.fromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'})
+                as SymmetricKeyPair;
 
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1863,10 +1862,9 @@ void main() {
       test(
         'AES Key Wrap throws typed exception on integrity check failure',
         () {
-          final keyPair = KeyPair.fromJwk({
-            'kty': 'oct',
-            'k': 'GawgguFyGrWKav7AX4VKUg',
-          });
+          final keyPair =
+              KeyPair.fromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'})
+                  as SymmetricKeyPair;
           final encrypter = keyPair.publicKey!.createEncrypter(
             algorithms.encryption.aes.keyWrap,
           );
@@ -1925,7 +1923,7 @@ void main() {
               'tUkTRclIfuEPmNsNDPbLoLqqCVznFbvdB7x-Tl-m0l_eFTj2KiqwGqE9PZ'
               'B9nNTwMVvH3VRRSLWACvPnSiwP8N5Usy-WRXS-V7TbpxIhvepTfE0NNo',
         };
-        var keyPair = KeyPair.fromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
 
         var data = Uint8List.fromList([
           4,
@@ -2272,7 +2270,7 @@ void main() {
               'eL4HrtZkUuKvnPrMnsUUFlfUdybVzxyjz9JF_XyaY14ardLSjf4L_FNY',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
 
         var data = Uint8List.fromList([
           177,
@@ -2626,7 +2624,7 @@ void main() {
               'mE3nwxg',
         };
 
-        var keyPair = KeyPair.fromJwk(jwk);
+        var keyPair = KeyPair.fromJwk(jwk) as RsaKeyPair;
 
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
