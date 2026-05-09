@@ -61,3 +61,13 @@ final class _X25519DerivationAlgorithm extends DerivationAlgorithm {
   @override
   int get hashCode => (_X25519DerivationAlgorithm).hashCode;
 }
+
+final class _Argon2idDerivationAlgorithm extends DerivationAlgorithm {
+  const _Argon2idDerivationAlgorithm() : super();
+
+  @override
+  bool operator ==(Object other) => other is _Argon2idDerivationAlgorithm;
+
+  @override
+  int get hashCode => (_Argon2idDerivationAlgorithm).hashCode;
+}

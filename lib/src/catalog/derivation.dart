@@ -17,6 +17,9 @@ class DerivationAlgorithms {
   /// HKDF
   final hkdf = const HkdfAlgorithms._();
 
+  /// Argon2id (RFC 9106 password KDF).
+  final DerivationAlgorithm argon2id = const .argon2id();
+
   const DerivationAlgorithms._();
 }
 

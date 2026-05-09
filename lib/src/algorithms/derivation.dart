@@ -21,4 +21,7 @@ sealed class DerivationAlgorithm extends Algorithm {
 
   /// X25519 (Curve25519) shared-secret agreement.
   const factory DerivationAlgorithm.x25519() = _X25519DerivationAlgorithm;
+
+  /// Argon2id password-based key derivation (RFC 9106).
+  const factory DerivationAlgorithm.argon2id() = _Argon2idDerivationAlgorithm;
 }
