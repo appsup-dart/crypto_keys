@@ -15,8 +15,8 @@ import 'src/operators/kdf.dart';
 import 'src/operators/key_agreement.dart';
 import 'src/operators/rsa.dart';
 import 'src/operators/symmetric.dart';
-import 'src/pointycastle_ext.dart' as pc;
-import 'src/secure_random.dart';
+import 'src/utils/pointycastle_ext.dart' as pc;
+import 'src/utils/secure_random.dart';
 
 export 'src/algorithms.dart'
     show
@@ -50,10 +50,10 @@ export 'src/kdf_params.dart'
 export 'src/key_agreement_params.dart'
     show KeyAgreementParams, EcKeyAgreementParams, OkpKeyAgreementParams;
 
-part 'src/ed25519_keys.dart';
-part 'src/x25519_keys.dart';
-part 'src/ec_keys.dart';
-part 'src/keys.dart';
+part 'src/keys/ed25519.dart';
+part 'src/keys/x25519.dart';
+part 'src/keys/ec.dart';
+part 'src/key_material.dart';
 part 'src/operator.dart';
-part 'src/rsa_keys.dart';
-part 'src/symmetric_keys.dart';
+part 'src/keys/rsa.dart';
+part 'src/keys/symmetric.dart';

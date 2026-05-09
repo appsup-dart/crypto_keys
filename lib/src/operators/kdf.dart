@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import '../../crypto_keys.dart';
 import '../algorithms.dart';
-import '../digest_utils.dart';
-import '../pointycastle_ext.dart' as pc;
+import '../utils/digest.dart';
+import '../utils/pointycastle_ext.dart' as pc;
 
 abstract class Kdf<T extends KdfParams, K extends KeyMaterial>
     extends Operator<K> {

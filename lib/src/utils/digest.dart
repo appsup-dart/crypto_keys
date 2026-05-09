@@ -1,6 +1,6 @@
 import 'package:pointycastle/export.dart' as pc;
 
-import 'algorithms.dart';
+import '../algorithms.dart';
 
 extension DigestAlgorithmPointyCastle on DigestAlgorithm {
   /// PointyCastle digest implementation for this algorithm.
@@ -33,17 +33,24 @@ extension DigestAlgorithmPkcs1 on DigestAlgorithm {
   /// this OID in the `DigestInfo` sequence (see [pc.RSASigner]).
   String get rsaPkcs1DigestIdentifierHex => switch (this) {
     DigestSha1() => '06052b0e03021a',
-    DigestSha2(outputLength: Sha2OutputLength.bits224) => '0609608648016503040204',
-    DigestSha2(outputLength: Sha2OutputLength.bits256) => '0609608648016503040201',
-    DigestSha2(outputLength: Sha2OutputLength.bits384) => '0609608648016503040202',
+    DigestSha2(outputLength: Sha2OutputLength.bits224) =>
+      '0609608648016503040204',
+    DigestSha2(outputLength: Sha2OutputLength.bits256) =>
+      '0609608648016503040201',
+    DigestSha2(outputLength: Sha2OutputLength.bits384) =>
+      '0609608648016503040202',
     DigestSha2(outputLength: Sha2OutputLength.bits512, digestSizeBytes: null) =>
       '0609608648016503040203',
     DigestSha2(digestSizeBytes: 28) => '0609608648016503040205',
     DigestSha2(digestSizeBytes: 32) => '0609608648016503040206',
-    DigestSha3(outputLength: Sha3OutputLength.bits224) => '0609608648016503040207',
-    DigestSha3(outputLength: Sha3OutputLength.bits256) => '0609608648016503040208',
-    DigestSha3(outputLength: Sha3OutputLength.bits384) => '0609608648016503040209',
-    DigestSha3(outputLength: Sha3OutputLength.bits512) => '060960864801650304020a',
+    DigestSha3(outputLength: Sha3OutputLength.bits224) =>
+      '0609608648016503040207',
+    DigestSha3(outputLength: Sha3OutputLength.bits256) =>
+      '0609608648016503040208',
+    DigestSha3(outputLength: Sha3OutputLength.bits384) =>
+      '0609608648016503040209',
+    DigestSha3(outputLength: Sha3OutputLength.bits512) =>
+      '060960864801650304020a',
     final d => throw UnsupportedError(
       'RSA PKCS#1 v1.5 has no registered DigestInfo OID mapping for ${d.name}',
     ),

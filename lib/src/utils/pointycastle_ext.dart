@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'secure_random.dart';
 import 'package:pointycastle/export.dart';
-import 'errors.dart';
+import '../errors.dart';
 
 export 'package:pointycastle/export.dart';
 

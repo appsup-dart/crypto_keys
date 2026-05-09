@@ -1,4 +1,4 @@
-part of '../crypto_keys.dart';
+part of '../../crypto_keys.dart';
 
 /// A symmetric key
 class SymmetricKey
@@ -33,23 +33,17 @@ class SymmetricKey
   }
 
   @override
-  Verifier createVerifier(
-    covariant SymmetricSigningAlgorithm algorithm,
-  ) {
+  Verifier createVerifier(covariant SymmetricSigningAlgorithm algorithm) {
     return SymmetricSignerAndVerifier(algorithm, this);
   }
 
   @override
-  Encrypter createEncrypter(
-    covariant SymmetricEncryptionAlgorithm algorithm,
-  ) {
+  Encrypter createEncrypter(covariant SymmetricEncryptionAlgorithm algorithm) {
     return SymmetricCipherOperator(algorithm, this);
   }
 
   @override
-  Decrypter createDecrypter(
-    covariant SymmetricEncryptionAlgorithm algorithm,
-  ) {
+  Decrypter createDecrypter(covariant SymmetricEncryptionAlgorithm algorithm) {
     return SymmetricCipherOperator(algorithm, this);
   }
 
@@ -61,4 +55,16 @@ class SymmetricKey
       identical(this, other) ||
       (other is SymmetricKey &&
           const ListEquality().equals(other.keyValue, keyValue));
+}
+
+class SymmetricKeyPair extends KeyPair<SymmetricKey, SymmetricKey> {
+  SymmetricKeyPair({required Uint8List keyValue})
+    : this.fromKey(SymmetricKey(keyValue: keyValue));
+
+  SymmetricKeyPair.fromKey(SymmetricKey key)
+    : super(publicKey: key, privateKey: key);
+
+  factory SymmetricKeyPair.generate(int bitLength) {
+    return SymmetricKeyPair.fromKey(SymmetricKey.generate(bitLength));
+  }
 }

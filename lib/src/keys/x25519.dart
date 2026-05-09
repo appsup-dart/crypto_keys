@@ -1,4 +1,4 @@
-part of '../crypto_keys.dart';
+part of '../../crypto_keys.dart';
 
 /// X25519 public key: 32-byte u-coordinate (RFC 7748).
 class X25519PublicKey with Key implements PublicKey, AgreementPublicKey {

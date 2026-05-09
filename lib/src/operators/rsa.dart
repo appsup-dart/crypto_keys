@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:crypto_keys/src/algorithms.dart';
-import 'package:crypto_keys/src/digest_utils.dart';
-import '../pointycastle_ext.dart' as pc;
-import '../secure_random.dart';
+import 'package:crypto_keys/src/utils/digest.dart';
+import '../utils/pointycastle_ext.dart' as pc;
+import '../utils/secure_random.dart';
 
 class RsaSigner extends Signer<RsaPrivateKey> {
   final pc.Signer _algorithm;

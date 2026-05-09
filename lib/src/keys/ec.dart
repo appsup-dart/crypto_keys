@@ -1,4 +1,4 @@
-part of '../crypto_keys.dart';
+part of '../../crypto_keys.dart';
 
 /// Base class for elliptic curve (EC) keys
 abstract class EcKey extends Key {
@@ -84,4 +84,51 @@ class EcPrivateKey
       (other is EcPrivateKey &&
           other.eccPrivateKey == eccPrivateKey &&
           other.curve == curve);
+}
+
+class EcKeyPair extends KeyPair<EcPublicKey, EcPrivateKey> {
+  EcKeyPair({
+    required Curve curve,
+    required BigInt xCoordinate,
+    required BigInt yCoordinate,
+    required BigInt eccPrivateKey,
+  }) : super(
+         publicKey: EcPublicKey(
+           xCoordinate: xCoordinate,
+           yCoordinate: yCoordinate,
+           curve: curve,
+         ),
+         privateKey: EcPrivateKey(eccPrivateKey: eccPrivateKey, curve: curve),
+       );
+
+  EcKeyPair.fromPrivateKey(EcPrivateKey privateKey)
+    : super(
+        publicKey: (() {
+          final domain = ecDomainParametersForCurve(privateKey.curve);
+          final q = domain.G * privateKey.eccPrivateKey;
+          return EcPublicKey(
+            xCoordinate: q!.x!.toBigInteger()!,
+            yCoordinate: q.y!.toBigInteger()!,
+            curve: privateKey.curve,
+          );
+        })(),
+        privateKey: privateKey,
+      );
+
+  factory EcKeyPair.generate(Curve curve) {
+    final generator = pc.ECKeyGenerator()
+      ..init(
+        pc.ParametersWithRandom(
+          pc.ECKeyGeneratorParameters(ecDomainParametersForCurve(curve)),
+          DefaultSecureRandom(),
+        ),
+      );
+    final pair = generator.generateKeyPair();
+    return EcKeyPair(
+      curve: curve,
+      xCoordinate: pair.publicKey.Q!.x!.toBigInteger()!,
+      yCoordinate: pair.publicKey.Q!.y!.toBigInteger()!,
+      eccPrivateKey: pair.privateKey.d!,
+    );
+  }
 }

@@ -1,4 +1,4 @@
-part of '../crypto_keys.dart';
+part of '../../crypto_keys.dart';
 
 /// Base class for RSA keys
 abstract class RsaKey extends Key {
@@ -24,9 +24,7 @@ class RsaPublicKey
   }
 
   @override
-  Encrypter createEncrypter(
-    covariant RsaEncryptionAlgorithm algorithm,
-  ) {
+  Encrypter createEncrypter(covariant RsaEncryptionAlgorithm algorithm) {
     return RsaEncrypter(algorithm, this);
   }
 
@@ -74,9 +72,7 @@ class RsaPrivateKey
   }
 
   @override
-  Decrypter createDecrypter(
-    covariant RsaEncryptionAlgorithm algorithm,
-  ) {
+  Decrypter createDecrypter(covariant RsaEncryptionAlgorithm algorithm) {
     return RsaDecrypter(algorithm, this);
   }
 
@@ -96,4 +92,52 @@ class RsaPrivateKey
           other.firstPrimeFactor == firstPrimeFactor &&
           other.secondPrimeFactor == secondPrimeFactor &&
           other.modulus == modulus);
+}
+
+class RsaKeyPair extends KeyPair<RsaPublicKey, RsaPrivateKey> {
+  RsaKeyPair({
+    required BigInt modulus,
+    required BigInt exponent,
+    required BigInt privateExponent,
+    required BigInt firstPrimeFactor,
+    required BigInt secondPrimeFactor,
+  }) : super(
+         publicKey: RsaPublicKey(modulus: modulus, exponent: exponent),
+         privateKey: RsaPrivateKey(
+           modulus: modulus,
+           privateExponent: privateExponent,
+           firstPrimeFactor: firstPrimeFactor,
+           secondPrimeFactor: secondPrimeFactor,
+         ),
+       );
+
+  RsaKeyPair.fromPrivateKey(
+    RsaPrivateKey privateKey, {
+    required BigInt exponent,
+  }) : super(
+         publicKey: RsaPublicKey(
+           modulus: privateKey.modulus,
+           exponent: exponent,
+         ),
+         privateKey: privateKey,
+       );
+
+  factory RsaKeyPair.generate({BigInt? exponent, int bitStrength = 2048}) {
+    exponent ??= BigInt.from(65537);
+    final generator = pc.RSAKeyGenerator()
+      ..init(
+        pc.ParametersWithRandom(
+          pc.RSAKeyGeneratorParameters(exponent, bitStrength, 5),
+          DefaultSecureRandom(),
+        ),
+      );
+    final pair = generator.generateKeyPair();
+    return RsaKeyPair(
+      modulus: pair.publicKey.n!,
+      exponent: pair.publicKey.publicExponent!,
+      privateExponent: pair.privateKey.privateExponent!,
+      firstPrimeFactor: pair.privateKey.p!,
+      secondPrimeFactor: pair.privateKey.q!,
+    );
+  }
 }

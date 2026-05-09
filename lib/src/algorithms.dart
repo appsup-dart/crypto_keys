@@ -1,4 +1,4 @@
-import 'digest_utils.dart';
+import 'utils/digest.dart';
 
 part 'algorithms/common.dart';
 part 'algorithms/kdf.dart';

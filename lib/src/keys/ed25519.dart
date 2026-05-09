@@ -1,4 +1,4 @@
-part of '../crypto_keys.dart';
+part of '../../crypto_keys.dart';
 
 /// Ed25519 public key (32-byte encoding, RFC 8032).
 class Ed25519PublicKey with Key implements PublicKey, VerifyingPublicKey {
@@ -17,9 +17,7 @@ class Ed25519PublicKey with Key implements PublicKey, VerifyingPublicKey {
   }
 
   @override
-  Verifier createVerifier(
-    covariant Ed25519SigningAlgorithm algorithm,
-  ) {
+  Verifier createVerifier(covariant Ed25519SigningAlgorithm algorithm) {
     return Ed25519Verifier(algorithm, this);
   }
 
