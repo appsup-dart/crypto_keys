@@ -11,6 +11,9 @@ class SigningAlgorithms extends Identifier {
   /// Contains the identifiers for supported ECDSA signing algorithms
   final ecdsa = const EcdsaSigningAlgorithms._();
 
+  /// Ed25519 (RFC 8032)
+  final ed25519 = const Ed25519SigningAlgorithms._();
+
   const SigningAlgorithms._() : super('sig');
 }
 
@@ -108,4 +111,12 @@ class EcdsaSigningAlgorithms extends Identifier {
       .ecdsa(hash);
 
   const EcdsaSigningAlgorithms._() : super('sig/ECDSA');
+}
+
+/// Ed25519 signing (RFC 8032).
+class Ed25519SigningAlgorithms extends Identifier {
+  const Ed25519SigningAlgorithms._() : super('sig/Ed25519');
+
+  /// Pure Ed25519 over the raw message bytes.
+  Ed25519SigningAlgorithmIdentifier get pure => SigningAlgorithmIdentifier.ed25519;
 }

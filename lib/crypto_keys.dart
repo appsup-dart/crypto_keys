@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:crypto_keys/src/secure_random.dart';
+import 'package:ed25519_edwards/ed25519_edwards.dart' as ed25519_impl;
 import 'package:pointycastle/export.dart' as pc;
 import 'src/algorithms.dart';
 import 'src/digest_utils.dart';
@@ -14,6 +15,8 @@ export 'src/algorithms.dart' hide AlgorithmIdentifierInternal;
 export 'src/errors.dart';
 
 part 'src/asymmetric_operator.dart';
+part 'src/ed25519_keys.dart';
+part 'src/ed25519_operator.dart';
 part 'src/ec_keys.dart';
 part 'src/keys.dart';
 part 'src/key_derivation.dart';

@@ -84,6 +84,10 @@ abstract class SigningAlgorithmIdentifier extends AlgorithmIdentifier {
   /// ECDSA with the given [hash].
   static EcSigningAlgorithmIdentifier ecdsa(DigestAlgorithmIdentifier hash) =>
       .ecdsa(hash);
+
+  /// Ed25519 pure signatures (RFC 8032).
+  static final Ed25519SigningAlgorithmIdentifier ed25519 =
+      Ed25519SigningAlgorithmIdentifier();
 }
 
 /// Symmetric signing algorithm identifiers (HMAC family).
@@ -153,4 +157,24 @@ class EcSigningAlgorithmIdentifier
         'sig/ECDSA/${hash.nameSuffix}',
         () => pc.ECDSASigner(hash.createAlgorithm() as pc.Digest, null),
       );
+}
+
+/// Ed25519 signing (RFC 8032).
+///
+/// Signs and verifies the **raw** message bytes (no separate digest step).
+class Ed25519SigningAlgorithmIdentifier
+    extends AsymmetricSigningAlgorithmIdentifier {
+  Ed25519SigningAlgorithmIdentifier._(super.name, super.factory) : super._();
+
+  Ed25519SigningAlgorithmIdentifier()
+    : this._('sig/Ed25519', () => _Ed25519PcPlaceholder.instance);
+}
+
+/// Satisfies [Operator] without delegating to PointyCastle signing.
+class _Ed25519PcPlaceholder implements pc.Algorithm {
+  _Ed25519PcPlaceholder._();
+  static final _Ed25519PcPlaceholder instance = _Ed25519PcPlaceholder._();
+
+  @override
+  String get algorithmName => 'Ed25519';
 }
