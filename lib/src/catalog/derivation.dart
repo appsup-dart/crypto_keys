@@ -3,7 +3,10 @@ part of '../catalog.dart';
 /// Browsable catalog of key derivation and key agreement algorithms.
 class DerivationAlgorithms {
   /// ECDH shared-secret derivation.
-  DerivationAlgorithm get ecdh => .ecdh();
+  final DerivationAlgorithm ecdh = const .ecdh();
+
+  /// X25519 (Curve25519) shared-secret derivation.
+  final DerivationAlgorithm x25519 = const .x25519();
 
   /// Concat KDF
   final concatKdf = const ConcatKdfAlgorithms._();

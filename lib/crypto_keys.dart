@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:crypto_keys/src/operators/ed25519.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed25519_impl;
+import 'package:x25519/x25519.dart' as x25519_impl;
 
 import 'src/algorithms.dart';
 import 'src/digest_utils.dart';
@@ -34,6 +35,7 @@ export 'src/algorithms.dart'
 export 'src/errors.dart';
 
 part 'src/ed25519_keys.dart';
+part 'src/x25519_keys.dart';
 part 'src/ec_keys.dart';
 part 'src/keys.dart';
 part 'src/key_derivation.dart';

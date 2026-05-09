@@ -44,4 +44,20 @@ final class _HkdfDerivationAlgorithm extends DerivationAlgorithm {
 
 final class _EcdhDerivationAlgorithm extends DerivationAlgorithm {
   const _EcdhDerivationAlgorithm() : super();
+
+  @override
+  bool operator ==(Object other) => other is _EcdhDerivationAlgorithm;
+
+  @override
+  int get hashCode => (_EcdhDerivationAlgorithm).hashCode;
+}
+
+final class _X25519DerivationAlgorithm extends DerivationAlgorithm {
+  const _X25519DerivationAlgorithm() : super();
+
+  @override
+  bool operator ==(Object other) => other is _X25519DerivationAlgorithm;
+
+  @override
+  int get hashCode => (_X25519DerivationAlgorithm).hashCode;
 }

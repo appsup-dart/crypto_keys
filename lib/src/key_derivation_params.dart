@@ -19,6 +19,16 @@ sealed class EcKeyAgreementParams extends PrivateKeyDeriverParams {
       EcdhKeyDeriverParams(peerPublicKey: peerPublicKey);
 }
 
+/// Marker base class for OKP key agreement (e.g. X25519).
+sealed class OkpKeyAgreementParams extends PrivateKeyDeriverParams {
+  const OkpKeyAgreementParams();
+
+  /// Shorthand factory for [X25519KeyDeriverParams].
+  static X25519KeyDeriverParams x25519({
+    required X25519PublicKey peerPublicKey,
+  }) => X25519KeyDeriverParams(peerPublicKey: peerPublicKey);
+}
+
 /// Marker base class for password-based derivation params (e.g. PBKDF2).
 sealed class PasswordKeyDeriverParams extends KeyDeriverParams {
   const PasswordKeyDeriverParams();
@@ -90,6 +100,13 @@ class EcdhKeyDeriverParams extends EcKeyAgreementParams {
   final EcPublicKey peerPublicKey;
 
   const EcdhKeyDeriverParams({required this.peerPublicKey});
+}
+
+/// Parameters for X25519 (RFC 7748) shared-secret derivation.
+class X25519KeyDeriverParams extends OkpKeyAgreementParams {
+  final X25519PublicKey peerPublicKey;
+
+  const X25519KeyDeriverParams({required this.peerPublicKey});
 }
 
 /// Parameters for Argon2id password-based key derivation (RFC 9106).

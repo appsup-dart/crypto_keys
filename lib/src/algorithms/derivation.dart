@@ -18,4 +18,7 @@ sealed class DerivationAlgorithm extends Algorithm {
 
   /// ECDH shared-secret agreement.
   const factory DerivationAlgorithm.ecdh() = _EcdhDerivationAlgorithm;
+
+  /// X25519 (Curve25519) shared-secret agreement.
+  const factory DerivationAlgorithm.x25519() = _X25519DerivationAlgorithm;
 }

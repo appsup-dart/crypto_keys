@@ -102,6 +102,17 @@ class _ConcatKdf {
   }
 }
 
+SecretBytes _deriveX25519SharedSecret({
+  required X25519PrivateKey privateKey,
+  required X25519KeyDeriverParams params,
+}) {
+  final shared = x25519_impl.X25519(
+    privateKey.scalarBytes,
+    params.peerPublicKey.uCoordinate,
+  );
+  return SecretBytes(shared);
+}
+
 SecretBytes _deriveEcdhSharedSecret({
   required EcPrivateKey privateKey,
   required EcdhKeyDeriverParams params,
