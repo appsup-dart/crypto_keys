@@ -24,6 +24,9 @@ class SymmetricKey
     return SymmetricKey(keyValue: value);
   }
 
+  /// Returns this symmetric key as a key pair.
+  SymmetricKeyPair asKeyPair() => SymmetricKeyPair.fromKey(this);
+
   @override
   Signer createSigner(covariant SymmetricSigningAlgorithmIdentifier algorithm) {
     return _SymmetricSignerAndVerifier(algorithm, this);

@@ -62,6 +62,10 @@ class RsaPrivateKey
     required this.modulus,
   });
 
+  /// Returns the corresponding [RsaKeyPair] for the given public exponent.
+  RsaKeyPair asKeyPair({required BigInt exponent}) =>
+      RsaKeyPair.fromPrivateKey(this, exponent: exponent);
+
   @override
   Signer createSigner(covariant RsaSigningAlgorithmIdentifier algorithm) {
     return _AsymmetricSigner(algorithm, this);

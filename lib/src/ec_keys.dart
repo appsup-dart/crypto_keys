@@ -58,6 +58,9 @@ class EcPrivateKey
 
   EcPrivateKey({required this.eccPrivateKey, required this.curve});
 
+  /// Derives and returns the corresponding [EcKeyPair].
+  EcKeyPair asKeyPair() => EcKeyPair.fromPrivateKey(this);
+
   @override
   Signer createSigner(covariant EcSigningAlgorithmIdentifier algorithm) {
     return _AsymmetricSigner(algorithm, this);
