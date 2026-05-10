@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:x25519/x25519.dart' as x25519_impl;
 
 import '../../crypto_keys.dart';
-import '../key_agreement_params.dart';
 import '../utils/pointycastle_ext.dart' as pc;
 import 'ec.dart';
 

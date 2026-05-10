@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:crypto_keys/crypto_keys.dart';
+import 'package:crypto_keys/src/catalog.dart';
 import 'package:test/test.dart';
 
 Uint8List _h(String hex) => .fromList(
@@ -34,5 +35,28 @@ void main() {
         expect(out, expected);
       },
     );
+
+    test('algorithm-first deriveBits matches Password.deriveBits', () {
+      final pwd = Password.fromString('password');
+      final salt = Uint8List.fromList(utf8.encode('somesalt'));
+      final viaPassword = pwd.deriveBits(
+        .argon2id(
+          salt: salt,
+          iterations: 2,
+          keyBitLength: 256,
+          memoryKiB: 256,
+          lanes: 1,
+        ),
+      );
+      final viaAlgorithm = algorithms.kdf.password.argon2id.deriveBits(
+        pwd,
+        salt: salt,
+        iterations: 2,
+        keyBitLength: 256,
+        memoryKiB: 256,
+        lanes: 1,
+      );
+      expect(viaAlgorithm, viaPassword);
+    });
   });
 }

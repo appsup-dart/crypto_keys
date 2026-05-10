@@ -2,9 +2,10 @@ part of '../catalog.dart';
 
 /// Key agreement algorithms ([AgreementPrivateKey.deriveSharedSecret]).
 class KeyAgreementAlgorithms {
-  final KeyAgreementAlgorithm ecdh = const KeyAgreementAlgorithm.ecdh();
+  final EcdhKeyAgreementAlgorithm ecdh = const EcdhKeyAgreementAlgorithm();
 
-  final KeyAgreementAlgorithm x25519 = const KeyAgreementAlgorithm.x25519();
+  final X25519KeyAgreementAlgorithm x25519 =
+      const X25519KeyAgreementAlgorithm();
 
   const KeyAgreementAlgorithms._();
 }

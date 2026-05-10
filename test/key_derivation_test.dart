@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:test/test.dart';
 
@@ -30,6 +31,35 @@ void main() {
       );
 
       expect(aKey, bKey);
+    });
+
+    test('algorithm-first ECDH and ConcatKdf match key-first APIs', () {
+      final a = EcKeyPair.generate(.p256);
+      final b = EcKeyPair.generate(.p256);
+      final z1 = a.privateKey
+          .deriveSharedSecret(.ecdh(peerPublicKey: b.publicKey))
+          .value;
+      final z2 = algorithms.keyAgreement.ecdh.deriveSharedSecret(
+        a.privateKey,
+        peerPublicKey: b.publicKey,
+      );
+      expect(z2.value, z1);
+
+      final otherInfo = Uint8List.fromList([1, 2, 3]);
+      final secret = SecretBytes(z1);
+      final k1 = secret.deriveBits(
+        .concatKdf(
+          hash: DigestAlgorithm.sha256,
+          keyBitLength: 128,
+          otherInfo: otherInfo,
+        ),
+      );
+      final k2 = algorithms.kdf.secret.concatKdf.sha256.deriveBits(
+        secret,
+        keyBitLength: 128,
+        otherInfo: otherInfo,
+      );
+      expect(k2, k1);
     });
 
     test('curve mismatch throws', () {
