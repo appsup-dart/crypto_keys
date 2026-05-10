@@ -1,31 +1,20 @@
+// AES-GCM encrypt/decrypt with optional additional authenticated data (AAD).
+//
+// Run from repo root: dart run example/encryption_example.dart
 import 'package:crypto_keys/crypto_keys.dart';
-import 'dart:typed_data';
+import 'dart:convert';
 
 void main() {
-  // Generate a random symmetric key pair
-  var keyPair = SymmetricKeyPair.generate(128);
+  final keyPair = SymmetricKeyPair.generate(128);
 
-  // Use the public key to create an encrypter with the AES/GCM algorithm
-  var encrypter = keyPair.publicKey.createEncrypter(.gcm());
-
-  // Encrypt the content with an additional authentication data for integrity
-  // protection
-  var content = 'A very secret text';
-  var aad = 'It is me';
-  var v = encrypter.encrypt(
-    Uint8List.fromList(content.codeUnits),
-    additionalAuthenticatedData: Uint8List.fromList(aad.codeUnits),
+  final encrypter = keyPair.publicKey.createEncrypter(.gcm());
+  final result = encrypter.encrypt(
+    utf8.encode('A very secret text'),
+    additionalAuthenticatedData: utf8.encode('It is me'),
   );
 
-  print("Encrypting '$content'");
-  print('Ciphertext: ${v.data}');
-  print('Authentication tag: ${v.authenticationTag}');
+  final decrypter = keyPair.privateKey.createDecrypter(.gcm());
+  final recovered = utf8.decode(decrypter.decrypt(result));
 
-  // Use the private key to create the decrypter
-  var decrypter = keyPair.privateKey.createDecrypter(.gcm());
-
-  // Decrypt and verify authentication tag
-  var decrypted = decrypter.decrypt(v);
-
-  print("Decrypted text: '${String.fromCharCodes(decrypted)}'");
+  print(recovered);
 }

@@ -67,4 +67,11 @@ final class EcdsaSigningAlgorithm extends EcSigningAlgorithm {
 
 final class Ed25519SigningAlgorithmImpl extends Ed25519SigningAlgorithm {
   const Ed25519SigningAlgorithmImpl() : super();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Ed25519SigningAlgorithmImpl;
+
+  @override
+  int get hashCode => (Ed25519SigningAlgorithmImpl).hashCode;
 }

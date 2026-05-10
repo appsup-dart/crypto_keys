@@ -6,6 +6,13 @@ final class DigestSha1 extends DigestAlgorithm {
 
   @override
   String get name => 'SHA-1';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is DigestSha1;
+
+  @override
+  int get hashCode => (DigestSha1).hashCode;
 }
 
 /// SHA-2 digest family (SHA-224 … SHA-512, SHA-512/t).
