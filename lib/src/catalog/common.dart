@@ -1,6 +1,8 @@
 part of '../catalog.dart';
 
-/// Top-level catalog grouping for all supported algorithm families.
+/// Nested grouping for every supported cryptographic primitive family.
+///
+/// Accessed via the top-level **`algorithms`** constant (typed [Algorithms]).
 class Algorithms {
   /// Signing algorithms
   final signing = const SigningAlgorithms._();
@@ -20,25 +22,5 @@ class Algorithms {
   const Algorithms._();
 }
 
-/// Top-level algorithm catalog
+/// Browsable **`algorithms.*`** entry points (`algorithms.signing.hmac.sha256`, …).
 const algorithms = Algorithms._();
-
-/// Supported elliptic curves
-const curves = Curves._();
-
-/// Browsable catalog of supported elliptic curves.
-class Curves {
-  const Curves._();
-
-  /// P-256
-  final p256 = Curve.p256;
-
-  /// P-384
-  final p384 = Curve.p384;
-
-  /// P-521
-  final p521 = Curve.p521;
-
-  /// P-256K
-  final p256k = Curve.p256k;
-}

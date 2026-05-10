@@ -59,7 +59,6 @@ export 'src/key_agreement_params.dart'
         KeyAgreementParams,
         OkpKeyAgreementParams,
         X25519KeyAgreementParams;
-export 'src/algorithm_operations.dart';
 
 part 'src/keys/ed25519.dart';
 part 'src/keys/x25519.dart';

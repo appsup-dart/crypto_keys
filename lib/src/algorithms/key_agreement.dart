@@ -1,6 +1,16 @@
 part of '../algorithms.dart';
 
-/// Key agreement algorithms used with [AgreementPrivateKey.deriveSharedSecret].
+/// Markers for [AgreementPrivateKey.deriveSharedSecret] (ECDH on NIST `Ec*`, X25519).
+///
+/// Example:
+///
+/// ```dart
+/// alice.privateKey.deriveSharedSecret(.x25519(peerPublicKey: bob.publicKey));
+/// ```
+///
+/// Next step is often HKDF / Concat-KDF on the `SecretBytes`. See `example/x25519_hkdf_example.dart`,
+/// `example/ecdh_concat_kdf_example.dart`.
+
 sealed class KeyAgreementAlgorithm extends Algorithm {
   const KeyAgreementAlgorithm();
 

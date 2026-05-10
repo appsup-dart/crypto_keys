@@ -33,7 +33,7 @@ void main() {
       expect(aKey, bKey);
     });
 
-    test('algorithm-first ECDH and ConcatKdf match key-first APIs', () {
+    test('ECDH and ConcatKdf via catalog match key APIs', () {
       final a = EcKeyPair.generate(.p256);
       final b = EcKeyPair.generate(.p256);
       final z1 = a.privateKey

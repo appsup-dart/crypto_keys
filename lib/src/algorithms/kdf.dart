@@ -1,7 +1,21 @@
 part of '../algorithms.dart';
 
-/// Sealed union of password-based and secret-bytes [KdfAlgorithm] families
-/// ([PasswordKdfAlgorithm], [SecretKdfAlgorithm]).
+/// Key-derivation markers for password stretching ([PasswordKdfAlgorithm]) and
+/// shared-secret expansion ([SecretKdfAlgorithm]).
+///
+/// Example on `Password` / `SecretBytes`:
+///
+/// ```dart
+/// pw.deriveBits(.pbkdf2(
+///   hash: .sha256,
+///   salt: salt,
+///   iterations: 100_000,
+///   keyBitLength: 256,
+/// ));
+/// ikm.deriveBits(.hkdf(hash: .sha256, salt: salt, keyBitLength: 256));
+/// ```
+///
+/// Union of password-based and shared-secret [KdfAlgorithm] families.
 sealed class KdfAlgorithm extends Algorithm {
   const KdfAlgorithm();
 }

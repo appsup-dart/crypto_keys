@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'utils/digest.dart';
 
 part 'algorithms/common.dart';

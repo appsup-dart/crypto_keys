@@ -1,3 +1,4 @@
+import 'package:crypto_keys/catalog.dart';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:test/test.dart';
 

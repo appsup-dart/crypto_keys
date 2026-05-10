@@ -6,7 +6,19 @@ abstract mixin class KeyMaterial {}
 /// A cryptographic key
 abstract mixin class Key implements KeyMaterial {}
 
-/// A password input for password-based key derivation.
+/// Weak human-chosen secret staged for slow KDFs (**PBKDF2**, **Argon2id**).
+///
+/// Prefer [Password.fromString] only when you genuinely have user text; derive
+/// hardened bytes with `deriveBits`:
+///
+/// ```dart
+/// pw.deriveBits(.pbkdf2(
+///   hash: .sha256,
+///   salt: salt,
+///   iterations: 100_000,
+///   keyBitLength: 256,
+/// ));
+/// ```
 class Password with KeyMaterial {
   final Uint8List value;
 
@@ -15,7 +27,7 @@ class Password with KeyMaterial {
   factory Password.fromString(String value) =>
       Password(Uint8List.fromList(utf8.encode(value)));
 
-  /// Derives bytes using password-based KDF parameters.
+  /// Derives deterministic key material using [Pbkdf2KdfParams] or [Argon2idKdfParams].
   Uint8List deriveBits(PasswordKdfParams params) {
     return switch (params) {
       Pbkdf2KdfParams() => Pbkdf2(params.hash, this).deriveKey(params),
@@ -24,13 +36,24 @@ class Password with KeyMaterial {
   }
 }
 
-/// Generic secret bytes input for key derivation APIs such as HKDF.
+/// Opaque high-entropy octets (ECDH output, pre-shared secrets, etc.).
+///
+/// Combine with HKDF / Concat params (or **`algorithms.kdf.secret…`** catalog paths).
+///
+/// ```dart
+/// ikm.deriveBits(.hkdf(
+///   hash: .sha256,
+///   salt: salt,
+///   keyBitLength: 256,
+///   info: protocolInfo,
+/// ));
+/// ```
 class SecretBytes with KeyMaterial {
   final Uint8List value;
 
   SecretBytes(List<int> value) : value = Uint8List.fromList(value);
 
-  /// Derives bytes from this secret using shared-secret KDF parameters.
+  /// Runs HKDF / Concat-KDF over this secret.
   Uint8List deriveBits(SecretBytesKdfParams params) {
     return switch (params) {
       HkdfKdfParams() => Hkdf(params.hash, this).deriveKey(params),

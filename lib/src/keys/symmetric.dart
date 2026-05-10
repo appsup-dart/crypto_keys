@@ -1,6 +1,11 @@
 part of '../../crypto_keys.dart';
 
-/// A symmetric key
+/// Single shared secret powering symmetric signatures (HMAC) and symmetric ciphers
+/// (AES, ChaCha20-Poly1305, AES Key Wrap).
+///
+/// Create fresh material with [SymmetricKey.generate] or clone existing bytes via
+/// the constructor (`SymmetricKey(keyValue: …)`); [SymmetricKeyPair] mirrors the same
+/// key for ergonomic APIs.
 class SymmetricKey
     with Key, PublicKey, PrivateKey
     implements

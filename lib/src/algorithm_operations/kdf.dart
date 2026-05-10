@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:crypto_keys/crypto_keys.dart';
 
+/// Turns catalog KDF markers into `deriveBits` calls on `Password`/`SecretBytes`.
 extension Pbkdf2KdfAlgorithmDerive on Pbkdf2KdfAlgorithm {
   /// PBKDF2 key derivation; digest is fixed by this algorithm value.
   Uint8List deriveBits(

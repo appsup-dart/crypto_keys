@@ -1,6 +1,13 @@
 part of '../algorithms.dart';
 
-/// Signing and signature-verification algorithms.
+/// Identifies algorithms that produce and verify signatures over message bytes
+/// (results as `Signature` in crypto_keys).
+///
+/// ```dart
+/// pair.privateKey.createSigner(.hmac(.sha256)).sign(message);
+/// pair.publicKey.createVerifier(.hmac(.sha256)).verify(message, sig);
+/// ```
+
 sealed class SigningAlgorithm extends Algorithm {
   const SigningAlgorithm();
 

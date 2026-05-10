@@ -5,7 +5,9 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 SymmetricKeyPair _symmetricFromJwk(Map<String, dynamic> jwk) {
-  return SymmetricKeyPair(keyValue: Uint8List.fromList(base64ToBytes(jwk['k'])));
+  return SymmetricKeyPair(
+    keyValue: Uint8List.fromList(base64ToBytes(jwk['k'])),
+  );
 }
 
 RsaKeyPair _rsaFromJwk(Map<String, dynamic> jwk) {
@@ -20,10 +22,10 @@ RsaKeyPair _rsaFromJwk(Map<String, dynamic> jwk) {
 
 EcKeyPair _ecFromJwk(Map<String, dynamic> jwk) {
   final curve = switch (jwk['crv']) {
-    'P-256' => curves.p256,
-    'P-256K' => curves.p256k,
-    'P-384' => curves.p384,
-    'P-521' => curves.p521,
+    'P-256' => Curve.p256,
+    'P-256K' => Curve.p256k,
+    'P-384' => Curve.p384,
+    'P-521' => Curve.p521,
     _ => throw UnsupportedError('Unsupported curve ${jwk['crv']}'),
   };
   return EcKeyPair(
@@ -953,7 +955,7 @@ void main() {
       });
 
       test('Example Signing Using ECDSA P-256K SHA-256', () {
-        var keyPair = EcKeyPair.generate(curves.p256k);
+        var keyPair = EcKeyPair.generate(.p256k);
 
         var data = Uint8List.fromList('hello world'.codeUnits);
 
@@ -1157,12 +1159,12 @@ void main() {
         var text = 'Can we sign and verify this text';
         var data = utf8.encode(text);
 
-        for (var curve in [curves.p256, curves.p384, curves.p521]) {
+        for (var curve in [Curve.p256, Curve.p384, Curve.p521]) {
           var keyPair = EcKeyPair.generate(curve);
           var alg = {
-            curves.p256: algorithms.signing.ecdsa.sha256,
-            curves.p384: algorithms.signing.ecdsa.sha384,
-            curves.p521: algorithms.signing.ecdsa.sha512,
+            Curve.p256: algorithms.signing.ecdsa.sha256,
+            Curve.p384: algorithms.signing.ecdsa.sha384,
+            Curve.p521: algorithms.signing.ecdsa.sha512,
           }[curve]!;
 
           _testSigning(keyPair, alg, data);
@@ -1201,23 +1203,23 @@ void main() {
       test('Example encryption using AES_128_CBC', () {
         var keyPair = SymmetricKeyPair(
           keyValue: Uint8List.fromList([
-              107,
-              124,
-              212,
-              45,
-              111,
-              107,
-              9,
-              219,
-              200,
-              177,
-              0,
-              240,
-              143,
-              156,
-              44,
-              207,
-            ]),
+            107,
+            124,
+            212,
+            45,
+            111,
+            107,
+            9,
+            219,
+            200,
+            177,
+            0,
+            240,
+            143,
+            156,
+            44,
+            207,
+          ]),
         );
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1295,39 +1297,39 @@ void main() {
       test('Example encryption using AES_128_CBC_HMAC_SHA_256', () {
         var keyPair = SymmetricKeyPair(
           keyValue: Uint8List.fromList([
-              4,
-              211,
-              31,
-              197,
-              84,
-              157,
-              252,
-              254,
-              11,
-              100,
-              157,
-              250,
-              63,
-              170,
-              106,
-              206,
-              107,
-              124,
-              212,
-              45,
-              111,
-              107,
-              9,
-              219,
-              200,
-              177,
-              0,
-              240,
-              143,
-              156,
-              44,
-              207,
-            ]),
+            4,
+            211,
+            31,
+            197,
+            84,
+            157,
+            252,
+            254,
+            11,
+            100,
+            157,
+            250,
+            63,
+            170,
+            106,
+            206,
+            107,
+            124,
+            212,
+            45,
+            111,
+            107,
+            9,
+            219,
+            200,
+            177,
+            0,
+            240,
+            143,
+            156,
+            44,
+            207,
+          ]),
         );
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1584,39 +1586,39 @@ void main() {
         ]);
         var keyPair = SymmetricKeyPair(
           keyValue: Uint8List.fromList([
-              177,
-              161,
-              244,
-              128,
-              84,
-              143,
-              225,
-              115,
-              63,
-              180,
-              3,
-              255,
-              107,
-              154,
-              212,
-              246,
-              138,
-              7,
-              110,
-              91,
-              112,
-              46,
-              34,
-              105,
-              47,
-              130,
-              203,
-              46,
-              122,
-              234,
-              64,
-              252,
-            ]),
+            177,
+            161,
+            244,
+            128,
+            84,
+            143,
+            225,
+            115,
+            63,
+            180,
+            3,
+            255,
+            107,
+            154,
+            212,
+            246,
+            138,
+            7,
+            110,
+            91,
+            112,
+            46,
+            34,
+            105,
+            47,
+            130,
+            203,
+            46,
+            122,
+            234,
+            64,
+            252,
+          ]),
         );
 
         var encryptedData = EncryptionResult(
@@ -1814,7 +1816,10 @@ void main() {
       ]);
 
       test('Example encryption using AES Key Wrap 128', () {
-        var keyPair = _symmetricFromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
+        var keyPair = _symmetricFromJwk({
+          'kty': 'oct',
+          'k': 'GawgguFyGrWKav7AX4VKUg',
+        });
 
         var encryptedData = EncryptionResult(
           Uint8List.fromList([
@@ -1881,7 +1886,10 @@ void main() {
       test(
         'AES Key Wrap throws typed exception on integrity check failure',
         () {
-          final keyPair = _symmetricFromJwk({'kty': 'oct', 'k': 'GawgguFyGrWKav7AX4VKUg'});
+          final keyPair = _symmetricFromJwk({
+            'kty': 'oct',
+            'k': 'GawgguFyGrWKav7AX4VKUg',
+          });
           final encrypter = keyPair.publicKey.createEncrypter(
             algorithms.encryption.aes.keyWrap,
           );

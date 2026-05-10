@@ -1,8 +1,10 @@
 part of '../algorithms.dart';
 
-/// Digest (hash) algorithms.
+/// Cryptographic hash (**digest**) identifiers for HMAC, ECDSA digest choice,
+/// PBKDF2/HKDF, RSA-OAEP, …
 ///
-/// Construct via static members such as [DigestAlgorithm.sha256].
+/// Use static getters ([DigestAlgorithm.sha256], …) with dot shorthand, e.g.
+/// `.hmac(.sha256)` on signers or `.pbkdf2(hash: .sha256, …)` on passwords.
 sealed class DigestAlgorithm extends Algorithm {
   const DigestAlgorithm();
 

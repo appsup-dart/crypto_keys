@@ -8,21 +8,25 @@ void main() {
   final keyPair = SymmetricKeyPair.generate(256);
 
   // Without shorthand: catalog path
-  final signerCatalog =
-      keyPair.privateKey.createSigner(algorithms.signing.hmac.sha256);
+  final signerCatalog = keyPair.privateKey.createSigner(
+    algorithms.signing.hmac.sha256,
+  );
   // Without shorthand: explicit factory
-  final signerFactory = keyPair.privateKey
-      .createSigner(SigningAlgorithm.hmac(DigestAlgorithm.sha256));
+  final signerFactory = keyPair.privateKey.createSigner(
+    SigningAlgorithm.hmac(DigestAlgorithm.sha256),
+  );
   // With dot shorthand (type context supplies SymmetricSigningAlgorithm / digest)
   final signerShorthand = keyPair.privateKey.createSigner(.hmac(.sha256));
 
   assert(signerCatalog.algorithm == signerFactory.algorithm);
   assert(signerCatalog.algorithm == signerShorthand.algorithm);
 
-  final encCatalog =
-      keyPair.publicKey.createEncrypter(algorithms.encryption.aes.gcm);
-  final encFactory =
-      keyPair.publicKey.createEncrypter(SymmetricEncryptionAlgorithm.gcm());
+  final encCatalog = keyPair.publicKey.createEncrypter(
+    algorithms.encryption.aes.gcm,
+  );
+  final encFactory = keyPair.publicKey.createEncrypter(
+    SymmetricEncryptionAlgorithm.gcm(),
+  );
   final encShorthand = keyPair.publicKey.createEncrypter(.gcm());
 
   assert(encCatalog.algorithm == encFactory.algorithm);

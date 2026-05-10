@@ -1,6 +1,15 @@
 part of '../algorithms.dart';
 
-/// Encryption and decryption algorithms.
+/// Encryption and decryption identifiers ([SymmetricEncryptionAlgorithm] AEAD modes,
+/// CBC, key wrap; [RsaEncryptionAlgorithm] for short payloads).
+///
+/// Symmetric payloads use `SymmetricKey`; RSA targets the recipient’s modulus.
+///
+/// ```dart
+/// final box = kp.publicKey.createEncrypter(.gcm()).encrypt(plaintext);
+/// kp.privateKey.createDecrypter(.gcm()).decrypt(box);
+/// ```
+
 sealed class EncryptionAlgorithm extends Algorithm {
   const EncryptionAlgorithm();
 }
@@ -29,7 +38,8 @@ sealed class SymmetricEncryptionAlgorithm extends EncryptionAlgorithm {
 
   /// ChaCha20-Poly1305 AEAD (RFC 8439).
   ///
-  /// Uses a 256-bit key and a 96-bit nonce ([initializationVector]).
+  /// Uses a 256-bit key and a 96-bit nonce (pass as `initializationVector` to
+  /// [Encrypter.encrypt]).
   const factory SymmetricEncryptionAlgorithm.chacha20Poly1305() =
       ChaCha20Poly1305EncryptionAlgorithm;
 }

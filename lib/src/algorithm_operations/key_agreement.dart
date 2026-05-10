@@ -1,5 +1,6 @@
 import 'package:crypto_keys/crypto_keys.dart';
 
+/// ECDH (`EcPrivateKey` ↔ `EcPublicKey` on identical curves).
 extension EcdhKeyAgreementAlgorithmDerive on EcdhKeyAgreementAlgorithm {
   /// ECDH shared secret (same semantics as [EcPrivateKey.deriveSharedSecret]).
   SecretBytes deriveSharedSecret(
@@ -12,6 +13,7 @@ extension EcdhKeyAgreementAlgorithmDerive on EcdhKeyAgreementAlgorithm {
   }
 }
 
+/// X25519 handshake helper.
 extension X25519KeyAgreementAlgorithmDerive on X25519KeyAgreementAlgorithm {
   /// X25519 shared secret (same semantics as [X25519PrivateKey.deriveSharedSecret]).
   SecretBytes deriveSharedSecret(

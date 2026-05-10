@@ -59,7 +59,7 @@ final sig = pair.privateKey.createSigner(SigningAlgorithm.ed25519).sign(message)
 final ok = pair.publicKey.createVerifier(SigningAlgorithm.ed25519).verify(message, sig);
 ```
 
-Key-first vs algorithm-first **spelling** for signing: **[Using the API](#using-the-api)**. Full programs: [`example/signing_example.dart`](example/signing_example.dart), [`example/ed25519_signing_example.dart`](example/ed25519_signing_example.dart).
+Runnable examples: [`example/signing_example.dart`](example/signing_example.dart), [`example/ed25519_signing_example.dart`](example/ed25519_signing_example.dart).
 
 ---
 
@@ -165,7 +165,7 @@ final fromSecret = SecretBytes(shared.value).deriveBits(
 );
 ```
 
-**PBKDF2** key-first vs algorithm-first one-liners: **[Using the API](#using-the-api)** · key-first runnable sample: [`example/pbkdf2_example.dart`](example/pbkdf2_example.dart).
+**PBKDF2** runnable sample: [`example/pbkdf2_example.dart`](example/pbkdf2_example.dart).
 
 ---
 
@@ -293,11 +293,6 @@ Runnable: [`example/key_first_vs_algorithm_first.dart`](example/key_first_vs_alg
 Same algorithm value, three ways—the **last line** of each group is the **shortest** spelling (`example/dot_shorthand.dart`):
 
 ```dart
-import 'package:crypto_keys/catalog.dart';
-import 'package:crypto_keys/crypto_keys.dart';
-
-final keyPair = SymmetricKeyPair.generate(256);
-
 // Signing: catalog path · factory · dot shorthand (most compact)
 keyPair.privateKey.createSigner(algorithms.signing.hmac.sha256);
 keyPair.privateKey.createSigner(SigningAlgorithm.hmac(DigestAlgorithm.sha256));

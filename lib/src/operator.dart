@@ -44,14 +44,18 @@ class Signature {
       other is Signature && const ListEquality().equals(other.data, data);
 }
 
-/// Operator for encrypting data.
+/// Stateful encryptor binding a concrete [EncryptionAlgorithm] to key material.
+///
+/// Obtained via `EncryptingPublicKey.createEncrypter` implementations
+/// (`SymmetricKey`, `RsaPublicKey`, …).
 abstract class Encrypter<T extends PublicKey> extends Operator<T> {
   Encrypter(EncryptionAlgorithm super.algorithm, super.key) : super._();
 
-  /// Encrypts the input data using the [keyMaterial] and [algorithm]
+  /// Encrypts `input`, returning ciphertext plus IV/tag/AAD metadata captured in
+  /// [EncryptionResult].
   ///
-  /// When the algorithm requires an initialization vector and none is provided,
-  /// a random initialization vector is generated.
+  /// When an IV/nonce is required yet omitted, this package generates unpredictable
+  /// random bytes automatically—persist them alongside the ciphertext for decryption.
   EncryptionResult encrypt(
     Uint8List input, {
     Uint8List? initializationVector,
@@ -59,15 +63,20 @@ abstract class Encrypter<T extends PublicKey> extends Operator<T> {
   });
 }
 
-/// Operator for decrypting data.
+/// Inverse of [Encrypter], restoring plaintext from [EncryptionResult].
 abstract class Decrypter<T extends PrivateKey> extends Operator<T> {
   Decrypter(EncryptionAlgorithm super.algorithm, super.key) : super._();
 
-  /// Decrypts the input data using the [keyMaterial] and [algorithm].
+  /// Decrypts a prior [EncryptionResult] using the same symmetric key or RSA private
+  /// key that produced it.
   Uint8List decrypt(EncryptionResult input);
 }
 
-/// Represents the result of encrypting some data
+/// Serialized encryption payload (ciphertext + IV/nonce + authentication tag + optional
+/// AAD echo) returned from [Encrypter.encrypt].
+///
+/// Store or transmit the non-secret fields together so [Decrypter.decrypt] can
+/// reconstruct the original plaintext.
 class EncryptionResult {
   /// Byte representation of the ciphertext
   final Uint8List data;

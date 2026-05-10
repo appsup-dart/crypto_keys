@@ -15,10 +15,11 @@ enum Curve {
   p256k,
 }
 
-/// Marker type for a concrete cryptographic algorithm instance.
+/// Marker for a concrete **cryptographic algorithm** plus its fixed parameters.
 ///
-/// Subtypes carry the algorithm family and parameters; identity is defined by
-/// type and fields (`==` / `hashCode`), not a path string.
+/// **Sealed** so subtrees (`SigningAlgorithm`, …) allow **exhaustive** `switch`es;
+/// subclasses act as immutable value identifiers (`@immutable`).
+@immutable
 sealed class Algorithm {
   const Algorithm();
 }

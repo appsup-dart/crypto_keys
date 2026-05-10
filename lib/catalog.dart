@@ -1,20 +1,18 @@
-/// Browsable catalog for algorithm discovery.
+/// Browsable **algorithm catalog**: [algorithms] groups `signing`, `encryption`,
+/// `keyAgreement`, `kdf`, and `digest` for IDE exploration.
 ///
-/// Import this library when you want a structured, discoverable path to
-/// algorithms, for example:
-/// `algorithms.signing.hmac.sha256` or `algorithms.encryption.aes.gcm`.
+/// Focus: **algorithm-first** calls—extensions exported here put an [algorithms] leaf **first**, then material / keys (`sign`, `verify`, `deriveBits`, `encrypt`, …).
 ///
-/// Example:
 /// ```dart
-/// import 'package:crypto_keys/catalog.dart';
-///
-/// final sigAlg = algorithms.signing.rsa.pkcs1.sha256;
-/// final encAlg = algorithms.encryption.aes.gcm;
-/// final kdfAlg = algorithms.kdf.secret.hkdf.withHash(.sha256);
+/// algorithms.signing.hmac.sha256.sign(privateKey, message);
+/// algorithms.kdf.password.pbkdf2.sha256.deriveBits(
+///     password,
+///     salt: salt,
+///     iterations: 100_000,
+///     keyBitLength: 256);
 /// ```
-///
-/// This entrypoint is focused on ergonomics and documentation discoverability.
-/// Core cryptographic types and operations remain in `package:crypto_keys/crypto_keys.dart`.
 library;
 
+import 'src/catalog.dart';
 export 'src/catalog.dart';
+export 'src/algorithm_operations.dart';

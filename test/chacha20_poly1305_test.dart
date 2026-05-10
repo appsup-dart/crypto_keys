@@ -7,8 +7,11 @@ import 'package:test/test.dart';
 /// RFC 8439 / RFC 7539 AEAD test vector (same as PointyCastle upstream test).
 /// See https://www.rfc-editor.org/rfc/rfc8439.html#section-2.8.2
 Uint8List _h(String hex) => Uint8List.fromList(
-      List.generate(hex.length ~/ 2, (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16)),
-    );
+  List.generate(
+    hex.length ~/ 2,
+    (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16),
+  ),
+);
 
 void main() {
   group('ChaCha20-Poly1305', () {
@@ -38,7 +41,11 @@ void main() {
       final enc = sk.createEncrypter(alg);
       final dec = sk.createDecrypter(alg);
 
-      final out = enc.encrypt(plaintext, initializationVector: nonce, additionalAuthenticatedData: aad);
+      final out = enc.encrypt(
+        plaintext,
+        initializationVector: nonce,
+        additionalAuthenticatedData: aad,
+      );
       expect(out.initializationVector, nonce);
       expect(out.data, expectedCt);
       expect(out.authenticationTag, expectedTag);

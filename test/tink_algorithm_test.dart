@@ -362,7 +362,7 @@ void main() {
         'EFD48B2AACB6A8FD1140DD9CD45E81D69D2C877B56AAF991C34D0EA84EAF3716',
         'F7CB1C942D657C41D436C7A1B6E29F65F3E900DBB9AFF4064DC4AB2F843ACDA8',
         algorithms.signing.ecdsa.sha256,
-        curves.p256,
+        Curve.p256,
       );
       doTest(
         'Test case 2',
@@ -375,7 +375,7 @@ void main() {
         '512C8CCEEE3890A84058CE1E22DBC2198F42323CE8ACA9135329F03C068E5112'
             'DC7CC3EF3446DEFCEB01A45C2667FDD5',
         algorithms.signing.ecdsa.sha512,
-        curves.p384,
+        Curve.p384,
       );
       doTest(
         'Test case 3',
@@ -392,7 +392,7 @@ void main() {
             'A19CA69EFF5C57400E3B3A0AD66CE0978214D13BAF4E9AC60752F7B155E2DE4D'
             'CE3',
         algorithms.signing.ecdsa.sha512,
-        curves.p521,
+        Curve.p521,
       );
     });
 
@@ -502,7 +502,7 @@ void main() {
         test(name, () {
           var key = EcPrivateKey(
             eccPrivateKey: bigIntFromHexString(privateKey),
-            curve: curves.p256,
+            curve: Curve.p256,
           );
           print(key);
           // TODO

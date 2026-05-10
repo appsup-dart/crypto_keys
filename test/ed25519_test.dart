@@ -7,7 +7,10 @@ import 'package:test/test.dart';
 Uint8List _hex(String s) {
   final h = s.replaceAll(RegExp(r'\s'), '');
   return Uint8List.fromList(
-    List.generate(h.length ~/ 2, (i) => int.parse(h.substring(2 * i, 2 * i + 2), radix: 16)),
+    List.generate(
+      h.length ~/ 2,
+      (i) => int.parse(h.substring(2 * i, 2 * i + 2), radix: 16),
+    ),
   );
 }
 
