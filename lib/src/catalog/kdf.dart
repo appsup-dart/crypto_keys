@@ -58,27 +58,27 @@ class ConcatKdfAlgorithms {
 /// Browsable catalog of PBKDF2 algorithms.
 class Pbkdf2Algorithms {
   /// PBKDF2 using HMAC-SHA-1
-  final Pbkdf2KdfAlgorithm sha1 = const Pbkdf2KdfAlgorithm(
+  final Pbkdf2Algorithm sha1 = const Pbkdf2Algorithm(
     DigestAlgorithm.sha1,
   );
 
   /// PBKDF2 using HMAC-SHA-256
-  final Pbkdf2KdfAlgorithm sha256 = const Pbkdf2KdfAlgorithm(
+  final Pbkdf2Algorithm sha256 = const Pbkdf2Algorithm(
     DigestAlgorithm.sha256,
   );
 
   /// PBKDF2 using HMAC-SHA-384
-  final Pbkdf2KdfAlgorithm sha384 = const Pbkdf2KdfAlgorithm(
+  final Pbkdf2Algorithm sha384 = const Pbkdf2Algorithm(
     DigestAlgorithm.sha384,
   );
 
   /// PBKDF2 using HMAC-SHA-512
-  final Pbkdf2KdfAlgorithm sha512 = const Pbkdf2KdfAlgorithm(
+  final Pbkdf2Algorithm sha512 = const Pbkdf2Algorithm(
     DigestAlgorithm.sha512,
   );
 
   /// PBKDF2 using HMAC with a caller-selected digest algorithm.
-  Pbkdf2KdfAlgorithm withHash(DigestAlgorithm hash) => Pbkdf2KdfAlgorithm(hash);
+  Pbkdf2Algorithm withHash(DigestAlgorithm hash) => Pbkdf2Algorithm(hash);
 
   const Pbkdf2Algorithms._();
 }
@@ -86,22 +86,22 @@ class Pbkdf2Algorithms {
 /// Browsable catalog of HKDF algorithms.
 class HkdfAlgorithms {
   /// HKDF using SHA-256
-  final HkdfKdfAlgorithm sha256 = const HkdfKdfAlgorithm(
+  final HkdfAlgorithm sha256 = const HkdfAlgorithm(
     DigestAlgorithm.sha256,
   );
 
   /// HKDF using SHA-384
-  final HkdfKdfAlgorithm sha384 = const HkdfKdfAlgorithm(
+  final HkdfAlgorithm sha384 = const HkdfAlgorithm(
     DigestAlgorithm.sha384,
   );
 
   /// HKDF using SHA-512
-  final HkdfKdfAlgorithm sha512 = const HkdfKdfAlgorithm(
+  final HkdfAlgorithm sha512 = const HkdfAlgorithm(
     DigestAlgorithm.sha512,
   );
 
   /// HKDF using a caller-selected digest algorithm.
-  HkdfKdfAlgorithm withHash(DigestAlgorithm hash) => HkdfKdfAlgorithm(hash);
+  HkdfAlgorithm withHash(DigestAlgorithm hash) => HkdfAlgorithm(hash);
 
   const HkdfAlgorithms._();
 }

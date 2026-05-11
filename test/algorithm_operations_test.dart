@@ -58,13 +58,13 @@ void main() {
     // fails when a variant is missing or lacks the method.
     void verify(KdfAlgorithm algorithm) {
       switch (algorithm) {
-        case Pbkdf2KdfAlgorithm():
+        case Pbkdf2Algorithm():
           algorithm.deriveBits;
         case Argon2idKdfAlgorithm():
           algorithm.deriveBits;
         case ConcatKdfAlgorithm():
           algorithm.deriveBits;
-        case HkdfKdfAlgorithm():
+        case HkdfAlgorithm():
           algorithm.deriveBits;
       }
     }

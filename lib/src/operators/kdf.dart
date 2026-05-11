@@ -139,11 +139,11 @@ class Argon2id extends PasswordKdf<Argon2idKdfParams> {
 
 class Pbkdf2 extends PasswordKdf<Pbkdf2KdfParams> {
   Pbkdf2(DigestAlgorithm hash, Password key)
-    : super(Pbkdf2KdfAlgorithm(hash), key);
+    : super(Pbkdf2Algorithm(hash), key);
 
   @override
   Uint8List deriveKey(Pbkdf2KdfParams params) {
-    assert(params.hash == (this.algorithm as Pbkdf2KdfAlgorithm).hash);
+    assert(params.hash == (this.algorithm as Pbkdf2Algorithm).hash);
     final password = keyMaterial;
 
     final salt = params.salt;
@@ -177,7 +177,7 @@ class Pbkdf2 extends PasswordKdf<Pbkdf2KdfParams> {
 
 class Hkdf extends SecretBytesKdf<HkdfKdfParams> {
   Hkdf(DigestAlgorithm hash, SecretBytes key)
-    : super(HkdfKdfAlgorithm(hash), key);
+    : super(HkdfAlgorithm(hash), key);
 
   @override
   Uint8List deriveKey(HkdfKdfParams params) {

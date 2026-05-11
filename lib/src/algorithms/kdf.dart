@@ -26,7 +26,7 @@ sealed class PasswordKdfAlgorithm extends KdfAlgorithm {
 
   /// PBKDF2-HMAC with caller-provided digest.
   const factory PasswordKdfAlgorithm.pbkdf2(DigestAlgorithm hash) =
-      Pbkdf2KdfAlgorithm;
+      Pbkdf2Algorithm;
 
   /// Argon2id (RFC 9106).
   const factory PasswordKdfAlgorithm.argon2id() = Argon2idKdfAlgorithm;
@@ -41,10 +41,10 @@ sealed class SecretKdfAlgorithm extends KdfAlgorithm {
       ConcatKdfAlgorithm;
 
   /// HKDF with caller-provided digest.
-  const factory SecretKdfAlgorithm.hkdf(DigestAlgorithm hash) =
-      HkdfKdfAlgorithm;
+  const factory SecretKdfAlgorithm.hkdf(DigestAlgorithm hash) = HkdfAlgorithm;
 }
 
+/// Concat KDF (SP 800-56A / JWE-style).
 final class ConcatKdfAlgorithm extends SecretKdfAlgorithm {
   final DigestAlgorithm hash;
 
@@ -59,33 +59,35 @@ final class ConcatKdfAlgorithm extends SecretKdfAlgorithm {
   int get hashCode => Object.hash(1, hash);
 }
 
-final class Pbkdf2KdfAlgorithm extends PasswordKdfAlgorithm {
+/// PBKDF2 (PKCS #5 / RFC 2898); digest selects HMAC PRF.
+final class Pbkdf2Algorithm extends PasswordKdfAlgorithm {
   final DigestAlgorithm hash;
 
-  const Pbkdf2KdfAlgorithm(this.hash) : super();
+  const Pbkdf2Algorithm(this.hash) : super();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Pbkdf2KdfAlgorithm && hash == other.hash;
+      identical(this, other) || other is Pbkdf2Algorithm && hash == other.hash;
 
   @override
   int get hashCode => Object.hash(2, hash);
 }
 
-final class HkdfKdfAlgorithm extends SecretKdfAlgorithm {
+/// HKDF (RFC 5869); digest selects extract/expand hash.
+final class HkdfAlgorithm extends SecretKdfAlgorithm {
   final DigestAlgorithm hash;
 
-  const HkdfKdfAlgorithm(this.hash) : super();
+  const HkdfAlgorithm(this.hash) : super();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is HkdfKdfAlgorithm && hash == other.hash;
+      identical(this, other) || other is HkdfAlgorithm && hash == other.hash;
 
   @override
   int get hashCode => Object.hash(3, hash);
 }
 
+/// Argon2id password-based key derivation (RFC 9106).
 final class Argon2idKdfAlgorithm extends PasswordKdfAlgorithm {
   const Argon2idKdfAlgorithm() : super();
 
