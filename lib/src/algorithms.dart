@@ -7,8 +7,6 @@ part 'algorithms/kdf.dart';
 part 'algorithms/key_agreement.dart';
 part 'algorithms/digest.dart';
 part 'algorithms/encryption.dart';
-part 'algorithms/internal/kdf.dart';
-part 'algorithms/internal/key_agreement.dart';
 part 'algorithms/internal/digest.dart';
 part 'algorithms/internal/encryption.dart';
 part 'algorithms/internal/signing.dart';
