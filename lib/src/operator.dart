@@ -26,7 +26,7 @@ abstract class Verifier<T extends PublicKey> extends Operator<T> {
 
   /// Verifies that [signature] is a valid signature for the input [data] using
   /// the [keyMaterial] and [algorithm]
-  bool verify(Uint8List data, Signature signature);
+  bool verify(List<int> data, Signature signature);
 }
 
 /// Represents the result of signing some data
@@ -34,7 +34,7 @@ class Signature {
   /// Byte representation of the signature
   final Uint8List data;
 
-  Signature(Uint8List data) : data = Uint8List.fromList(data);
+  Signature(List<int> data) : data = Uint8List.fromList(data);
 
   @override
   int get hashCode => const ListEquality().hash(data);

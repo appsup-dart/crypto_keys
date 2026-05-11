@@ -23,7 +23,7 @@ class SymmetricSignerAndVerifier extends Signer<SymmetricKey>
   }
 
   @override
-  bool verify(Uint8List data, Signature signature) => sign(data) == signature;
+  bool verify(List<int> data, Signature signature) => sign(data) == signature;
 }
 
 extension on SymmetricSigningAlgorithm {

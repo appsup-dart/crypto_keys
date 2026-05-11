@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:crypto_keys/crypto_keys.dart';
 
 /// Forwards symmetric MAC signatures to [SymmetricKey.createSigner] / [SymmetricKey.createVerifier].
@@ -7,7 +5,7 @@ extension SymmetricSigningAlgorithmOps on SymmetricSigningAlgorithm {
   Signature sign(SymmetricKey key, List<int> data) =>
       key.createSigner(this).sign(data);
 
-  bool verify(SymmetricKey key, Uint8List data, Signature signature) =>
+  bool verify(SymmetricKey key, List<int> data, Signature signature) =>
       key.createVerifier(this).verify(data, signature);
 }
 
@@ -16,7 +14,7 @@ extension RsaSigningAlgorithmOps on RsaSigningAlgorithm {
   Signature sign(RsaPrivateKey privateKey, List<int> data) =>
       privateKey.createSigner(this).sign(data);
 
-  bool verify(RsaPublicKey publicKey, Uint8List data, Signature signature) =>
+  bool verify(RsaPublicKey publicKey, List<int> data, Signature signature) =>
       publicKey.createVerifier(this).verify(data, signature);
 }
 
@@ -25,7 +23,7 @@ extension EcSigningAlgorithmOps on EcSigningAlgorithm {
   Signature sign(EcPrivateKey privateKey, List<int> data) =>
       privateKey.createSigner(this).sign(data);
 
-  bool verify(EcPublicKey publicKey, Uint8List data, Signature signature) =>
+  bool verify(EcPublicKey publicKey, List<int> data, Signature signature) =>
       publicKey.createVerifier(this).verify(data, signature);
 }
 
@@ -36,7 +34,7 @@ extension Ed25519SigningAlgorithmOps on Ed25519SigningAlgorithm {
 
   bool verify(
     Ed25519PublicKey publicKey,
-    Uint8List data,
+    List<int> data,
     Signature signature,
   ) => publicKey.createVerifier(this).verify(data, signature);
 }

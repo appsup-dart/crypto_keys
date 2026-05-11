@@ -40,7 +40,8 @@ class RsaVerifier extends Verifier<RsaPublicKey> {
       super();
 
   @override
-  bool verify(Uint8List data, Signature signature) {
+  bool verify(List<int> data, Signature signature) {
+    data = data is Uint8List ? data : Uint8List.fromList(data);
     _algorithm.init(
       false,
       pc.ParametersWithRandom(

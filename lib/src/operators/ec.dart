@@ -44,7 +44,8 @@ class EcVerifier extends Verifier<EcPublicKey> {
     : _algorithm = algorithm.algorithmImplementation;
 
   @override
-  bool verify(Uint8List data, Signature signature) {
+  bool verify(List<int> data, Signature signature) {
+    data = data is Uint8List ? data : Uint8List.fromList(data);
     _algorithm.init(false, keyMaterial.keyParameter);
 
     final l = signature.data.length ~/ 2;

@@ -19,7 +19,8 @@ class Ed25519Verifier extends Verifier<Ed25519PublicKey> {
   Ed25519Verifier(Ed25519SigningAlgorithm super.algorithm, super.key);
 
   @override
-  bool verify(Uint8List data, Signature signature) {
+  bool verify(List<int> data, Signature signature) {
+    data = data is Uint8List ? data : Uint8List.fromList(data);
     final pk = ed25519_impl.PublicKey(keyMaterial.publicKeyBytes.toList());
     return ed25519_impl.verify(pk, data, signature.data);
   }
