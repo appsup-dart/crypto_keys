@@ -31,10 +31,10 @@ export 'src/algorithms.dart'
         HkdfAlgorithm,
         KdfAlgorithm,
         KeyAgreementAlgorithm,
+        MontgomeryDhKeyAgreementAlgorithm,
         PasswordKdfAlgorithm,
         Pbkdf2Algorithm,
         SecretKdfAlgorithm,
-        X25519KeyAgreementAlgorithm,
         EcSigningAlgorithm,
         EddsaSigningAlgorithm,
         EncryptionAlgorithm,
@@ -55,14 +55,13 @@ export 'src/kdf_params.dart'
         SecretBytesKdfParams;
 export 'src/key_agreement_params.dart'
     show
-        EcdhKeyAgreementParams,
+        DiffieHellmanAgreementParams,
         EcKeyAgreementParams,
         KeyAgreementParams,
-        OkpKeyAgreementParams,
-        X25519KeyAgreementParams;
+        MontgomeryKeyAgreementParams;
 
 part 'src/keys/edwards.dart';
-part 'src/keys/x25519.dart';
+part 'src/keys/montgomery.dart';
 part 'src/keys/ec.dart';
 part 'src/key_material.dart';
 part 'src/operator.dart';

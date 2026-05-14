@@ -69,9 +69,12 @@ class EcPrivateKey
   @override
   SecretBytes deriveSharedSecret(EcKeyAgreementParams params) {
     return switch (params) {
-      EcdhKeyAgreementParams() => EcdhKeyAgreement(
+      DiffieHellmanAgreementParams<EcPublicKey>() => EcdhKeyAgreement(
         this,
       ).deriveSharedSecret(params),
+      _ => throw StateError(
+        'Invalid key agreement parameters for ECDH: this path should be unreachable.',
+      ),
     };
   }
 

@@ -13,7 +13,13 @@ List<int> _hex(String s) {
 }
 
 void main() {
-  test('EdDSA signing algorithm identifier', () {
+  test('Key agreement and signing algorithm identifiers', () {
+    final ecdh = KeyAgreementAlgorithm.ecdh();
+    expect(ecdh, isA<EcdhKeyAgreementAlgorithm>());
+    expect(ecdh, isA<DiffieHellmanKeyAgreementAlgorithm>());
+    final montgomeryDh = KeyAgreementAlgorithm.montgomeryDh();
+    expect(montgomeryDh, isA<MontgomeryDhKeyAgreementAlgorithm>());
+    expect(montgomeryDh, isA<DiffieHellmanKeyAgreementAlgorithm>());
     expect(SigningAlgorithm.eddsa, isA<PureEddsaSigningAlgorithm>());
     expect(SigningAlgorithm.eddsa, isA<EddsaSigningAlgorithm>());
   });
@@ -59,7 +65,7 @@ void main() {
       switch (algorithm) {
         case EcdhKeyAgreementAlgorithm():
           algorithm.deriveSharedSecret;
-        case X25519KeyAgreementAlgorithm():
+        case MontgomeryDhKeyAgreementAlgorithm():
           algorithm.deriveSharedSecret;
       }
     }
@@ -160,9 +166,7 @@ void main() {
     test('SHA-512/224 "abc" (FIPS 180-4)', () {
       expect(
         algorithms.digest.sha512t(28).hashBytes(abc),
-        _hex(
-          '4634270f707b6a54daae7530460842e20e37ed265ceee9a43e8924aa',
-        ),
+        _hex('4634270f707b6a54daae7530460842e20e37ed265ceee9a43e8924aa'),
       );
     });
 
@@ -178,9 +182,7 @@ void main() {
     test('SHA3-224 "abc" (FIPS 202)', () {
       expect(
         algorithms.digest.sha3_224.hashBytes(abc),
-        _hex(
-          'e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf',
-        ),
+        _hex('e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf'),
       );
     });
 

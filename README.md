@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/appsup-dart/crypto_keys.svg?branch=master)](https://travis-ci.org/appsup-dart/crypto_keys)
 [:heart: sponsor](https://github.com/sponsors/rbellens)
 
-**crypto_keys** exposes the most common cryptographic operations—signing, symmetric and RSA encryption, key agreement, password and shared-secret key derivation—in a **single unified, easy-to-use, ergonomic API**. You combine **`algorithms.*`** from **`package:crypto_keys/catalog.dart`** with concrete **keys** and secret material (`SymmetricKey`, `Rsa*`, `Ec*`, `Edwards*`, `X25519*`, `Password`, `SecretBytes`) using **key-first** or **algorithm-first** styles ([**Using the API**](#using-the-api)).
+**crypto_keys** exposes the most common cryptographic operations—signing, symmetric and RSA encryption, key agreement, password and shared-secret key derivation—in a **single unified, easy-to-use, ergonomic API**. You combine **`algorithms.*`** from **`package:crypto_keys/catalog.dart`** with concrete **keys** and secret material (`SymmetricKey`, `Rsa*`, `Ec*`, `Edwards*`, `Montgomery*`, `Password`, `SecretBytes`) using **key-first** or **algorithm-first** styles ([**Using the API**](#using-the-api)).
 
 ---
 
@@ -126,18 +126,18 @@ Outputs are rarely used directly as AEAD keys: run **HKDF** or **Concat-KDF** ([
 
 | Scheme | Catalog | Keys |
 |--------|---------|------|
-| ECDH | `algorithms.keyAgreement.ecdh` | `EcPrivateKey` + peer `EcPublicKey` (**same curve**) |
-| X25519 | `algorithms.keyAgreement.x25519` | `X25519PrivateKey` + peer `X25519PublicKey` |
+| ECDH (NIST EC) | `algorithms.keyAgreement.ecdh` | `EcPrivateKey` + peer `EcPublicKey` (**same curve**) |
+| Montgomery DH (RFC 7748) | `algorithms.keyAgreement.montgomeryDh` | `MontgomeryPrivateKey` + peer `MontgomeryPublicKey` (**same** [MontgomeryCurve]) |
 
 Small key-agreement example (X25519):
 
 ```dart
-final alice = X25519KeyPair.generate();
-final bob = X25519KeyPair.generate();
-final shared = alice.privateKey.deriveSharedSecret(.x25519(peerPublicKey: bob.publicKey));
+final alice = MontgomeryKeyPair.generate(.x25519);
+final bob = MontgomeryKeyPair.generate(.x25519);
+final shared = alice.privateKey.deriveSharedSecret(.montgomeryDh(peerPublicKey: bob.publicKey));
 ```
 
-Agreement then HKDF, minimal spelling: `alice.privateKey.deriveSharedSecret(.x25519(peerPublicKey: bob.publicKey))` then `SecretBytes(…).deriveBits(.hkdf(hash: .sha256, …))` — [`example/x25519_hkdf_example.dart`](example/x25519_hkdf_example.dart), [`example/ecdh_concat_kdf_example.dart`](example/ecdh_concat_kdf_example.dart).
+Agreement then HKDF, minimal spelling: `alice.privateKey.deriveSharedSecret(.montgomeryDh(peerPublicKey: bob.publicKey))` then `SecretBytes(…).deriveBits(.hkdf(hash: .sha256, …))` — [`example/montgomerydh_hkdf_example.dart`](example/montgomerydh_hkdf_example.dart), [`example/ecdh_concat_kdf_example.dart`](example/ecdh_concat_kdf_example.dart).
 
 ---
 
@@ -183,7 +183,7 @@ final fromSecret = SecretBytes(shared.value).deriveBits(
 | **RSA** | `RsaPublicKey`, `RsaPrivateKey`, `RsaKeyPair` | RSA signatures, RSA encrypt/decrypt |
 | **NIST EC** | `EcPublicKey`, `EcPrivateKey`, `EcKeyPair` | ECDSA signing, ECDH agreement |
 | **Edwards** | `EdwardsPublicKey`, `EdwardsPrivateKey`, `EdwardsKeyPair` | RFC 8032 pure signatures (Ed25519) |
-| **X25519** | `X25519PublicKey`, `X25519PrivateKey`, `X25519KeyPair` | X25519 agreement |
+| **Montgomery** | `MontgomeryPublicKey`, `MontgomeryPrivateKey`, `MontgomeryKeyPair` | RFC 7748 agreement (X25519) |
 | **Material** | `Password`, `SecretBytes` | Stretch or derive (`deriveBits`), e.g. after agreement |
 
 ### Which key goes with which operation?
@@ -194,7 +194,7 @@ final fromSecret = SecretBytes(shared.value).deriveBits(
 | `Rsa*` | RSA | RSA (short payloads) | — |
 | `Ec*` | ECDSA | — | ECDH |
 | `Edwards*` | EdDSA | — | — |
-| `X25519*` | - | - | X25519 |
+| `Montgomery*` | - | - | MontgomeryDH (X25519) |
 
 ### RSA vs elliptic-curve (`Ec*`)
 
@@ -215,7 +215,7 @@ final sym = SymmetricKey.generate(256);
 final rsa = RsaKeyPair.generate(bitStrength: 2048);
 final ec = EcKeyPair.generate(.p256);
 final ed = EdwardsKeyPair.generate(.ed25519);
-final x = X25519KeyPair.generate();
+final x = MontgomeryKeyPair.generate(.x25519);
 ```
 
 Import/construct from existing key material:
@@ -230,8 +230,11 @@ final importedRsaPriv = RsaPrivateKey(
   secondPrimeFactor: q,
 );
 final importedEc = EcPrivateKey(eccPrivateKey: dEc, curve: .p256).asKeyPair();
-final importedEd = EdwardsKeyPair.fromSeed(.ed25519, seed32);
-final importedX = X25519KeyPair.fromPrivateKeyBytes(privateScalar32);
+final importedEd = EdwardsKeyPair.fromSeed(EdwardsCurve.ed25519, seed32);
+final importedX = MontgomeryKeyPair.fromPrivateKeyBytes(
+  .x25519,
+  privateScalar32,
+);
 ```
 
 Importing note: this package intentionally works with **raw key values** (bytes / integers / coordinates / scalars). If your source is PEM, JWK, or X.509, decode/convert it outside this package first, then construct the corresponding key object here.
@@ -242,7 +245,7 @@ Importing note: this package intentionally works with **raw key values** (bytes 
 
 ### The catalog
 
-Import **`package:crypto_keys/catalog.dart`** for the top-level **`algorithms`** object: a **nested, browsable tree** of named algorithm values (good for autocomplete and docs), e.g. **`algorithms.signing.hmac.sha256`**, **`algorithms.encryption.aes.gcm`**, **`algorithms.kdf.password.pbkdf2.sha256`**, **`algorithms.keyAgreement.x25519`**, **`algorithms.digest.*`**, and so on. Each leaf is a **typed algorithm constant**—the same conceptual primitive you can also build with factories on types from **`package:crypto_keys/crypto_keys.dart`** (`SigningAlgorithm`, `SymmetricEncryptionAlgorithm`, …); **equal values mean the same algorithm** for `createSigner`, `deriveBits`, etc.
+Import **`package:crypto_keys/catalog.dart`** for the top-level **`algorithms`** object: a **nested, browsable tree** of named algorithm values (good for autocomplete and docs), e.g. **`algorithms.signing.hmac.sha256`**, **`algorithms.encryption.aes.gcm`**, **`algorithms.kdf.password.pbkdf2.sha256`**, **`algorithms.keyAgreement.ecdh`**, **`algorithms.digest.*`**, and so on. Each leaf is a **typed algorithm constant**—the same conceptual primitive you can also build with factories on types from **`package:crypto_keys/crypto_keys.dart`** (`SigningAlgorithm`, `SymmetricEncryptionAlgorithm`, …); **equal values mean the same algorithm** for `createSigner`, `deriveBits`, etc.
 
 Core **keys**, **operators**, and **material** types live in **`crypto_keys.dart`**; the catalog entrypoint is mainly **ergonomics and discovery** (see the [`catalog`](https://pub.dev/documentation/crypto_keys/latest/catalog/catalog-library.html) library API docs).
 

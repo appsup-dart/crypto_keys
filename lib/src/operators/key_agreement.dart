@@ -17,7 +17,7 @@ abstract class KeyAgreement<T extends KeyAgreementParams, K extends PrivateKey>
 ///
 /// These helpers derive the ECDH shared secret from EC key pairs.
 class EcdhKeyAgreement
-    extends KeyAgreement<EcdhKeyAgreementParams, EcPrivateKey> {
+    extends KeyAgreement<EcKeyAgreementParams, EcPrivateKey> {
   EcdhKeyAgreement(EcPrivateKey key) : super(.ecdh(), key);
 
   /// Derives the ECDH shared secret for the given EC key pair.
@@ -25,9 +25,10 @@ class EcdhKeyAgreement
   /// The input keys must both be EC keys and use the same curve (`P-256`,
   /// `P-384`, or `P-521`). The output is fixed-length, big-endian bytes.
   @override
-  SecretBytes deriveSharedSecret(EcdhKeyAgreementParams params) {
+  SecretBytes deriveSharedSecret(EcKeyAgreementParams params) {
+    final typed = params as DiffieHellmanAgreementParams<EcPublicKey>;
     final privateKey = keyMaterial;
-    final publicKey = params.peerPublicKey;
+    final publicKey = typed.peerPublicKey;
     if (privateKey.curve != publicKey.curve) {
       throw ArgumentError(
         'ECDH requires matching curves, got '
@@ -64,18 +65,26 @@ class EcdhKeyAgreement
   }
 }
 
-class X25519KeyAgreement
-    extends KeyAgreement<X25519KeyAgreementParams, X25519PrivateKey> {
-  X25519KeyAgreement(X25519PrivateKey key) : super(.x25519(), key);
+class MontgomeryKeyAgreement
+    extends KeyAgreement<MontgomeryKeyAgreementParams, MontgomeryPrivateKey> {
+  MontgomeryKeyAgreement(MontgomeryPrivateKey key)
+    : super(.montgomeryDh(), key);
 
   @override
-  SecretBytes deriveSharedSecret(X25519KeyAgreementParams params) {
+  SecretBytes deriveSharedSecret(MontgomeryKeyAgreementParams params) {
+    final typed = params as DiffieHellmanAgreementParams<MontgomeryPublicKey>;
     final privateKey = keyMaterial;
-
-    final shared = x25519_impl.X25519(
-      privateKey.scalarBytes,
-      params.peerPublicKey.uCoordinate,
-    );
-    return SecretBytes(shared);
+    final peer = typed.peerPublicKey;
+    if (privateKey.curve != peer.curve) {
+      throw ArgumentError(
+        'Montgomery DH requires matching curves, got '
+        '${privateKey.curve.name} and ${peer.curve.name}',
+      );
+    }
+    return switch (privateKey.curve) {
+      MontgomeryCurve.x25519 => SecretBytes(
+        x25519_impl.X25519(privateKey.scalarBytes, peer.uCoordinate),
+      ),
+    };
   }
 }

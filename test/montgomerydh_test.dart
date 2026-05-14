@@ -33,36 +33,48 @@ void main() {
         '4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742',
       );
 
-      final alice = X25519KeyPair.fromPrivateKeyBytes(aliceScalar);
+      final alice = MontgomeryKeyPair.fromPrivateKeyBytes(.x25519, aliceScalar);
       expect(alice.publicKey.uCoordinate, alicePub);
-      final bob = X25519KeyPair.fromPrivateKeyBytes(bobScalar);
+      final bob = MontgomeryKeyPair.fromPrivateKeyBytes(.x25519, bobScalar);
       expect(bob.publicKey.uCoordinate, bobPub);
       final kAlice = alice.privateKey.deriveSharedSecret(
-        OkpKeyAgreementParams.x25519(peerPublicKey: bob.publicKey),
+        .montgomeryDh(peerPublicKey: bob.publicKey),
       );
       final kBob = bob.privateKey.deriveSharedSecret(
-        OkpKeyAgreementParams.x25519(peerPublicKey: alice.publicKey),
+        .montgomeryDh(peerPublicKey: alice.publicKey),
       );
 
       expect(kAlice.value, expectedShared);
       expect(kBob.value, expectedShared);
 
       expect(
-        algorithms.keyAgreement.x25519,
-        const X25519KeyAgreementAlgorithm(),
+        algorithms.keyAgreement.montgomeryDh,
+        const MontgomeryDhKeyAgreementAlgorithm(),
       );
     });
 
     test('random pair agrees', () {
-      final a = X25519KeyPair.generate();
-      final b = X25519KeyPair.generate();
+      final a = MontgomeryKeyPair.generate(.x25519);
+      final b = MontgomeryKeyPair.generate(.x25519);
       final z1 = a.privateKey.deriveSharedSecret(
-        OkpKeyAgreementParams.x25519(peerPublicKey: b.publicKey),
+        .montgomeryDh(peerPublicKey: b.publicKey),
       );
       final z2 = b.privateKey.deriveSharedSecret(
-        OkpKeyAgreementParams.x25519(peerPublicKey: a.publicKey),
+        .montgomeryDh(peerPublicKey: a.publicKey),
       );
       expect(z1.value, z2.value);
+    });
+
+    test('key types use Montgomery RFC 7748 abstractions', () {
+      final pair = MontgomeryKeyPair.generate(.x25519);
+      expect(pair, isA<MontgomeryKeyPair>());
+      expect(pair.publicKey.curve, MontgomeryCurve.x25519);
+      expect(pair.privateKey.curve, MontgomeryCurve.x25519);
+      expect(pair.publicKey, isA<AgreementPublicKey>());
+      expect(
+        pair.privateKey,
+        isA<AgreementPrivateKey<MontgomeryKeyAgreementParams>>(),
+      );
     });
   });
 }

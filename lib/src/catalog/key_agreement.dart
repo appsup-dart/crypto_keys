@@ -4,8 +4,8 @@ part of '../catalog.dart';
 class KeyAgreementAlgorithms {
   final EcdhKeyAgreementAlgorithm ecdh = const EcdhKeyAgreementAlgorithm();
 
-  final X25519KeyAgreementAlgorithm x25519 =
-      const X25519KeyAgreementAlgorithm();
+  final MontgomeryDhKeyAgreementAlgorithm montgomeryDh =
+      const MontgomeryDhKeyAgreementAlgorithm();
 
   const KeyAgreementAlgorithms._();
 }
