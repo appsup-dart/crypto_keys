@@ -5,12 +5,9 @@ import 'package:crypto_keys/crypto_keys.dart';
 import 'dart:convert';
 
 void main() {
-  final pair = Ed25519KeyPair.generate();
+  final pair = EdwardsKeyPair.generate(.ed25519);
   final msg = utf8.encode('hello');
-  final sig = pair.privateKey.createSigner(SigningAlgorithm.ed25519).sign(msg);
-  final ok = pair.publicKey.createVerifier(SigningAlgorithm.ed25519).verify(
-        msg,
-        sig,
-      );
+  final sig = pair.privateKey.createSigner(.eddsa()).sign(msg);
+  final ok = pair.publicKey.createVerifier(.eddsa()).verify(msg, sig);
   print(ok); // true
 }

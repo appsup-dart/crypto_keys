@@ -13,6 +13,11 @@ List<int> _hex(String s) {
 }
 
 void main() {
+  test('EdDSA signing algorithm identifier', () {
+    expect(SigningAlgorithm.eddsa, isA<PureEddsaSigningAlgorithm>());
+    expect(SigningAlgorithm.eddsa, isA<EddsaSigningAlgorithm>());
+  });
+
   test('every SigningAlgorithm resolves sign / verify extensions', () {
     void verify(SigningAlgorithm algorithm) {
       switch (algorithm) {
@@ -25,7 +30,7 @@ void main() {
         case EcSigningAlgorithm():
           algorithm.sign;
           algorithm.verify;
-        case Ed25519SigningAlgorithm():
+        case PureEddsaSigningAlgorithm():
           algorithm.sign;
           algorithm.verify;
       }

@@ -31,8 +31,8 @@ sealed class SigningAlgorithm extends Algorithm {
   /// ECDSA with the given [hash].
   static EcSigningAlgorithm ecdsa(DigestAlgorithm hash) => .ecdsa(hash);
 
-  /// Ed25519 pure signatures (RFC 8032).
-  static const Ed25519SigningAlgorithm ed25519 = Ed25519SigningAlgorithmImpl();
+  /// RFC 8032 PureEdDSA on Ed25519 (raw message bytes).
+  static const EddsaSigningAlgorithm eddsa = .eddsa();
 }
 
 /// Symmetric signing algorithm identifiers (HMAC family).
@@ -77,9 +77,10 @@ sealed class EcSigningAlgorithm extends AsymmetricSigningAlgorithm {
       EcdsaSigningAlgorithm;
 }
 
-/// Ed25519 signing (RFC 8032).
-///
-/// Signs and verifies the **raw** message bytes (no separate digest step).
-sealed class Ed25519SigningAlgorithm extends AsymmetricSigningAlgorithm {
-  const Ed25519SigningAlgorithm();
+/// RFC 8032 Edwards-curve Digital Signature Algorithm (EdDSA).
+sealed class EddsaSigningAlgorithm extends AsymmetricSigningAlgorithm {
+  const EddsaSigningAlgorithm();
+
+  /// PureEdDSA (RFC 8032), e.g. Ed25519 in this package.
+  const factory EddsaSigningAlgorithm.eddsa() = PureEddsaSigningAlgorithm;
 }

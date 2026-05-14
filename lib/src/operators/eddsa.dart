@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:crypto_keys/crypto_keys.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed25519_impl;
 
-class Ed25519Signer extends Signer<Ed25519PrivateKey> {
-  Ed25519Signer(Ed25519SigningAlgorithm super.algorithm, super.key);
+class EddsaSigner extends Signer<EdwardsPrivateKey> {
+  EddsaSigner(EddsaSigningAlgorithm super.algorithm, super.key);
 
   @override
   Signature sign(List<int> data) {
@@ -15,8 +15,8 @@ class Ed25519Signer extends Signer<Ed25519PrivateKey> {
   }
 }
 
-class Ed25519Verifier extends Verifier<Ed25519PublicKey> {
-  Ed25519Verifier(Ed25519SigningAlgorithm super.algorithm, super.key);
+class EddsaVerifier extends Verifier<EdwardsPublicKey> {
+  EddsaVerifier(EddsaSigningAlgorithm super.algorithm, super.key);
 
   @override
   bool verify(List<int> data, Signature signature) {

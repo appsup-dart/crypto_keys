@@ -20,10 +20,10 @@ void _runVector({
   required Uint8List message,
   required Uint8List expectedSignature,
 }) {
-  final pair = Ed25519KeyPair.fromSeed(seed);
+  final pair = EdwardsKeyPair.fromSeed(EdwardsCurve.ed25519, seed);
   expect(pair.publicKey.publicKeyBytes, publicKey);
 
-  final alg = algorithms.signing.ed25519.pure;
+  final alg = algorithms.signing.eddsa.pure;
   final sig = pair.privateKey.createSigner(alg).sign(message);
   expect(sig.data, expectedSignature);
   expect(pair.publicKey.createVerifier(alg).verify(message, sig), isTrue);
@@ -31,6 +31,15 @@ void _runVector({
 
 void main() {
   group('Ed25519 (RFC 8032 §7.1)', () {
+    test('key types use Edwards RFC 8032 abstractions', () {
+      final pair = EdwardsKeyPair.generate(EdwardsCurve.ed25519);
+      expect(pair, isA<EdwardsKeyPair>());
+      expect(pair.publicKey.curve, EdwardsCurve.ed25519);
+      expect(pair.privateKey.curve, EdwardsCurve.ed25519);
+      expect(pair.publicKey, isA<VerifyingPublicKey>());
+      expect(pair.privateKey, isA<SigningPrivateKey>());
+    });
+
     test('TEST 1: empty message', () {
       final seed = _hex('''
 9d61b19deffd5a60ba844af492ec2cc4

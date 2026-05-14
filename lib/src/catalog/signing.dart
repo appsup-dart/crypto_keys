@@ -11,8 +11,8 @@ class SigningAlgorithms {
   /// ECDSA signing
   final ecdsa = const EcdsaSigningAlgorithms._();
 
-  /// Ed25519 (RFC 8032)
-  final ed25519 = const Ed25519SigningAlgorithms._();
+  /// EdDSA (RFC 8032)
+  final eddsa = const EddsaSigningAlgorithms._();
 
   const SigningAlgorithms._();
 }
@@ -125,10 +125,10 @@ class EcdsaSigningAlgorithms {
   const EcdsaSigningAlgorithms._();
 }
 
-/// Ed25519 signing (RFC 8032).
-class Ed25519SigningAlgorithms {
-  const Ed25519SigningAlgorithms._();
+/// EdDSA signing (RFC 8032).
+class EddsaSigningAlgorithms {
+  const EddsaSigningAlgorithms._();
 
-  /// Pure Ed25519 over the raw message bytes.
-  final Ed25519SigningAlgorithm pure = SigningAlgorithm.ed25519;
+  /// Pure EdDSA over the raw message bytes.
+  final EddsaSigningAlgorithm pure = const .eddsa();
 }

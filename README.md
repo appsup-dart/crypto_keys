@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/appsup-dart/crypto_keys.svg?branch=master)](https://travis-ci.org/appsup-dart/crypto_keys)
 [:heart: sponsor](https://github.com/sponsors/rbellens)
 
-**crypto_keys** exposes the most common cryptographic operations—signing, symmetric and RSA encryption, key agreement, password and shared-secret key derivation—in a **single unified, easy-to-use, ergonomic API**. You combine **`algorithms.*`** from **`package:crypto_keys/catalog.dart`** with concrete **keys** and secret material (`SymmetricKey`, `Rsa*`, `Ec*`, `Ed25519*`, `X25519*`, `Password`, `SecretBytes`) using **key-first** or **algorithm-first** styles ([**Using the API**](#using-the-api)).
+**crypto_keys** exposes the most common cryptographic operations—signing, symmetric and RSA encryption, key agreement, password and shared-secret key derivation—in a **single unified, easy-to-use, ergonomic API**. You combine **`algorithms.*`** from **`package:crypto_keys/catalog.dart`** with concrete **keys** and secret material (`SymmetricKey`, `Rsa*`, `Ec*`, `Edwards*`, `X25519*`, `Password`, `SecretBytes`) using **key-first** or **algorithm-first** styles ([**Using the API**](#using-the-api)).
 
 ---
 
@@ -48,15 +48,15 @@ You can do this in two broad ways in this library:
 | RSA PKCS#1 v1.5 | `algorithms.signing.rsa.pkcs1.*` | Legacy interop |
 | RSA-PSS | `algorithms.signing.rsa.pss.*` | Prefer for new RSA |
 | ECDSA | `algorithms.signing.ecdsa.*` | Curve on **`Ec*`** key |
-| Ed25519 | `SigningAlgorithm.ed25519`, `algorithms.signing.ed25519.pure` | No extra pre-hash layer here |
+| EdDSA | `algorithms.signing.eddsa.pure` | No extra pre-hash layer here |
 
 
 ### Example (Ed25519):
 
 ```dart
-final pair = Ed25519KeyPair.generate();
-final sig = pair.privateKey.createSigner(SigningAlgorithm.ed25519).sign(message);
-final ok = pair.publicKey.createVerifier(SigningAlgorithm.ed25519).verify(message, sig);
+final pair = EdwardsKeyPair.generate(.ed25519);
+final sig = pair.privateKey.createSigner(.eddsa()).sign(message);
+final ok = pair.publicKey.createVerifier(.eddsa()).verify(message, sig);
 ```
 
 Runnable examples: [`example/signing_example.dart`](example/signing_example.dart), [`example/ed25519_signing_example.dart`](example/ed25519_signing_example.dart).
@@ -101,7 +101,7 @@ RSA is avoided for bulk data because it is slow and size-limited; symmetric cryp
 | AES-EAX | `algorithms.encryption.aes.eax` | AEAD alternative |
 | Key wrap | `algorithms.encryption.aes.keyWrap` | Wrap a key under a symmetric KEK (RFC 3394) |
 | ChaCha-Poly1305 | `algorithms.encryption.chacha20.poly1305` | AEAD; often chosen without hardware AES |
-| RSA | `.pkcs1`, `.oaep`, `.oaep256` | Short plaintext only; **`oaep256`** preferred where supported |
+| RSA | `algorithms.encryption.rsa.pkcs1`, `algorithms.encryption.rsa.oaep`, `algorithms.encryption.rsa.oaep256` | Short plaintext only; **`oaep256`** preferred where supported |
 
 ### Example
 
@@ -182,7 +182,7 @@ final fromSecret = SecretBytes(shared.value).deriveBits(
 | **Symmetric** | `SymmetricKey`, `SymmetricKeyPair` | HMAC, AES/ChaCha, key wrap with KEK |
 | **RSA** | `RsaPublicKey`, `RsaPrivateKey`, `RsaKeyPair` | RSA signatures, RSA encrypt/decrypt |
 | **NIST EC** | `EcPublicKey`, `EcPrivateKey`, `EcKeyPair` | ECDSA signing, ECDH agreement |
-| **Ed25519** | `Ed25519PublicKey`, `Ed25519PrivateKey`, `Ed25519KeyPair` | Ed25519 signing |
+| **Edwards** | `EdwardsPublicKey`, `EdwardsPrivateKey`, `EdwardsKeyPair` | RFC 8032 pure signatures (Ed25519) |
 | **X25519** | `X25519PublicKey`, `X25519PrivateKey`, `X25519KeyPair` | X25519 agreement |
 | **Material** | `Password`, `SecretBytes` | Stretch or derive (`deriveBits`), e.g. after agreement |
 
@@ -193,7 +193,8 @@ final fromSecret = SecretBytes(shared.value).deriveBits(
 | `SymmetricKey` | HMAC | AES / ChaCha / key wrap, … | — |
 | `Rsa*` | RSA | RSA (short payloads) | — |
 | `Ec*` | ECDSA | — | ECDH |
-| `Ed25519*` / `X25519*` | Ed25519 / — | — / — | — / X25519 |
+| `Edwards*` | EdDSA | — | — |
+| `X25519*` | - | - | X25519 |
 
 ### RSA vs elliptic-curve (`Ec*`)
 
@@ -213,7 +214,7 @@ Random generation:
 final sym = SymmetricKey.generate(256);
 final rsa = RsaKeyPair.generate(bitStrength: 2048);
 final ec = EcKeyPair.generate(.p256);
-final ed = Ed25519KeyPair.generate();
+final ed = EdwardsKeyPair.generate(.ed25519);
 final x = X25519KeyPair.generate();
 ```
 
@@ -229,7 +230,7 @@ final importedRsaPriv = RsaPrivateKey(
   secondPrimeFactor: q,
 );
 final importedEc = EcPrivateKey(eccPrivateKey: dEc, curve: .p256).asKeyPair();
-final importedEd = Ed25519KeyPair.fromSeed(seed32);
+final importedEd = EdwardsKeyPair.fromSeed(.ed25519, seed32);
 final importedX = X25519KeyPair.fromPrivateKeyBytes(privateScalar32);
 ```
 

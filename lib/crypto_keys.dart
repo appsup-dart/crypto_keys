@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:crypto_keys/src/operators/ed25519.dart';
+import 'package:crypto_keys/src/algorithms.dart';
+import 'package:crypto_keys/src/operators/eddsa.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed25519_impl;
 import 'package:x25519/x25519.dart' as x25519_impl;
 
@@ -35,7 +36,7 @@ export 'src/algorithms.dart'
         SecretKdfAlgorithm,
         X25519KeyAgreementAlgorithm,
         EcSigningAlgorithm,
-        Ed25519SigningAlgorithm,
+        EddsaSigningAlgorithm,
         EncryptionAlgorithm,
         RsaEncryptionAlgorithm,
         RsaSigningAlgorithm,
@@ -60,7 +61,7 @@ export 'src/key_agreement_params.dart'
         OkpKeyAgreementParams,
         X25519KeyAgreementParams;
 
-part 'src/keys/ed25519.dart';
+part 'src/keys/edwards.dart';
 part 'src/keys/x25519.dart';
 part 'src/keys/ec.dart';
 part 'src/key_material.dart';

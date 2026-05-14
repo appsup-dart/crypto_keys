@@ -27,13 +27,13 @@ extension EcSigningAlgorithmOps on EcSigningAlgorithm {
       publicKey.createVerifier(this).verify(data, signature);
 }
 
-/// Ed25519 helpers (raw message bytes per RFC 8032).
-extension Ed25519SigningAlgorithmOps on Ed25519SigningAlgorithm {
-  Signature sign(Ed25519PrivateKey privateKey, List<int> data) =>
+/// PureEdDSA helpers (raw message bytes per RFC 8032).
+extension EddsaSigningAlgorithmOps on EddsaSigningAlgorithm {
+  Signature sign(EdwardsPrivateKey privateKey, List<int> data) =>
       privateKey.createSigner(this).sign(data);
 
   bool verify(
-    Ed25519PublicKey publicKey,
+    EdwardsPublicKey publicKey,
     List<int> data,
     Signature signature,
   ) => publicKey.createVerifier(this).verify(data, signature);

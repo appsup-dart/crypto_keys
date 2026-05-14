@@ -65,13 +65,7 @@ final class EcdsaSigningAlgorithm extends EcSigningAlgorithm {
   int get hashCode => Object.hash(12, hash);
 }
 
-final class Ed25519SigningAlgorithmImpl extends Ed25519SigningAlgorithm {
-  const Ed25519SigningAlgorithmImpl() : super();
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is Ed25519SigningAlgorithmImpl;
-
-  @override
-  int get hashCode => (Ed25519SigningAlgorithmImpl).hashCode;
+/// RFC 8032 PureEdDSA — signs raw message octets (curve on keys, e.g. [EdwardsCurve]).
+final class PureEddsaSigningAlgorithm extends EddsaSigningAlgorithm {
+  const PureEddsaSigningAlgorithm();
 }
