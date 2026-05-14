@@ -1776,7 +1776,7 @@ void main() {
           encryptedData,
           false,
         );
-      } /* skip: 'GCM mode not implemented'*/);
+      });
     });
 
     group('Key Encryption with symmetric keys', () {

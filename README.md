@@ -1,5 +1,10 @@
+
+[![Ceasefire Now](https://badge.techforpalestine.org/default)](https://techforpalestine.org/learn-more)
+
 [![pub package](https://img.shields.io/pub/v/crypto_keys.svg)](https://pub.dev/packages/crypto_keys)
-[![Build Status](https://travis-ci.org/appsup-dart/crypto_keys.svg?branch=master)](https://travis-ci.org/appsup-dart/crypto_keys)
+
+[![CI](https://github.com/appsup-dart/crypto_keys/actions/workflows/ci.yml/badge.svg)](https://github.com/appsup-dart/crypto_keys/actions/workflows/ci.yml)
+
 [:heart: sponsor](https://github.com/sponsors/rbellens)
 
 **crypto_keys** exposes the most common cryptographic operations—signing, symmetric and RSA encryption, key agreement, password and shared-secret key derivation—in a **single unified, easy-to-use, ergonomic API**. You combine **`algorithms.*`** from **`package:crypto_keys/catalog.dart`** with concrete **keys** and secret material (`SymmetricKey`, `Rsa*`, `Ec*`, `Edwards*`, `Montgomery*`, `Password`, `SecretBytes`) using **key-first** or **algorithm-first** styles ([**Using the API**](#using-the-api)).
@@ -347,4 +352,11 @@ Please file requests and bugs at the [issue tracker][tracker].
 
 ## Sponsor
 
-Creating and maintaining this package takes time. [:heart: sponsor](https://github.com/sponsors/rbellens). More Dart packages from the same publisher: [pub.dev](https://pub.dev/packages?q=publisher%3Aappsup.be).
+If your team depends on this package in production, please consider sponsoring maintenance.
+
+Sponsorship helps fund:
+- compatibility and dependency updates
+- bug fixes and issue triage
+- documentation and migration support
+
+👉 https://github.com/sponsors/rbellens
